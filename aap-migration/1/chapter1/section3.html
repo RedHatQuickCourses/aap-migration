@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Section 3 :: FIXME Course Title</title>
+    <title>Migration Artifact :: Fast-Track Ansible Automation Platform Migration</title>
     <link rel="prev" href="section2.html">
     <link rel="next" href="../chapter2/index.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -15,7 +15,7 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
-      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">FIXME Course Title</a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Fast-Track Ansible Automation Platform Migration</a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -35,7 +35,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">FIXME Course Title</a></h3>
+    <h3 class="title"><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -55,7 +55,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">Chapter 1</a>
+    <a class="nav-link" href="index.html">Fast-Track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.html">Section 1</a>
@@ -64,7 +64,7 @@
     <a class="nav-link" href="section2.html">Section 2</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section3.html">Section 3</a>
+    <a class="nav-link" href="section3.html">Migration Artifact</a>
   </li>
 </ul>
   </li>
@@ -74,10 +74,10 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter2/index.html">Chapter 2</a>
+    <a class="nav-link" href="../chapter2/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter2/section1.html">Section 1</a>
+    <a class="nav-link" href="../chapter2/section1.html">Migration LAB</a>
   </li>
 </ul>
   </li>
@@ -87,10 +87,10 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter3/index.html">Chapter 3</a>
+    <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Section 1</a>
+    <a class="nav-link" href="../chapter3/section1.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter3/section2.html">Section 2</a>
@@ -111,12 +111,12 @@
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">FIXME Course Title</span>
+    <span class="title">Fast-Track Ansible Automation Platform Migration</span>
     <span class="version">1</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../index.html">FIXME Course Title</a>
+      <a class="title" href="../index.html">Fast-Track Ansible Automation Platform Migration</a>
       <ul class="versions">
         <li class="version is-current is-latest">
           <a href="../index.html">1</a>
@@ -134,9 +134,8 @@
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">FIXME Course Title</a></li>
-    <li><a href="index.html">Chapter 1</a></li>
-    <li><a href="section3.html">Section 3</a></li>
+    <li><a href="index.html">Fast-Track Ansible Automation Platform Migration</a></li>
+    <li><a href="section3.html">Migration Artifact</a></li>
   </ul>
 </nav>
 </div>
@@ -145,26 +144,213 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Section 3</h1>
+<h1 class="page">Migration Artifact</h1>
+<div class="paragraph">
+<p>The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.</p>
+</div>
+<div class="paragraph">
+<p>In the larger context of Ansible Automation Platform 2.5 Migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Preparing and assessing the source environment.</p>
+</li>
+<li>
+<p>Exporting the source environment, which includes creating the migration artifact.</p>
+</li>
+<li>
+<p>Creating and verifying the migration artifact.</p>
+</li>
+<li>
+<p>Preparing and assessing the target environment.</p>
+</li>
+<li>
+<p>Importing the migration content to the target environment.</p>
+</li>
+<li>
+<p>Reconciling the target environment post-import.</p>
+</li>
+<li>
+<p>Validating the target environment.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Migration Artifact: Purpose and Structure</strong></p>
+</div>
+<div class="paragraph">
+<p>The migration artifact is a <code>comprehensive package</code> that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.</p>
+</div>
+<div class="paragraph">
+<p>The recommended structure for the migration artifact is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>/ (Root directory of the artifact)</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>manifest.yml</p>
+</li>
+<li>
+<p>secrets.yml</p>
+</li>
+<li>
+<p>sha256sum.txt (for checksum verification)</p>
+</li>
+<li>
+<p>controller/ (directory for automation controller data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>controller.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>custom_configs/ (directory for custom configuration files)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>foo.py</p>
+</li>
+<li>
+<p>bar.py</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>gateway/ (directory for platform gateway data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>gateway.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>hub/ (directory for automation hub data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>hub.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Manifest File (manifest.yml)</strong></p>
+</div>
+<div class="paragraph">
+<p>The <code>manifest.yml</code> file acts as the primary metadata document for the migration artifact. It provides critical versioning and component information about your source environment. Its structure includes:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Create multiple copies of this section as needed.</p>
+<p>aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).</p>
 </li>
 <li>
-<p>Remove any unnecessary sections or chapter pages.</p>
+<p>Platform: The type of the source platform (e.g., rpm).</p>
 </li>
 <li>
-<p>Customize the section as appropriate.</p>
-</li>
-<li>
-<p>Ensure that each page contains a manageable amount of content.</p>
+<p>Components: A list detailing each component&#8217;s name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p><strong>Secrets File (secrets.yml)</strong></p>
+</div>
+<div class="paragraph">
+<p>The <code>secrets.yml</code> file within the migration artifact is vital as it contains essential Django <code>SECRET_KEY values and other sensitive data</code> required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.</p>
+</div>
+<div class="paragraph">
+<p>Its structure contains redacted values for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>controller_pg_database</p>
+</li>
+<li>
+<p>controller_secret_key</p>
+</li>
+<li>
+<p>gateway_pg_database</p>
+</li>
+<li>
+<p>gateway_secret_key</p>
+</li>
+<li>
+<p>hub_pg_database</p>
+</li>
+<li>
+<p>hub_secret_key</p>
+</li>
+<li>
+<p>hub_db_fields_encryption_key</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Migration Artifact Creation and Verification Checklist</strong></p>
+</div>
+<div class="paragraph">
+<p>To ensure the integrity and completeness of the migration artifact, the sources provide a checklist for verification:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Database dumps: You must include complete database dumps for each component. This involves ensuring the presence of controller.pgc, hub.pgc, and gateway.pgc in the artifact. The process of performing these dumps is detailed for both RPM-based and container-based source environments.</p>
+</li>
+<li>
+<p>Secret dumps: All security-related information must be exported and included, verifying that all secret values are present in the secrets.yml file. Specific commands are provided to extract these secrets from both RPM and containerized environments.</p>
+</li>
+<li>
+<p>Custom configurations: Any customizations from the source environment, such as custom Python scripts or modules (e.g., foo.py, bar.py), should be packaged and validated as present in the artifact. Non-standard configurations should also be documented.</p>
+</li>
+<li>
+<p>Database information: Documentation of database details is required, including database names, users, required permissions, and any specific configurations or optimizations. The process for gathering this information from the source environment is also outlined.</p>
+</li>
+<li>
+<p>Verification: This step ensures the artifact&#8217;s integrity and completeness:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that all required files are included.</p>
+</li>
+<li>
+<p>Verify that checksums exist for all included database files.</p>
+</li>
+<li>
+<p>Test the artifact&#8217;s structure and accessibility.</p>
+</li>
+<li>
+<p>Consider encrypting the artifact for secure transfer to the target environment.</p>
+</li>
+<li>
+<p>Document any known limitations or special considerations.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The packaging of the artifact typically involves creating a <code>sha256sum.txt</code> file for database dumps, then archiving the artifact content into a <code>.tar</code> file and generating a checksum for the archive. This artifact is then transferred to the target environment.</p>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="section2.html">Section 2</a></span>
-  <span class="next"><a href="../chapter2/index.html">Chapter 2</a></span>
+  <span class="next"><a href="../chapter2/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a></span>
 </nav>
 </article>
   </div>
