@@ -1,6 +1,205 @@
-= Section 1
+= Migration LAB
 
-* Create multiple copies of this section as needed.
-* Remove any unnecessary sections or chapter pages.
-* Customize the section as appropriate.
-* Ensure that each page contains a manageable amount of content.
+- `scp` the `artifact.tar` file to the New systems. 
+
+- Extract the Artifact on the home folder for the user running the containerized containers.
+
+~~~
+$ cd ~
+$ sha256sum --check artifact.tar.sha256
+$ tar xf artifact.tar
+$ cd artifact
+$ sha256sum --check sha256sum.txt
+~~~
+
+ Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:
+
+  $ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"
+
+- Create a backup of the initial containerized environment:
++
+[source,bash,role=execute]
+----
+ $ ansible-playbook -i <path_to_inventory> ansible.containerized_installer.backup
+----
+
+- In all nodes, if Performance Co-Pilot is configured, run the following command:
+
+.. Access the Automation Controller node and run:
++
+[source,bash,role=execute]
+----
+$ systemctl --user stop automation-controller-task automation-controller-web
+automation-controller-rsyslog
+$ systemctl --user stop receptor
+----
+
+.. Access the Automation Hub node and run:
++
+[source,bash,role=execute]
+----
+$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-
+web automation-hub-worker-1 automation-hub-worker-2
+----
+
+.. Access the Automation EDA node and run:
++
+[source,bash,role=execute]
+----
+$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-
+eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2
+automation-eda-activation-worker-1 automation-eda-activation-worker-2
+----
+
+.. Access the Automation Gateway node and run:
++
+[source,bash,role=execute]
+----
+$ systemctl --user stop automation-gateway automation-gateway-proxy
+----
+
+.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
++
+[source,bash,role=execute]
+----
+$ systemctl --user stop redis-unix redis-tcp
+----
+
+ Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
+
+To perform a restore on an installer-managed database, you'll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
+The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.
+
+- On the database node run the following command: 
++
+[source,bash,role=execute]
+----
+$ podman run -it --rm --name postgresql_restore_temp --network host --volume
+~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume
+~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume
+~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume
+~/artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-
+15:latest bash
+---- 
+
+Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.
+
+ Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.
+
+*Create a DB role* 
+
+- When inside the container, access the database and ensure the users have the CREATEDB role.
++
+[source,bash,role=execute]
+----
+$ psql -h <pg_hostname> -U postgres
+---- 
+
+.. For each component name, add the CREATEDB role to the Owner. E.g.:
+
+[source]
+----
+ postgres=# ALTER ROLE awx WITH CREATEDB;
+ postgres=# \q
+----
+
+- With the CREATEDB in place, access the path where the artifact is mounted, and you may run the `pg_restore` commands.
++
+[source,bash,role=execute]
+----
+bash$ cd /var/lib/pgsql/backups
+bash$ pg_restore --clean --create --no-owner -h <pg_hostname> -U
+<component_pg_user> -d template1 <component>/<component>.pgc
+----
+
+After the restore, remove the permissions from the user E.g.:
++ 
+[source,bash,role=execute]
+----
+postgres=# ALTER ROLE awx WITH NOCREATEDB;
+postgres=# \q
+----
+
+Replace `awx` with the each user containing the role. Start the containerized services except the database in all nodes, if Performance Co-Pilot is configured, run the following command:
+ 
+[source,bash,role=execute]
+----
+$ systemctl --user start pcp
+----
+
+- All the below services needs to be started again on all the nodes: 
+
+.. Access the Automation Controller node and run:
++ 
+[source,bash,role=execute]
+----
+$ systemctl --user start automation-controller-task automation-controller-web
+automation-controller-rsyslog
+$ systemctl --user start receptor
+----
+
+.. Access the Automation Hub node and run:
++ 
+[source,bash,role=execute]
+----
+$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
+web automation-hub-worker-1 automation-hub-worker-2
+---- 
+
+.. Access the Automation EDA node and run:
++ 
+[source,bash,role=execute]
+----
+$ systemctl --user start automation-eda-scheduler automation-eda-daphne
+automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
+worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2
+----
+
+.. Access the Automation Gateway node and run:
++ 
+[source,bash,role=execute]
+----
+$ systemctl --user start automation-gateway automation-gateway-proxy
+---- 
+
+.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
++ 
+[source,bash,role=execute]
+----
+$ systemctl --user start redis-unix redis-tcp
+----
+
+*Target Environment Post-Import Reconciliation*
+
+
+- Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
++ 
+[source,bash,role=execute]
+----
+$ podman exec -it automation-gateway bash
+$ aap-gateway-manage migrate
+$ aap-gateway-manage shell_plus
+>>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
+ServiceCluster.objects.all().delete()
+---- 
+
+- Re-run the containerized installer on the target environment using the same inventory from the installation.
+
+- Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
++ 
+[source,bash,role=execute]
+----
+$ podman exec -it automation-controller-task bash
+$ awx-manage list_instances
+----
+
+- Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
+[ungrouped capacity=0]
+[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
+heartbeat="..."
+[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
+runner-X.Y.Z heartbeat="..."
+Remove those nodes with awx-manage:
+awx-manage deprovision_instance --host=node1.example.org
+awx-manage deprovision_instance --host=node2.example.org
+

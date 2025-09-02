@@ -1,5 +1,5 @@
 site:
-  title: FIXME Course Title
+  title: "Fast-Track Ansible Automation Platform Migration"
   start_page: aap-migration::index.adoc
 
 content:

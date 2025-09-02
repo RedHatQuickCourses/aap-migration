@@ -1,5 +1,5 @@
 name: aap-migration
-title: FIXME Course Title
+title: "Fast-Track Ansible Automation Platform Migration"
 version: 1
 nav:
 - modules/ROOT/nav.adoc

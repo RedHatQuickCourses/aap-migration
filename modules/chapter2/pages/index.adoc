@@ -1,7 +1,23 @@
-= Chapter 2
+= AAP RPM 2.6 to AAP Containerized 2.6
 
-In this section, we cover... FIXME
+This guide provides a detailed, step-by-step process to migrate your RPM-based Ansible Automation Platform (AAP) to a containerized deployment. Follow these steps carefully to ensure a smooth transition.
 
+Prerequisites: 
 
-- Add or remove section entries in the `antora.yaml` file as needed.
-- Ensure you create or delete the corresponding directory for the chapter accordingly.
+✅ Source Environment:
+
+- RPM-based AAP deployment (version 2.4).
+- PostgreSQL 15 (mandatory).
+- Sufficient disk space for backups and migration artifacts.
+
+✅ Target Environment:
+
+- Fresh server(s) for containerized AAP.
+- Podman installed and configured.
+- Network connectivity between source and target.
+
+✅ Tools Needed:
+
+- pg_dump / pg_restore (PostgreSQL 15).
+- tar, sha256sum (for artifact integrity).
+- Red Hat Containerized AAP installer.
