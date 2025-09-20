@@ -58,13 +58,19 @@
     <a class="nav-link" href="index.html">Fast-Track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section1.html">Section 1</a>
+    <a class="nav-link" href="section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section2.html">Section 2</a>
+    <a class="nav-link" href="section2.html">Setup ansible automation platfrom 2.4</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section3.html">Migration Artifact</a>
+    <a class="nav-link" href="section3.html">section3.adoc</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section4.html">Migration Artifact</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section5.html">Migration Artifact Collection LAB</a>
   </li>
 </ul>
   </li>
@@ -145,21 +151,39 @@
 <article class="doc">
 <h1 class="page">Fast-Track Ansible Automation Platform Migration</h1>
 <div class="paragraph">
-<p>In this section, we cover&#8230;&#8203; FIXME</p>
+<p>This training focuses only on migrating the main components of Ansible Automation Platform. You&#8217;ll need to manually re-create or re-import the following items in your new environment:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Add or remove section entries in the <code>antora.yaml</code> file as needed.</p>
+<p>Event-Driven Ansible (EDA) configurations and content</p>
 </li>
 <li>
-<p>Ensure you create or delete the corresponding directory for the chapter accordingly.</p>
+<p>Instance group configurations</p>
+</li>
+<li>
+<p>Content from Automation Hub</p>
+</li>
+<li>
+<p>Custom Certificate Authority for the receptor mesh</p>
+</li>
+<li>
+<p>Any custom execution environments (the default one is included)</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>When we talk about migrating from an RPM to a container or operator-based installation, we&#8217;re really talking about a major shift. The biggest difference is that we&#8217;re moving the entire infrastructure from living directly on the system to being managed by container technology.</p>
+</div>
+<div class="paragraph">
+<p>So this course is divided into multiple sections:
+- First we will talk about a simple upgrade from AAP 2.4 to AAP 2.6 <code>RPM</code>
+- Then we talk about migrating AAP 2.6 RPM tp AAP 2.6 <code>Containerized</code>.
+- Then we talk about migrating AAP 2.6 RPM tp AAP 2.6 <code>Operator</code>.</p>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="../LABENV/index.html">Lab Environment</a></span>
-  <span class="next"><a href="section1.html">Section 1</a></span>
+  <span class="next"><a href="section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a></span>
 </nav>
 </article>
   </div>
