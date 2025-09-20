@@ -113,7 +113,7 @@ bash$ pg_restore --clean --create --no-owner -h <pg_hostname> -U
 ----
 
 After the restore, remove the permissions from the user E.g.:
-+ 
+ 
 [source,bash,role=execute]
 ----
 postgres=# ALTER ROLE awx WITH NOCREATEDB;

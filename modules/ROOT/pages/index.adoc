@@ -40,7 +40,6 @@ Test & Validate the migrated content
 
 This course assumes that you have the following prior experience:
 
-* karman approval
 * Course or experience...
 * Course or experience...
 

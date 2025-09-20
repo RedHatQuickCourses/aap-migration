@@ -1,6 +1,2 @@
-= Section 1
+= Upgrade from Ansible Automation platfrom 2.4 to 2.6. 
 
-* Create multiple copies of this section as needed.
-* Remove any unnecessary sections or chapter pages.
-* Customize the section as appropriate.
-* Ensure that each page contains a manageable amount of content.
