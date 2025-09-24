@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Migration LAB :: Fast-Track Ansible Automation Platform Migration</title>
+    <title>Migration Artifact :: Fast-Track Ansible Automation Platform Migration</title>
     <link rel="prev" href="index.html">
-    <link rel="next" href="../chapter3/index.html">
+    <link rel="next" href="section2.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -67,10 +67,10 @@
     <a class="nav-link" href="../chapter1/section3.html">section3.adoc</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section4.html">Migration Artifact</a>
+    <a class="nav-link" href="#section4.adoc">section4.adoc</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section5.html">Migration Artifact Collection LAB</a>
+    <a class="nav-link" href="#section5.adoc">section5.adoc</a>
   </li>
 </ul>
   </li>
@@ -80,35 +80,15 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
+    <a class="nav-link" href="index.html">Migration Artifact</a>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section1.html">Migration LAB</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="section1.html">Migration Artifact</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section2.html">Section 2</a>
+    <a class="nav-link" href="section2.html">Migration Artifact Collection LAB</a>
   </li>
 </ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
   </li>
 </ul>
   </li>
@@ -141,8 +121,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></li>
-    <li><a href="index.html">AAP RPM 2.6 to AAP Containerized 2.6</a></li>
-    <li><a href="section1.html">Migration LAB</a></li>
+    <li><a href="index.html">Migration Artifact</a></li>
+    <li><a href="section1.html">Migration Artifact</a></li>
   </ul>
 </nav>
 </div>
@@ -151,99 +131,201 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Migration LAB</h1>
+<h1 class="page">Migration Artifact</h1>
+<div class="paragraph">
+<p>The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.</p>
+</div>
+<div class="paragraph">
+<p>In the larger context of Ansible Automation Platform 2.5 Migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Preparing and assessing the source environment.</p>
+</li>
+<li>
+<p>Exporting the source environment, which includes creating the migration artifact.</p>
+</li>
+<li>
+<p>Creating and verifying the migration artifact.</p>
+</li>
+<li>
+<p>Preparing and assessing the target environment.</p>
+</li>
+<li>
+<p>Importing the migration content to the target environment.</p>
+</li>
+<li>
+<p>Reconciling the target environment post-import.</p>
+</li>
+<li>
+<p>Validating the target environment.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Migration Artifact: Purpose and Structure</strong></p>
+</div>
+<div class="paragraph">
+<p>The migration artifact is a <code>comprehensive package</code> that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.</p>
+</div>
+<div class="paragraph">
+<p>The recommended structure for the migration artifact is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>/ (Root directory of the artifact)</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>manifest.yml</p>
+</li>
+<li>
+<p>secrets.yml</p>
+</li>
+<li>
+<p>sha256sum.txt (for checksum verification)</p>
+</li>
+<li>
+<p>controller/ (directory for automation controller data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>controller.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>custom_configs/ (directory for custom configuration files)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>foo.py</p>
+</li>
+<li>
+<p>bar.py</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>gateway/ (directory for platform gateway data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>gateway.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>hub/ (directory for automation hub data)</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>hub.pgc (PostgreSQL database dump)</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Manifest File (manifest.yml)</strong></p>
+</div>
+<div class="paragraph">
+<p>The <code>manifest.yml</code> file acts as the primary metadata document for the migration artifact. It provides critical versioning and component information about your source environment. Its structure includes:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>scp</code> the <code>artifact.tar</code> file to the New systems.</p>
+<p>aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).</p>
 </li>
 <li>
-<p>Extract the Artifact on the home folder for the user running the containerized containers.</p>
+<p>Platform: The type of the source platform (e.g., rpm).</p>
+</li>
+<li>
+<p>Components: A list detailing each component&#8217;s name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p><sub>~</sub>
-$ cd ~
-$ sha256sum --check artifact.tar.sha256
-$ tar xf artifact.tar
-$ cd artifact
-$ sha256sum --check sha256sum.txt
-<sub>~</sub></p>
+<p><strong>Secrets File (secrets.yml)</strong></p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:</pre>
+<div class="paragraph">
+<p>The <code>secrets.yml</code> file within the migration artifact is vital as it contains essential Django <code>SECRET_KEY values and other sensitive data</code> required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.</p>
 </div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"</pre>
-</div>
+<div class="paragraph">
+<p>Its structure contains redacted values for:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Create a backup of the initial containerized environment:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ ansible-playbook -i &lt;path_to_inventory&gt; ansible.containerized_installer.backup</code></pre>
-</div>
-</div>
+<p>controller_pg_database</p>
 </li>
 <li>
-<p>In all nodes, if Performance Co-Pilot is configured, run the following command:</p>
+<p>controller_secret_key</p>
+</li>
+<li>
+<p>gateway_pg_database</p>
+</li>
+<li>
+<p>gateway_secret_key</p>
+</li>
+<li>
+<p>hub_pg_database</p>
+</li>
+<li>
+<p>hub_secret_key</p>
+</li>
+<li>
+<p>hub_db_fields_encryption_key</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Migration Artifact Creation and Verification Checklist</strong></p>
+</div>
+<div class="paragraph">
+<p>To ensure the integrity and completeness of the migration artifact, the sources provide a checklist for verification:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Database dumps: You must include complete database dumps for each component. This involves ensuring the presence of controller.pgc, hub.pgc, and gateway.pgc in the artifact. The process of performing these dumps is detailed for both RPM-based and container-based source environments.</p>
+</li>
+<li>
+<p>Secret dumps: All security-related information must be exported and included, verifying that all secret values are present in the secrets.yml file. Specific commands are provided to extract these secrets from both RPM and containerized environments.</p>
+</li>
+<li>
+<p>Custom configurations: Any customizations from the source environment, such as custom Python scripts or modules (e.g., foo.py, bar.py), should be packaged and validated as present in the artifact. Non-standard configurations should also be documented.</p>
+</li>
+<li>
+<p>Database information: Documentation of database details is required, including database names, users, required permissions, and any specific configurations or optimizations. The process for gathering this information from the source environment is also outlined.</p>
+</li>
+<li>
+<p>Verification: This step ensures the artifact&#8217;s integrity and completeness:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Access the Automation Controller node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user stop receptor</code></pre>
-</div>
-</div>
+<p>Verify that all required files are included.</p>
 </li>
 <li>
-<p>Access the Automation Hub node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
-</div>
-</div>
+<p>Verify that checksums exist for all included database files.</p>
 </li>
 <li>
-<p>Access the Automation EDA node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-
-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2
-automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pre>
-</div>
-</div>
+<p>Test the artifact&#8217;s structure and accessibility.</p>
 </li>
 <li>
-<p>Access the Automation Gateway node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-gateway automation-gateway-proxy</code></pre>
-</div>
-</div>
+<p>Consider encrypting the artifact for secure transfer to the target environment.</p>
 </li>
 <li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop redis-unix redis-tcp</code></pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.</pre>
-</div>
-</div>
+<p>Document any known limitations or special considerations.</p>
 </li>
 </ol>
 </div>
@@ -251,193 +333,11 @@ automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pr
 </ul>
 </div>
 <div class="paragraph">
-<p>To perform a restore on an installer-managed database, you&#8217;ll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
-The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>On the database node run the following command:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman run -it --rm --name postgresql_restore_temp --network host --volume
-~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume
-~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume
-~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume
-~/artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-
-15:latest bash</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Create a DB role</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>When inside the container, access the database and ensure the users have the CREATEDB role.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -h &lt;pg_hostname&gt; -U postgres</code></pre>
-</div>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>For each component name, add the CREATEDB role to the Owner. E.g.:</p>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"> postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# \q</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>With the CREATEDB in place, access the path where the artifact is mounted, and you may run the <code>pg_restore</code> commands.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h &lt;pg_hostname&gt; -U
-&lt;component_pg_user&gt; -d template1 &lt;component&gt;/&lt;component&gt;.pgc</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>After the restore, remove the permissions from the user E.g.:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# \q</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Replace <code>awx</code> with the each user containing the role. Start the containerized services except the database in all nodes, if Performance Co-Pilot is configured, run the following command:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start pcp</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>All the below services needs to be started again on all the nodes:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Access the Automation Controller node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user start receptor</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Hub node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation EDA node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Gateway node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-gateway automation-gateway-proxy</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start redis-unix redis-tcp</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Target Environment Post-Import Reconciliation</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman exec -it automation-gateway bash
-$ aap-gateway-manage migrate
-$ aap-gateway-manage shell_plus
-&gt;&gt;&gt; HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Re-run the containerized installer on the target environment using the same inventory from the installation.</p>
-</li>
-<li>
-<p>Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman exec -it automation-controller-task bash
-$ awx-manage list_instances</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="&#8230;&#8203;"
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="&#8230;&#8203;"
-Remove those nodes with awx-manage:
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</p>
-</li>
-</ul>
+<p>The packaging of the artifact typically involves creating a <code>sha256sum.txt</code> file for database dumps, then archiving the artifact content into a <code>.tar</code> file and generating a checksum for the archive. This artifact is then transferred to the target environment.</p>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="index.html">AAP RPM 2.6 to AAP Containerized 2.6</a></span>
-  <span class="next"><a href="../chapter3/index.html">AAP RPM 2.6 to AAP operator 2.6</a></span>
+  <span class="prev"><a href="index.html">Migration Artifact</a></span>
+  <span class="next"><a href="section2.html">Migration Artifact Collection LAB</a></span>
 </nav>
 </article>
   </div>

@@ -67,10 +67,10 @@
     <a class="nav-link" href="section3.html">section3.adoc</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.html">Migration Artifact</a>
+    <a class="nav-link" href="#section4.adoc">section4.adoc</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section5.html">Migration Artifact Collection LAB</a>
+    <a class="nav-link" href="#section5.adoc">section5.adoc</a>
   </li>
 </ul>
   </li>
@@ -80,35 +80,15 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter2/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
+    <a class="nav-link" href="../chapter2/index.html">Migration Artifact</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter2/section1.html">Migration LAB</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter2/section1.html">Migration Artifact</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section2.html">Section 2</a>
+    <a class="nav-link" href="../chapter2/section2.html">Migration Artifact Collection LAB</a>
   </li>
 </ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
   </li>
 </ul>
   </li>
@@ -151,7 +131,96 @@
 </aside>
 <article class="doc">
 <h1 class="page">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</h1>
-
+<div class="paragraph">
+<p>This comprehensive checklist guides you through the essential steps for a successful Ansible Automation Platform (AAP) upgrade. It covers three key phases: pre-upgrade preparation, execution, and post-upgrade verification, ensuring a smooth transition and reliable platform performance.</p>
+</div>
+<div class="paragraph">
+<p><strong>AAP Upgrade Checklist</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Before the Upgrade</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>New Node Preparation:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Confirm all new nodes have been received.</p>
+</li>
+<li>
+<p>Validate new nodes: Check hardware (RAM, CPU, Disk), partitions, and network settings (NFS, DNS, NTP, Ports, URLs).</p>
+</li>
+<li>
+<p>Verify new nodes are reachable from the existing AAP infrastructure.</p>
+</li>
+<li>
+<p>Ensure the OS is consistent across all nodes.</p>
+</li>
+<li>
+<p>Capture and document OS hardening details.</p>
+</li>
+<li>
+<p>Determine if a dedicated installer user is required on the new nodes.</p>
+</li>
+<li>
+<p>Set up passwordless access to the new nodes for the installer.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Backups and Documentation:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Ensure the upgrade guide or document is available and reviewed.</p>
+</li>
+<li>
+<p>Confirm the setup bundle for your target version (e.g., 2.4/2.6) is available.</p>
+</li>
+<li>
+<p>Take a backup or snapshot of all existing nodes.</p>
+</li>
+<li>
+<p>Back up all associated databases.</p>
+</li>
+<li>
+<p>Capture the current load balancer (LB) configuration.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>After the Upgrade</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify functionality:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Confirm all data and configurations are present.</p>
+</li>
+<li>
+<p>Ensure all jobs are executing properly.</p>
+</li>
+<li>
+<p>Test user login and access to confirm it&#8217;s working as expected.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Fast-Track Ansible Automation Platform Migration</a></span>
   <span class="next"><a href="section2.html">Setup ansible automation platfrom 2.4</a></span>

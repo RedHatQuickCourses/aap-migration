@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Migration Artifact Collection LAB :: Fast-Track Ansible Automation Platform Migration</title>
+    <link rel="prev" href="section1.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Fast-Track Ansible Automation Platform Migration</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/aap-migration/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="aap-migration" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../chapter1/index.html">Fast-Track Ansible Automation Platform Migration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter1/section2.html">Setup ansible automation platfrom 2.4</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter1/section3.html">section3.adoc</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#section4.adoc">section4.adoc</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#section5.adoc">section5.adoc</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Migration Artifact</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.html">Migration Artifact</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="section2.html">Migration Artifact Collection LAB</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Fast-Track Ansible Automation Platform Migration</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Fast-Track Ansible Automation Platform Migration</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></li>
+    <li><a href="index.html">Migration Artifact</a></li>
+    <li><a href="section2.html">Migration Artifact Collection LAB</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Migration Artifact Collection LAB</h1>
+<div class="paragraph">
+<p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or . It should be organized as follows:</p>
+</div>
+<div class="paragraph">
+<p><strong>Artifact checking</strong></p>
+</div>
+<div class="paragraph">
+<p>Before starting with the migration please check if we have the correct postgress version 15 of the database using the below command:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You can verify your current PostgreSQL version by connecting to your database server and running the following command as the postgres user:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -c 'SELECT version();'</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You can verify the database sizes by connecting to your database server and running the following command as the postgres user and make sure that you have enough free storage space to create the backups:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ psql -c '\l+'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Create Migration Artifact</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Artifact Structure</p>
+<div class="paragraph">
+<p>The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/migration_artifact/
+├── manifest.yml          # Metadata
+├── secrets.yml           # Sensitive data
+├── sha256sum.txt         # Checksums
+├── controller/
+│   ├── controller.pgc    # DB dump
+│   └── custom_configs/   # Custom Python files
+├── hub/
+│   └── hub.pgc
+└── gateway/
+    └── gateway.pgc</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub migration_artifact/gateway &amp;&amp; touch migration_artifact/manifest.yml migration_artifact/secrets.yml migration_artifact/sha256sum.txt migration_artifact/controller/controller.pgc migration_artifact/hub/hub.pgc migration_artifact/gateway/gateway.pgc</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create manifest.yml</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap_version: 2.5
+platform: rpm
+components:
+  - name: controller
+    version: x.y.z
+  - name: hub
+    version: x.y.z
+  - name: gateway
+    version: x.y.z</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create secrets.yml</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">controller_pg_database: &lt;redacted&gt;
+controller_secret_key: &lt;from /etc/tower/SECRET_KEY&gt;
+gateway_pg_database: &lt;redacted&gt;
+gateway_secret_key: &lt;from /etc/ansible-automation-platform/gateway/SECRET_KEY&gt;
+hub_pg_database: &lt;redacted&gt;
+hub_secret_key: &lt;from /etc/pulp/settings.py&gt;
+hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric.key&gt;</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Security Note: Encrypt this file before transfer.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a complete backup of the source environment using the below command.</p>
+</li>
+<li>
+<p>/setup.sh -e 'backup_dest=/path/to/backup_dir/' -b</p>
+</li>
+<li>
+<p>Create some data:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user before running each of the commands listed below.</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Access the Controller node and run:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># awx-manage print_settings | grep '^DATABASES'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the Hub node and run:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># grep '^DATABASES' /etc/pulp/settings.py</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the Gateway node and run:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># aap-gateway-manage print_settings | grep '^DATABASES'
+# mkdir -p /tmp/backups/artifact/{controller,gateway,hub}
+# mkdir -p /tmp/backups/artifact/controller/custom_configs
+# touch /tmp/backups/artifact/secrets.yml
+# cd /tmp/backups/artifact/</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the controller node and gather the secret key and add to the controller_secret_key value in
+secrets.yml file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/tower/SECRET_KEY</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the hub node and gather the database_fields.symmetric.key value and add to the
+hub_db_fields_encryption_key value in secrets.yml file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/pulp/certs/database_fields.symmetric.key</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the gateway node and gather the secret key and add to the gateway_secret_key value in secrets.yml
+file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/ansible-automation-platform/gateway/SECRET_KEY</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Export Automation Controller custom configurations If any custom settings exists on the <code>/etc/tower/conf.d</code>,
+copy them to <code>/tmp/backups/artifact/controller/custom_configs</code>.</p>
+</li>
+<li>
+<p>Configuration files on controller which are managed by the installer and not considered custom:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/etc/tower/conf.d/postgres.py
+/etc/tower/conf.d/channels.py
+/etc/tower/conf.d/caching.py
+/etc/tower/conf.d/cluster_host_id.py</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Package the artifact</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cd /tmp/backups/artifact/
+# [ -f sha256sum.txt ] &amp;&amp; rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec
+sha256sum {} \; &gt;&gt; sha256sum.txt
+# cat sha256sum.txt
+# cd ..
+# tar cf artifact.tar artifact
+# sha256sum artifact.tar &gt; artifact.tar.sha256
+# sha256sum --check artifact.tar.sha256
+# tar tvf artifact.tar</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Download the artifact.tar and artifact.tar.sha256 to your local machine or transfer to the target
+node with the scp command.</p>
+</li>
+</ul>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="section1.html">Migration Artifact</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
