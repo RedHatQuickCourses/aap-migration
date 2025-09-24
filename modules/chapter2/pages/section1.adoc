@@ -1,205 +1,76 @@
-= Migration LAB
+= Migration Artifact
 
-- `scp` the `artifact.tar` file to the New systems. 
+The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.
 
-- Extract the Artifact on the home folder for the user running the containerized containers.
+In the larger context of Ansible Automation Platform 2.5 Migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
 
-~~~
-$ cd ~
-$ sha256sum --check artifact.tar.sha256
-$ tar xf artifact.tar
-$ cd artifact
-$ sha256sum --check sha256sum.txt
-~~~
+. Preparing and assessing the source environment.
+. Exporting the source environment, which includes creating the migration artifact.
+. Creating and verifying the migration artifact.
+. Preparing and assessing the target environment.
+. Importing the migration content to the target environment.
+. Reconciling the target environment post-import.
+. Validating the target environment.
 
- Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:
+*Migration Artifact: Purpose and Structure*
 
-  $ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"
+The migration artifact is a `comprehensive package` that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.
 
-- Create a backup of the initial containerized environment:
-+
-[source,bash,role=execute]
-----
- $ ansible-playbook -i <path_to_inventory> ansible.containerized_installer.backup
-----
+The recommended structure for the migration artifact is as follows:
 
-- In all nodes, if Performance Co-Pilot is configured, run the following command:
+. / (Root directory of the artifact)
+.. manifest.yml
+.. secrets.yml
+.. sha256sum.txt (for checksum verification)
+.. controller/ (directory for automation controller data)
+... controller.pgc (PostgreSQL database dump)
+.. custom_configs/ (directory for custom configuration files)
+... foo.py
+... bar.py
+.. gateway/ (directory for platform gateway data)
+... gateway.pgc (PostgreSQL database dump)
+.. hub/ (directory for automation hub data)
+... hub.pgc (PostgreSQL database dump)
 
-.. Access the Automation Controller node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user stop receptor
-----
+*Manifest File (manifest.yml)*
 
-.. Access the Automation Hub node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2
-----
+The `manifest.yml` file acts as the primary metadata document for the migration artifact. It provides critical versioning and component information about your source environment. Its structure includes:
 
-.. Access the Automation EDA node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-
-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2
-automation-eda-activation-worker-1 automation-eda-activation-worker-2
-----
+- aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).
+- Platform: The type of the source platform (e.g., rpm).
+- Components: A list detailing each component's name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).
 
-.. Access the Automation Gateway node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-gateway automation-gateway-proxy
-----
+*Secrets File (secrets.yml)*
 
-.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop redis-unix redis-tcp
-----
+The `secrets.yml` file within the migration artifact is vital as it contains essential Django `SECRET_KEY values and other sensitive data` required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.
 
- Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
+Its structure contains redacted values for:
 
-To perform a restore on an installer-managed database, you'll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
-The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.
+- controller_pg_database
+- controller_secret_key
+- gateway_pg_database
+- gateway_secret_key
+- hub_pg_database
+- hub_secret_key
+- hub_db_fields_encryption_key
 
-- On the database node run the following command: 
-+
-[source,bash,role=execute]
-----
-$ podman run -it --rm --name postgresql_restore_temp --network host --volume
-~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume
-~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume
-~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume
-~/artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-
-15:latest bash
----- 
+*Migration Artifact Creation and Verification Checklist*
 
-Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.
+To ensure the integrity and completeness of the migration artifact, the sources provide a checklist for verification:
 
- Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.
+- Database dumps: You must include complete database dumps for each component. This involves ensuring the presence of controller.pgc, hub.pgc, and gateway.pgc in the artifact. The process of performing these dumps is detailed for both RPM-based and container-based source environments.
 
-*Create a DB role* 
+- Secret dumps: All security-related information must be exported and included, verifying that all secret values are present in the secrets.yml file. Specific commands are provided to extract these secrets from both RPM and containerized environments.
 
-- When inside the container, access the database and ensure the users have the CREATEDB role.
-+
-[source,bash,role=execute]
-----
-$ psql -h <pg_hostname> -U postgres
----- 
+- Custom configurations: Any customizations from the source environment, such as custom Python scripts or modules (e.g., foo.py, bar.py), should be packaged and validated as present in the artifact. Non-standard configurations should also be documented.
 
-.. For each component name, add the CREATEDB role to the Owner. E.g.:
+- Database information: Documentation of database details is required, including database names, users, required permissions, and any specific configurations or optimizations. The process for gathering this information from the source environment is also outlined.
 
-[source]
-----
- postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# \q
-----
+- Verification: This step ensures the artifact's integrity and completeness:
+.. Verify that all required files are included.
+.. Verify that checksums exist for all included database files.
+.. Test the artifact's structure and accessibility.
+.. Consider encrypting the artifact for secure transfer to the target environment.
+.. Document any known limitations or special considerations.
 
-- With the CREATEDB in place, access the path where the artifact is mounted, and you may run the `pg_restore` commands.
-+
-[source,bash,role=execute]
-----
-bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h <pg_hostname> -U
-<component_pg_user> -d template1 <component>/<component>.pgc
-----
-
-After the restore, remove the permissions from the user E.g.:
- 
-[source,bash,role=execute]
-----
-postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# \q
-----
-
-Replace `awx` with the each user containing the role. Start the containerized services except the database in all nodes, if Performance Co-Pilot is configured, run the following command:
- 
-[source,bash,role=execute]
-----
-$ systemctl --user start pcp
-----
-
-- All the below services needs to be started again on all the nodes: 
-
-.. Access the Automation Controller node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user start receptor
-----
-
-.. Access the Automation Hub node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2
----- 
-
-.. Access the Automation EDA node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2
-----
-
-.. Access the Automation Gateway node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-gateway automation-gateway-proxy
----- 
-
-.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start redis-unix redis-tcp
-----
-
-*Target Environment Post-Import Reconciliation*
-
-
-- Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
-+ 
-[source,bash,role=execute]
-----
-$ podman exec -it automation-gateway bash
-$ aap-gateway-manage migrate
-$ aap-gateway-manage shell_plus
->>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()
----- 
-
-- Re-run the containerized installer on the target environment using the same inventory from the installation.
-
-- Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
-+ 
-[source,bash,role=execute]
-----
-$ podman exec -it automation-controller-task bash
-$ awx-manage list_instances
-----
-
-- Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[ungrouped capacity=0]
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="..."
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="..."
-Remove those nodes with awx-manage:
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org
-
+The packaging of the artifact typically involves creating a `sha256sum.txt` file for database dumps, then archiving the artifact content into a `.tar` file and generating a checksum for the archive. This artifact is then transferred to the target environment.

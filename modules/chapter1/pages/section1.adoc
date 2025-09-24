@@ -1,2 +1,28 @@
 = Upgrade from Ansible Automation platfrom 2.4 to 2.6. 
 
+This comprehensive checklist guides you through the essential steps for a successful Ansible Automation Platform (AAP) upgrade. It covers three key phases: pre-upgrade preparation, execution, and post-upgrade verification, ensuring a smooth transition and reliable platform performance.
+
+*AAP Upgrade Checklist*
+
+. Before the Upgrade
+..  New Node Preparation:
+... Confirm all new nodes have been received.
+... Validate new nodes: Check hardware (RAM, CPU, Disk), partitions, and network settings (NFS, DNS, NTP, Ports, URLs).
+... Verify new nodes are reachable from the existing AAP infrastructure.
+... Ensure the OS is consistent across all nodes.
+... Capture and document OS hardening details.
+... Determine if a dedicated installer user is required on the new nodes.
+... Set up passwordless access to the new nodes for the installer.
+
+.. Backups and Documentation:
+... Ensure the upgrade guide or document is available and reviewed.
+... Confirm the setup bundle for your target version (e.g., 2.4/2.6) is available.
+... Take a backup or snapshot of all existing nodes.
+... Back up all associated databases.
+... Capture the current load balancer (LB) configuration.
+
+. After the Upgrade
+.. Verify functionality:
+... Confirm all data and configurations are present.
+... Ensure all jobs are executing properly.
+... Test user login and access to confirm it's working as expected.
