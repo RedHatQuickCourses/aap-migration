@@ -8,10 +8,10 @@ This comprehensive checklist guides you through the essential steps for a succes
 ..  New Node Preparation:
 ... Confirm all new nodes have been received.
 ... Validate new nodes: Check hardware (RAM, CPU, Disk), partitions, and network settings (NFS, DNS, NTP, Ports, URLs).
-... Verify new nodes are reachable from the existing AAP infrastructure.
+... Verify new nodes are reachable from the installer system. 
 ... Ensure the OS is consistent across all nodes.
 ... Capture and document OS hardening details.
-... Determine if a dedicated installer user is required on the new nodes.
+... Determine if a dedicated installer user is there on the new nodes and have the sudo.
 ... Set up passwordless access to the new nodes for the installer.
 
 .. Backups and Documentation:
@@ -20,6 +20,7 @@ This comprehensive checklist guides you through the essential steps for a succes
 ... Take a backup or snapshot of all existing nodes.
 ... Back up all associated databases.
 ... Capture the current load balancer (LB) configuration.
+
 
 . After the Upgrade
 .. Verify functionality:

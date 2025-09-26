@@ -1,0 +1,121 @@
+== Performing Upgrade to Ansible automation platfrom 2.6
+
+This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of **Ansible Automation Platform 2.6** having a new component called `Unified-ui`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI. 
+
+all the above steps followed in the video are shared below: 
+
+. Once the lab is deployed and you are accessing the system via *ssh* terminal make sure to run everything as a normal user only and use the sudo command to perform any root-level operations. 
+
+. We are going to follow a *RPM growth topology* approach for this upgrade. Where we have each system for new componenets and use the exsiting one to upgrade for the same componenets.  
+
+. Go to the https://nightlies.testing.ansible.com/ansible-tower_nightlies_m8u16fz56qr6q7/nightly_ng_2.6/setup-bundle/x86_64/[Installer,window=_blank] link and Get the installer link for *ansible-automation-platform-setup-bundle-latest.tar.gz*.
++
+Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 4, and copy the link if you are having trouble.  
+
+. Download the installer file to the VM: 
++ 
+[source,bash,role=execute]
+---- 
+ wget -O aap.tar.gz "<paste-link-here taken from step 3>"
+----
+
+. Extract the *aap.tar.gz* file using the following command:
++ 
+[source,bash,role=execute]
+---- 
+ tar -xvf aap.tar.gz
+----
+
+. Using the *cd* command, enter the extracted folder. Then, use the *vim* command, open the *inventory-growth* file and make the following changes, wherever they appear throughout the entire *inventory-growth* file:
++ 
+[source,bash,role=execute]
+---- 
+ cd <extracted-folder-from-step-6>
+ vim inventory-growth
+
+<set your own> → redhat
+
+<set your own> ← This value can be customized as per your need but remember to use the same while doing the login after the deployment. 
+
+and 
+
+db.example.org → database.lab
+----
++
+Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank].
+
+. After the above changes the below variable should appear like the below: 
++ 
+[source,bash,role=execute]
+---- 
+automationgateway_admin_password=redhat
+automationgateway_pg_host=database.lab
+automationgateway_pg_password=redhat
+
+admin_password=redhat
+pg_host=database.lab
+pg_password=redhat
+
+automationhub_admin_password=redhat
+automationhub_pg_host=database.lab
+automationhub_pg_password=redhat
+
+automationedacontroller_admin_password=redhat
+automationedacontroller_pg_host=database.lab
+automationedacontroller_pg_password=redhat
+----
+
+. Now lets add the addition details of the hosts where it needs to either install or upgrade the components: 
++
+[source,bash,role=execute]
+----
+[automationgateway]
+gateway.lab  
+
+[automationcontroller]
+controller.lab
+
+[automationcontroller:vars]
+peers=execution_nodes
+
+[execution_nodes]
+
+[automationhub]
+hub.lab
+
+[automationedacontroller]
+eda.lab
+
+[database]
+database.lab
+
+[all:vars]
+ansible_become=true
+----
+
+. Once the inventory file is ready follow the below steps to do the installation/Upgrade:
++
+[source,bash,role=execute]
+----
+./setup.sh -i inventory-growth -- -e gpgcheck=0 
+----
+
+. Simply ssh the hostname from the *bastion* host and get the *external_IP* of the system to access the Dashboard.
++
+[source,bash,role=execute]
+----
+ssh gateway.lab  
+----
++
+[source,bash,role=execute]
+----
+cat external_ip
+----
+
+. Copy the *external_ip* and paste it in the browser and you should be able to access the AAP 2.6 *Login page*. 
+
+. Use the user *admin* and the *password* set during the time of installation. In the above video I set it to *redhat*. 
+
+ Note: Try to use stronger password while doing the enterprise deployment 
+
+. After *Login* run the *Project sync* for the *Demo project* to confirm the job is getting executed and verify the data of the AAP 2.4. 
