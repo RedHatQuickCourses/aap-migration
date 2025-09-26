@@ -1,3 +1,4 @@
 = Ansible automation platfrom 2.4
 
 The Red Hat Ansible Automation Platform 2.4 environment is now fully deployed and ready for immediate use. Below, you'll find the essential access details for the core components: the **Automation Controller** for centralized job orchestration and the **Private Automation Hub** for managing your curated content and Execution Environments. Your immediate next step is to begin populating the platform—curating organizational data such as Ansible Playbooks, Credentials, and RBAC configurations—in preparation for the subsequent upgrade to AAP 2.6 and then migration to conatinerized or operator based deployement of AAP 2.6 . We've also included a video demonstrating access to the Controller and Hub, along with sample content to guide your initial upgrade testing.
+
