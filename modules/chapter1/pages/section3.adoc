@@ -10,7 +10,7 @@ all the above steps followed in the video are shared below:
 
 . Go to the https://nightlies.testing.ansible.com/ansible-tower_nightlies_m8u16fz56qr6q7/nightly_ng_2.6/setup-bundle/x86_64/[Installer,window=_blank] link and Get the installer link for *ansible-automation-platform-setup-bundle-latest.tar.gz*.
 +
-Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 4, and copy the link if you are having trouble.  
+Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and copy the link if you are having trouble.  
 
 . Download the installer file to the VM: 
 + 

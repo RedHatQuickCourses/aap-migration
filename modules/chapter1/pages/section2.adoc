@@ -32,3 +32,4 @@ Your immediate next step is to begin populating the platform—curating organiza
 
 We've also included a video demonstrating access to the Controller and Hub, along with sample content to guide for your upgrade and then testing of the content is migrated correctly.
 
+video::aap2.4_migration_content.mp4[align="left",width=800,height=500]
