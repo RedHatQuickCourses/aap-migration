@@ -77,10 +77,10 @@
     <a class="nav-link" href="../chapter2/index.html">Migration Artifact</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter2/section1.html">Migration Artifact</a>
+    <a class="nav-link" href="../chapter2/section1.html">Migration Artifact Collection LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter2/section2.html">Migration Artifact Collection LAB</a>
+    <a class="nav-link" href="../chapter2/section2.html">section2.adoc</a>
   </li>
 </ul>
   </li>
@@ -93,7 +93,7 @@
     <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Migration LAB</a>
+    <a class="nav-link" href="../chapter3/section1.html">Performing Migration LAB</a>
   </li>
 </ul>
   </li>
@@ -112,13 +112,6 @@
     <a class="nav-link" href="../chapter4/section2.html">Section 2</a>
   </li>
 </ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
   </li>
 </ul>
   </li>
@@ -160,6 +153,8 @@
 </aside>
 <article class="doc">
 <h1 class="page">Fast-Track Ansible Automation Platform Migration</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>This training focuses only on migrating the main components of Ansible Automation Platform. You&#8217;ll need to manually re-create or re-import the following items in your new environment:</p>
 </div>
@@ -190,6 +185,60 @@
 - First we will talk about a simple upgrade from AAP 2.4 to AAP 2.6 <code>RPM</code>
 - Then we talk about migrating AAP 2.6 RPM tp AAP 2.6 <code>Containerized</code>.
 - Then we talk about migrating AAP 2.6 RPM tp AAP 2.6 <code>Operator</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_system_list"><a class="anchor" href="#_system_list"></a>System List</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The below systems will be used in the exercise for the initial 2 chapters.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Number of Systems</th>
+<th class="tableblock halign-left valign-top">Hostname</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System 1</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>gateway.lab</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System 2</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>controller.lab</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System 3</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>hub.lab</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System 4</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>eda.lab</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System 5</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>database.lab</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="../LABENV/index.html">Lab Environment</a></span>
