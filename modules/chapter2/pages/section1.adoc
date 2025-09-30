@@ -1,76 +1,174 @@
-= Migration Artifact
+= Migration Artifact Collection LAB
 
-The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.
+The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or . It should be organized as follows:
 
-In the larger context of Ansible Automation Platform 2.5 Migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
+- Create a complete backup of the source environment using the below command. 
 
-. Preparing and assessing the source environment.
-. Exporting the source environment, which includes creating the migration artifact.
-. Creating and verifying the migration artifact.
-. Preparing and assessing the target environment.
-. Importing the migration content to the target environment.
-. Reconciling the target environment post-import.
-. Validating the target environment.
+[source,bash,role=execute]
+----
+ ./setup.sh -e 'backup_dest=/path/to/backup_dir/' -b
+----
 
-*Migration Artifact: Purpose and Structure*
+*Artifact checking before collecting data*
+ 
+Before starting with the migration please check if we have the correct postgress version 15 of the database using the below command: 
 
-The migration artifact is a `comprehensive package` that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.
+- You can verify your current PostgreSQL version by connecting to your database server and running the following command as the postgres user:
 
-The recommended structure for the migration artifact is as follows:
+[source,bash,role=execute]
+----
 
-. / (Root directory of the artifact)
-.. manifest.yml
-.. secrets.yml
-.. sha256sum.txt (for checksum verification)
-.. controller/ (directory for automation controller data)
-... controller.pgc (PostgreSQL database dump)
-.. custom_configs/ (directory for custom configuration files)
-... foo.py
-... bar.py
-.. gateway/ (directory for platform gateway data)
-... gateway.pgc (PostgreSQL database dump)
-.. hub/ (directory for automation hub data)
-... hub.pgc (PostgreSQL database dump)
+$ psql -c 'SELECT version();'
 
-*Manifest File (manifest.yml)*
+----
+   
+- You can verify the database sizes by connecting to your database server and running the following command as the postgres user and make sure that you have enough free storage space to create the backups: 
 
-The `manifest.yml` file acts as the primary metadata document for the migration artifact. It provides critical versioning and component information about your source environment. Its structure includes:
+[source,bash,role=execute]
+----
+ $ psql -c '\l+'
+----
 
-- aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).
-- Platform: The type of the source platform (e.g., rpm).
-- Components: A list detailing each component's name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).
+*Create Migration Artifact*
 
-*Secrets File (secrets.yml)*
+- Artifact Structure
++
+The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment. 
 
-The `secrets.yml` file within the migration artifact is vital as it contains essential Django `SECRET_KEY values and other sensitive data` required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.
+[source,bash]
+----
+/migration_artifact/
+├── manifest.yml          # Metadata
+├── secrets.yml           # Sensitive data
+├── sha256sum.txt         # Checksums
+├── controller/
+│   ├── controller.pgc    # DB dump
+│   └── custom_configs/   # Custom Python files
+├── hub/
+│   └── hub.pgc
+└── gateway/
+    └── gateway.pgc
+----
 
-Its structure contains redacted values for:
+[source,bash,role=execute]
+----
+mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub migration_artifact/gateway && touch migration_artifact/manifest.yml migration_artifact/secrets.yml migration_artifact/sha256sum.txt
+----
 
-- controller_pg_database
-- controller_secret_key
-- gateway_pg_database
-- gateway_secret_key
-- hub_pg_database
-- hub_secret_key
-- hub_db_fields_encryption_key
+- Create manifest.yml
++
+[source,bash,role=execute]
+----
+aap_version: 2.5
+platform: rpm
+components:
+  - name: controller
+    version: 4.7.1
+  - name: hub
+    version: 4.11.0
+  - name: gateway
+    version: 2.6.0
+----
 
-*Migration Artifact Creation and Verification Checklist*
+- Creating a `secrets.yml` which will be containg the below information as this is different for every environment so create it accordingly. 
++
+[source,bash,role=execute]
+----
+controller_pg_database: <redacted>
+controller_secret_key: <from /etc/tower/SECRET_KEY>
+gateway_pg_database: <redacted>
+gateway_secret_key: <from /etc/ansible-automation-platform/gateway/SECRET_KEY>
+hub_pg_database: <redacted>
+hub_secret_key: <from /etc/pulp/settings.py>
+hub_db_fields_encryption_key: <from /etc/pulp/certs/database_fields.symmetric.key>
+----
 
-To ensure the integrity and completeness of the migration artifact, the sources provide a checklist for verification:
+Note: Encrypt this file before transfer.
 
-- Database dumps: You must include complete database dumps for each component. This involves ensuring the presence of controller.pgc, hub.pgc, and gateway.pgc in the artifact. The process of performing these dumps is detailed for both RPM-based and container-based source environments.
+- The below is the correct way to collect information and fill the information in the `secrets.yml` file: 
 
-- Secret dumps: All security-related information must be exported and included, verifying that all secret values are present in the secrets.yml file. Specific commands are provided to extract these secrets from both RPM and containerized environments.
+For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running `sudo -i` before running each of the commands listed below.
++
+.. Access the controller node and gather the secret key and add to the controller_secret_key value in
+secrets.yml file.
++
+[source,bash,role=execute]
+----
+# cat /etc/tower/SECRET_KEY
+----
 
-- Custom configurations: Any customizations from the source environment, such as custom Python scripts or modules (e.g., foo.py, bar.py), should be packaged and validated as present in the artifact. Non-standard configurations should also be documented.
+.. Access the hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.
++
+[source,bash,role=execute]
+----
+# grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
+----
 
-- Database information: Documentation of database details is required, including database names, users, required permissions, and any specific configurations or optimizations. The process for gathering this information from the source environment is also outlined.
+.. Access the hub node and gather the database_fields.symmetric.key value and add to the
+hub_db_fields_encryption_key value in secrets.yml file.
++
+[source,bash,role=execute]
+----
+# cat /etc/pulp/certs/database_fields.symmetric.key
+----
 
-- Verification: This step ensures the artifact's integrity and completeness:
-.. Verify that all required files are included.
-.. Verify that checksums exist for all included database files.
-.. Test the artifact's structure and accessibility.
-.. Consider encrypting the artifact for secure transfer to the target environment.
-.. Document any known limitations or special considerations.
+.. Access the gateway node and gather the secret key and add to the gateway_secret_key value in secrets.yml
+file.
++
+[source,bash,role=execute]
+----
+# cat /etc/ansible-automation-platform/gateway/SECRET_KEY
+----
 
-The packaging of the artifact typically involves creating a `sha256sum.txt` file for database dumps, then archiving the artifact content into a `.tar` file and generating a checksum for the archive. This artifact is then transferred to the target environment.
+
+.. Access the Controller node and run to get the database settings:
++
+[source,bash,role=execute]
+----
+# awx-manage print_settings | grep '^DATABASES'
+----
+
+.. Access the Hub node and run:
++
+[source,bash,role=execute]
+----
+# grep '^DATABASES' /etc/pulp/settings.py
+----
+
+.. Access the Gateway node and run:
++
+[source,bash,role=execute]
+----
+# aap-gateway-manage print_settings | grep '^DATABASES'
+----
+
+
+.. Export Automation Controller custom configurations If any custom settings exists on the `/etc/tower/conf.d`,
+copy them to `/tmp/backups/artifact/controller/custom_configs`.
+
+.. Configuration files on controller which are managed by the installer and not considered custom:
++
+[source,bash,role=execute]
+----
+/etc/tower/conf.d/postgres.py
+/etc/tower/conf.d/channels.py
+/etc/tower/conf.d/caching.py
+/etc/tower/conf.d/cluster_host_id.py
+----
+
+Package the artifact
+[source,bash,role=execute]
+----
+# cd /tmp/backups/artifact/
+# [ -f sha256sum.txt ] && rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec
+sha256sum {} \; >> sha256sum.txt
+# cat sha256sum.txt
+# cd ..
+# tar cf artifact.tar artifact
+# sha256sum artifact.tar > artifact.tar.sha256
+# sha256sum --check artifact.tar.sha256
+# tar tvf artifact.tar
+----
+
+- Download the `artifact.tar` and `artifact.tar.sha256` to your local machine or transfer to the target
+node with the scp command.

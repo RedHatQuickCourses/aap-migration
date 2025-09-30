@@ -100,7 +100,7 @@ ansible_become=true
 ./setup.sh -i inventory-growth -- -e gpgcheck=0 
 ----
 
-. Simply ssh the hostname from the *bastion* host and get the *external_IP* of the system to access the Dashboard.
+. Simply ssh the hostname from the *bastion* host and get the *external_IP* of the system to access the AAP Dashboard.
 +
 [source,bash,role=execute]
 ----

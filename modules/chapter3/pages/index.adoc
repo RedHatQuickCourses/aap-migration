@@ -2,7 +2,7 @@
 
 This guide provides a detailed, step-by-step process to migrate your RPM-based Ansible Automation Platform (AAP) to a containerized deployment. Follow these steps carefully to ensure a smooth transition.
 
-Prerequisites: 
+*Prerequisites* 
 
 ✅ Source Environment:
 

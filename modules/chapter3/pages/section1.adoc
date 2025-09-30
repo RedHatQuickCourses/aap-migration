@@ -1,16 +1,17 @@
-= Migration LAB
+= Performing Migration LAB
 
 - `scp` the `artifact.tar` file to the New systems. 
 
 - Extract the Artifact on the home folder for the user running the containerized containers.
-
-~~~
++
+[source]
+----
 $ cd ~
 $ sha256sum --check artifact.tar.sha256
 $ tar xf artifact.tar
 $ cd artifact
 $ sha256sum --check sha256sum.txt
-~~~
+----
 
  Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:
 
