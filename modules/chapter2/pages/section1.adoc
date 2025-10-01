@@ -1,25 +1,25 @@
 = Migration Artifact Collection LAB
 
-The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or . It should be organized as follows:
-
-- Create a complete backup of the source environment using the below command. 
+- Create a complete backup of the source environment using the below command before proceeding forward. 
 
 [source,bash,role=execute]
 ----
  ./setup.sh -b
 ----
 
-. Simply `ssh`` the hostname from the *bastion* host and perform the activity on the `gateway` node.
+The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:
+
+. Simply `ssh` the hostname from the *bastion* host and perform the activity on the `gateway` node.
 +
 [source,bash,role=execute]
 ----
-ssh gatway.lab  
+ssh gateway.lab  
 ----
 
 *Create Migration Artifact*
 
-- Artifact Structure
-+
+Artifact Structure
+
 The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment. 
 
 [source,bash]
@@ -42,11 +42,16 @@ The below architecture we will be creating so that it can be further moved to th
 mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub migration_artifact/gateway && touch migration_artifact/manifest.yml migration_artifact/secrets.yml migration_artifact/sha256sum.txt
 ----
 
-- Create manifest.yml
+- Create `manifest.yml` using vi command:
 +
 [source,bash,role=execute]
 ----
-aap_versio4n: 2.5
+vi manifest.yml
+----
++
+[source,bash,role=execute]
+----
+aap_version: 2.6
 platform: rpm
 components:
   - name: controller
@@ -76,27 +81,31 @@ Note: Encrypt this file before transfer.
 
 For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running `sudo -i` before running each of the commands listed below.
 
-.. Access the controller node and gather the secret key and add to the controller_secret_key value in
-secrets.yml file.
+.. Access the *hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.
 +
 [source,bash,role=execute]
 ----
-# cat /etc/tower/SECRET_KEY
+ssh hub.lab 
 ----
-
-.. Access the hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.
 +
 [source,bash,role=execute]
 ----
 # grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 ----
 
-.. Access the hub node and gather the database_fields.symmetric.key value and add to the
-hub_db_fields_encryption_key value in secrets.yml file.
+.. Access the *hub node* from the *bastion* host and gather the `database_fields.symmetric.key` value and add to the
+`hub_db_fields_encryption_key` value in `secrets.yml` file.
 +
 [source,bash,role=execute]
 ----
 # cat /etc/pulp/certs/database_fields.symmetric.key
+----
+
+.. Access the Hub node and run:
++
+[source,bash,role=execute]
+----
+# grep '^DATABASES' /etc/pulp/settings.py
 ----
 
 .. Access the gateway node and gather the secret key and add to the gateway_secret_key value in secrets.yml
@@ -107,21 +116,6 @@ file.
 # cat /etc/ansible-automation-platform/gateway/SECRET_KEY
 ----
 
-
-.. Access the Controller node and run to get the database settings:
-+
-[source,bash,role=execute]
-----
-# awx-manage print_settings | grep '^DATABASES'
-----
-
-.. Access the Hub node and run:
-+
-[source,bash,role=execute]
-----
-# grep '^DATABASES' /etc/pulp/settings.py
-----
-
 .. Access the Gateway node and run:
 +
 [source,bash,role=execute]
@@ -129,6 +123,24 @@ file.
 # aap-gateway-manage print_settings | grep '^DATABASES'
 ----
 
+.. Access the *controller node* from the *bastion* host and gather the secret key and add to the controller_secret_key value in `secrets.yml` file.
++
+[source,bash,role=execute]
+----
+ssh controller.lab 
+----
++
+[source,bash,role=execute]
+----
+# cat /etc/tower/SECRET_KEY
+----
+
+.. Access the Controller node and run to get the database settings:
++
+[source,bash,role=execute]
+----
+# awx-manage print_settings | grep '^DATABASES'
+----
 
 .. Export Automation Controller custom configurations If any custom settings exists on the `/etc/tower/conf.d`,
 copy them to `/tmp/backups/artifact/controller/custom_configs`.
@@ -141,6 +153,35 @@ copy them to `/tmp/backups/artifact/controller/custom_configs`.
 /etc/tower/conf.d/channels.py
 /etc/tower/conf.d/caching.py
 /etc/tower/conf.d/cluster_host_id.py
+----
+
+.. From the *migration_artifact* directory on the Gateway node run the below commands to *backup* the databases contenta and Make sure you are a `sudo user`. 
++
+[source,bash,role=execute]
+----
+using the below format to create command: 
+ pg_dump -h <pg_hostname> -U <component_pg_user> -d <component_pg_name> --clean --create -Fc -f <component>/<component>.pgc
+----
+
+... To create the backup of *Automation Controller* database. 
++
+[source,bash,role=execute]
+----
+pg_dump -h database.lab -U awx -d awx --clean --create -Fc -f controller/awx.pgc
+----
+
+... To create the backup of *Unified UI* database.
++
+[source,bash,role=execute]
+----
+pg_dump -h database.lab -U automationgateway -d automationgateway --clean --create -Fc -f gateway/automationgateway.pgc
+----
+
+... To create the backup of *Automation Hub* database.
++
+[source,bash,role=execute]
+----
+pg_dump -h database.lab -U automationhub -d automationhub --clean --create -Fc -f hub/automationhub.pgc
 ----
 
 Package the artifact

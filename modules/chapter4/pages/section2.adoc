@@ -13,16 +13,8 @@ Wait for component pods to terminate. Only the 6 operator pods will remain runni
 + 
 [source,bash,role=execute]
 ----
-oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager
+oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
 ---- 
-
-[source,ruby]
-----
-deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled
-----
-
 
 - Scale up the idled Postgres StatefulSet:
 + 
@@ -56,11 +48,9 @@ spec:
 [source,bash,role=execute]
 ----
 oc create -f aap-temp-pvc.yaml
-persistentvolumeclaim/aap-temp-pvc created
 ----
 
-
-- Obtain existing postgres image to use for temporary deployment:
+- Obtain existing postgres image to use for temporary deployment and `copy` the image name:
 + 
 [source,bash,role=execute]
 ----
@@ -68,6 +58,11 @@ echo $(oc get pod/aap-postgres-15-0 -o jsonpath="{.spec.containers[].image}")
 ----
 
 - Create temporary postgres deployment with mounted temporary pvc: aap-temp-postgres.yaml
++ 
+[source,bash,role=execute]
+----
+vim aap-temp-postgres.yaml
+----
 + 
 [source,bash,role=execute]
 ----
@@ -110,7 +105,6 @@ spec:
 [source,bash,role=execute]
 ----
 oc create -f aap-temp-postgres.yaml
-deployment.apps/aap-temp-postgres created
 ----
 
 - Copy export artifact to temporary postgres pod:
@@ -119,13 +113,17 @@ deployment.apps/aap-temp-postgres created
 [source,bash,role=execute]
 ----
 export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
-
-
-(test the env var)
+----
++ 
+[source,bash,role=execute]
+----
 echo $AAP_TEMP_POSTGRES
-aap-temp-postgres-7b6c57f87f-s2ldp
+----
 
-(copy the artifact and checksum to the pvc)
+- Copy the Created artifact created from *Chapter 2* to this system: 
++ 
+[source,bash,role=execute]
+----
 oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 ----
@@ -147,18 +145,27 @@ echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base
 -d`"
 echo "" done && echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-
 configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"
+----
 
-(exec into temporary postgres deployment and cd to the mounted pvc containing copied artifact) 
-
+- Now `exec` into temporary postgres deployment and cd to the mounted pvc containing copied artifact) 
++ 
+[source,bash,role=execute]
+----
 oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
-(inside pod) cd /tmp/aap-temp-pvc && ls -l
-total 2240
--rw-r--r--. 1 1000900000 1000900000 2273280 Jun 13 17:41 artifact.tar
--rw-r--r--. 1 1000900000 1000900000
-79 Jun 13 17:42 artifact.tar.sha256
+----
 
++ 
+[source,bash,role=execute]
+----
+cd /tmp/aap-temp-pvc && ls -l
+----
+
++ 
+[source,bash,role=execute]
+----
 (drop controller db)
 dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
+
 (alter user temporarily with createdb role)
 postgres=# ALTER USER automationcontroller CREATEDB;
 

@@ -13,8 +13,6 @@ This guide provides a detailed, step-by-step process to migrate your RPM-based A
 ✅ Target Environment:
 
 - Fresh server(s) for containerized AAP.
-- Podman installed and configured.
-- Network connectivity between source and target.
 
 ✅ Tools Needed:
 
