@@ -160,7 +160,7 @@
 <p>Begin by scaling down the AAP deployment using idle_aap:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":true}}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":true}}'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -296,19 +296,15 @@ oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code></pre>
 <p>Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "" &amp;&amp; for secret in aap-controller-postgres-configuration aap-hub-postgres-
-configuration aap-gateway-postgres-configuration
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo
+for secret in aap-controller-postgres-configuration aap-hub-postgres-configuration aap-gateway-postgres-configuration
 do
-echo $secret
-
-echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64
--d`"
-echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -
-d`"
-echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64
--d`"
-echo "" done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-
-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"</code></pre>
+  echo $secret
+  echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
+  echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -d`"
+  echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64 -d`"
+  echo
+done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"</code></pre>
 </div>
 </div>
 </li>
@@ -329,6 +325,8 @@ configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"</co
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(drop controller db)
 dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
 
+psql -U postgres -h aap-postgres-15
+
 (alter user temporarily with createdb role)
 postgres=# ALTER USER automationcontroller CREATEDB;
 
@@ -339,14 +337,13 @@ postgres=# ALTER USER automationcontroller NOCREATEDB;
 
 
 (restore controller db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d
-automationcontroller controller/controller.pgc
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/awx.pgc
 (restore hub db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d
-automationhub hub/hub.pgc
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d automationhub hub/automationhub.pgc
+
 (restore gateway db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway
-gateway/gateway.pgc
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc
+
 (exit pod)
 exit</code></pre>
 </div>
