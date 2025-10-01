@@ -106,10 +106,10 @@
     <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section1.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section1.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section2.html">Section 2</a>
+    <a class="nav-link" href="../chapter4/section2.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
   </li>
 </ul>
   </li>
@@ -167,38 +167,20 @@
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> ./setup.sh -e 'backup_dest=/path/to/backup_dir/' -b</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> ./setup.sh -b</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>Artifact checking before collecting data</strong></p>
-</div>
-<div class="paragraph">
-<p>Before starting with the migration please check if we have the correct postgress version 15 of the database using the below command:</p>
-</div>
-<div class="ulist">
-<ul>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>You can verify your current PostgreSQL version by connecting to your database server and running the following command as the postgres user:</p>
-</li>
-</ul>
-</div>
+<p>Simply <code>ssh`</code> the hostname from the <strong>bastion</strong> host and perform the activity on the <code>gateway</code> node.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -c 'SELECT version();'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gatway.lab</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>You can verify the database sizes by connecting to your database server and running the following command as the postgres user and make sure that you have enough free storage space to create the backups:</p>
 </li>
-</ul>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ psql -c '\l+'</code></pre>
-</div>
+</ol>
 </div>
 <div class="paragraph">
 <p><strong>Create Migration Artifact</strong></p>
@@ -239,7 +221,7 @@
 <p>Create manifest.yml</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap_version: 2.5
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap_versio4n: 2.5
 platform: rpm
 components:
   - name: controller
@@ -280,21 +262,17 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <div class="paragraph">
 <p>For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running <code>sudo -i</code> before running each of the commands listed below.</p>
 </div>
-<div class="paragraph">
-<p>+
-.. Access the controller node and gather the secret key and add to the controller_secret_key value in
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Access the controller node and gather the secret key and add to the controller_secret_key value in
 secrets.yml file.</p>
-</div>
-<div class="paragraph">
-<p>+</p>
-</div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/tower/SECRET_KEY</code></pre>
 </div>
 </div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
+</li>
 <li>
 <p>Access the hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.</p>
 <div class="listingblock execute">
