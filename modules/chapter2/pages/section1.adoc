@@ -1,7 +1,7 @@
 = Migration Artifact Collection LAB
 
 - Create a complete backup of the source environment using the below command before proceeding forward. 
-
++
 [source,bash,role=execute]
 ----
  ./setup.sh -b
@@ -9,7 +9,7 @@
 
 The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:
 
-. Simply `ssh` the hostname from the *bastion* host and perform the activity on the `gateway` node.
+- Simply `ssh` the hostname from the *bastion* host and perform the activity on the `gateway` node.
 +
 [source,bash,role=execute]
 ----
