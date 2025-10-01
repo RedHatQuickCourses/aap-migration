@@ -1,281 +1,34 @@
-= Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6. 
+= Operator Deployment LAB
 
-- Begin by scaling down the AAP deployment using idle_aap:
-+ 
-[source,bash,role=execute]
-----
-$ oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":true}}'
-----
-+
-Wait for component pods to terminate. Only the 6 operator pods will remain running.
+We will be using *Product Enablement AAP Operator Deployment lab* LAB for this deployment. Please be aware that setting up a Operator Lab will take about fifty minutes. Following that, you can proceed with the installation procedures:
 
-- Scale down the AAP Gateway Operator and Controller Operator:
-+ 
-[source,bash,role=execute]
-----
-oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager
----- 
-
-[source,ruby]
-----
-deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled
-----
+The following video will provide the step-by-step guide for installing the Ansible Automation Platform 2.6 operator:
 
 
-- Scale up the idled Postgres StatefulSet:
-+ 
-[source,bash,role=execute]
-----
-oc scale --replicas=1 statefulset.apps/aap-postgres-15
-----
+All the followed steps in the video are shared below:
 
-- Create a temporary PVC with appropriate settings and sizing:
-+ 
-[source,bash,role=execute]
-----
-aap-temp-pvc.yaml
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-name: aap-temp-pvc
-namespace: aap
-spec:
-accessModes:
-- ReadWriteOnce
-resources:
-requests:
-storage: 200Gi
-----
+. Log in to the Red Hat OpenShift Container Platform.
+. Navigate to Operators OperatorHub.
+. Search for *Ansible Automation Platform* and click *Install*.
+. Select a *stable-2.6*.
+. Select namespace as default which will be *aap*.
+. Click *Install*.
+. Go to *Installed Operators* and there you will see *Ansible Automation Platform* operator installed click on it. 
 
-+ 
-[source,bash,role=execute]
-----
-oc create -f aap-temp-pvc.yaml
-persistentvolumeclaim/aap-temp-pvc created
-----
+. Select project as *aap* if it's not aap. 
 
+. There scroll to the option *Ansible Automation Platform* and click on *Create instance* which will deploy all the components of *AAP*.
 
-- Obtain existing postgres image to use for temporary deployment:
-+ 
-[source,bash,role=execute]
-----
-echo $(oc get pod/aap-postgres-15-0 -o jsonpath="{.spec.containers[].image}")
-----
+. Provide the *Name* = *aap* on which will be used to create the resources for that *AAP* like network routes,secrets. 
 
-- Create temporary postgres deployment with mounted temporary pvc: aap-temp-postgres.yaml
-+ 
-[source,bash,role=execute]
-----
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-name: aap-temp-postgres
-spec:
-replicas: 1
-selector:
-matchLabels:
-app: aap-temp-postgres
-template:
-metadata:
-labels:
-app: aap-temp-postgres
-spec:
-containers:
-- name: aap-temp-postgres
-image: <postgres image from previous step>
-command:
-- /bin/sh
-- '-c'
-- sleep infinity
-imagePullPolicy: Always
-securityContext:
-runAsNonRoot: true
-allowPrivilegeEscalation: false
-volumeMounts:
-- name: aap-temp-pvc
-mountPath: /tmp/aap-temp-pvc
-volumes:
-- name: aap-temp-pvc
-persistentVolumeClaim:
-claimName: aap-temp-pvc
-----
+ Note: There are many other options that we can customize according to the requirement but in this we will be taking care of very basic deployment. 
 
-+ 
-[source,bash,role=execute]
-----
-oc create -f aap-temp-postgres.yaml
-deployment.apps/aap-temp-postgres created
-----
+. Click on *Create* it will deploy the resournces which will take around 20 minutes. 
 
-- Copy export artifact to temporary postgres pod:
-(obtain the pod name and set as an ENV variable)
-+ 
-[source,bash,role=execute]
-----
-export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns=":metadata.name" |
-grep aap-temp-postgres)
+. On openshift dashboard *Click on* Networking and then routes and click on the *ansible* route or the *Name* given in Step 10 above.
 
-(test the env var)
-echo $AAP_TEMP_POSTGRES
-aap-temp-postgres-7b6c57f87f-s2ldp
+. On openshift dashboard go to *Workloads* and then *Secrets* and search for *admin* . click on it and copy the *password*. 
 
-(copy the artifact and checksum to the pvc)
-oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
-oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
-----
+. Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab.  
 
-- Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)
-+ 
-[source,bash,role=execute]
-----
-echo "" && for secret in aap-controller-postgres-configuration aap-hub-postgres-
-configuration aap-gateway-postgres-configuration
-do
-echo $secret
-
-echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64
--d`"
-echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -
-d`"
-echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64
--d`"
-echo "" done && echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-
-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"
-
-(exec into temporary postgres deployment and cd to the mounted pvc containing copied artifact) 
-
-oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
-(inside pod) cd /tmp/aap-temp-pvc && ls -l
-total 2240
--rw-r--r--. 1 1000900000 1000900000 2273280 Jun 13 17:41 artifact.tar
--rw-r--r--. 1 1000900000 1000900000
-79 Jun 13 17:42 artifact.tar.sha256
-
-(drop controller db)
-dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
-(alter user temporarily with createdb role)
-postgres=# ALTER USER automationcontroller CREATEDB;
-
-(create the db)
-createdb -h aap-postgres-15 -U automationcontroller automationcontroller
-(revert temporary user permission)
-postgres=# ALTER USER automationcontroller NOCREATEDB;
-
-
-(restore controller db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d
-automationcontroller controller/controller.pgc
-(restore hub db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d
-automationhub hub/hub.pgc
-(restore gateway db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway
-gateway/gateway.pgc
-(exit pod)
-exit
-----
-
-- Replace db field encryption secrets:
-+ 
-[source,bash,role=execute]
-----
-oc set data secret/aap-controller-secret-key secret_key="<unencoded
-controller_secret_key value from secrets.yml>"
-
-oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
-gateway_secret_key value from secrets.yml>"
-
-oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
-<unencoded hub_db_fields_encryption_key value from secrets.yml>"
----- 
-
-- Clean up Temporary Postgres and PVC:
-+ 
-[source,bash,role=execute]
-----
-oc delete -f aap-temp-postgres.yaml
-deployment.apps "aap-temp-postgres" deleted
-----
-+ 
-[source,bash,role=execute]
-----
-oc delete -f aap-temp-pvc.yaml
-persistentvolumeclaim "aap-temp-pvc" deleted
----- 
-
-Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)
-+ 
-[source,bash,role=execute]
-----
-- oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager
-deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled
----- 
-
-- Scale AAP back up using idle_aap
-+ 
-[source,bash,role=execute]
-----
-oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":false}}'
-----
-
-ansibleautomationplatform.aap.ansible.com/aap patched
-
--  Wait for aap-gateway pod to be running and clean up old service endpoints:
-+ 
-[source,bash]
-----
-(wait for pod to be running)
-pod/aap-gateway-6c989b846c-47b9l 2/2 Running 0 45s
-----
-
--  Run aap-gateway-manage to deprovision instances
-(obtain controller pod) export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns=":metadata.name"
-| grep aap-controller-task)
-
-+ 
-[source,bash,role=execute]
-----
-echo $AAP_CONTROLLER_POD
-aap-controller-task-759b6d9759-r59q9
-(exec into controller pod)
-----
-+ 
-[source,bash,role=execute]
-----
-oc exec -it $AAP_CONTROLLER_POD -- /bin/bash
-
-awx-manage list_instances
-----
-
-+ 
-[source,bash,role=execute]
-----
-[controlplane capacity=642 policy=100%]
-aap-controller-task-759b6d9759-r59q9 capacity=642 node_type=control
-version=4.6.15 heartbeat="2025-06-12 21:39:48"
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-
-[default capacity=0 policy=100%]
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-node2.example.org capacity=0 node_type=execution version=ansible-runner-2.4.1
-heartbeat="2025-05-30 17:22:08"
-Remove old nodes with awx-manage (leave only aap-controller-task):
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org
----- 
-
--  Run curl command to repair hub filesystem data
-+ 
-[source,bash,role=execute]
-----
-curl -d '{\"verify_checksums\": true }' -X POST -k https://<aap
-url>/api/galaxy/pulp/api/v3/repair/ -u <admin_user>:<restored_admin_password>
-----
+. Submit it and run the *Project sync* of the *Demo project* to confirm the job is getting executed.

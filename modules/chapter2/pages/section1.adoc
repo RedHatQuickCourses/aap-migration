@@ -6,27 +6,14 @@ The migration artifact is a complete bundle of all the components you need to su
 
 [source,bash,role=execute]
 ----
- ./setup.sh -e 'backup_dest=/path/to/backup_dir/' -b
+ ./setup.sh -b
 ----
 
-*Artifact checking before collecting data*
- 
-Before starting with the migration please check if we have the correct postgress version 15 of the database using the below command: 
-
-- You can verify your current PostgreSQL version by connecting to your database server and running the following command as the postgres user:
-
+. Simply `ssh`` the hostname from the *bastion* host and perform the activity on the `gateway` node.
++
 [source,bash,role=execute]
 ----
-
-$ psql -c 'SELECT version();'
-
-----
-   
-- You can verify the database sizes by connecting to your database server and running the following command as the postgres user and make sure that you have enough free storage space to create the backups: 
-
-[source,bash,role=execute]
-----
- $ psql -c '\l+'
+ssh gatway.lab  
 ----
 
 *Create Migration Artifact*
@@ -59,7 +46,7 @@ mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub mig
 +
 [source,bash,role=execute]
 ----
-aap_version: 2.5
+aap_versio4n: 2.5
 platform: rpm
 components:
   - name: controller
@@ -88,7 +75,7 @@ Note: Encrypt this file before transfer.
 - The below is the correct way to collect information and fill the information in the `secrets.yml` file: 
 
 For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running `sudo -i` before running each of the commands listed below.
-+
+
 .. Access the controller node and gather the secret key and add to the controller_secret_key value in
 secrets.yml file.
 +

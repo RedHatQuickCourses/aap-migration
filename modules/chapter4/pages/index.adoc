@@ -1,3 +1,14 @@
 = AAP RPM 2.6 to AAP operator 2.6
 
+This chapter serves as your comprehensive guide to transitioning your existing Ansible Automation Platform 2.6 deployment from its traditional RPM-based installation to the modern, resilient, and Operator-based deployment.
 
+The migration to the Operator unlocks significant benefits, including simplified upgrades, automated Day 2 operations, and seamless scaling through integration with OpenShift. As RPM-based installations are being phased out in future releases, this transition is a critical step in future-proofing your automation infrastructure.
+
+
+By the end of this chapter, you will be able to:
+
+- *Install and Configure the AAP 2.6 Operator*: Learn the prerequisite steps and commands to successfully deploy the Ansible Automation Platform Operator in your container environment, establishing the foundation for your new platform.
+
+- *Perform Content Migration from RPM to Operator*: Execute the necessary procedures to securely export all critical content—including projects, inventories, job templates, and credentials—from your source RPM deployment and import it into your new Operator-managed environment.
+
+This process is designed to be as low-risk and non-disruptive as possible, ensuring that your valuable automation content and configuration are preserved during the shift to this new, more efficient architecture.
