@@ -1,7 +1,7 @@
 = Migration Artifact Collection LAB
 
-- Create a complete backup of the source environment using the below command before proceeding forward. 
-+
+Create a complete backup of the source environment using the below command before proceeding forward. 
+
 [source,bash,role=execute]
 ----
  ./setup.sh -b
