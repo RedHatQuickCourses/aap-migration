@@ -155,13 +155,10 @@
 </aside>
 <article class="doc">
 <h1 class="page">Migration Artifact Collection LAB</h1>
-<div class="paragraph">
-<p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or . It should be organized as follows:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Create a complete backup of the source environment using the below command.</p>
+<p>Create a complete backup of the source environment using the below command before proceeding forward.</p>
 </li>
 </ul>
 </div>
@@ -170,13 +167,16 @@
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> ./setup.sh -b</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:</p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Simply <code>ssh`</code> the hostname from the <strong>bastion</strong> host and perform the activity on the <code>gateway</code> node.</p>
+<p>Simply <code>ssh</code> the hostname from the <strong>bastion</strong> host and perform the activity on the <code>gateway</code> node.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gatway.lab</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gateway.lab</code></pre>
 </div>
 </div>
 </li>
@@ -185,15 +185,11 @@
 <div class="paragraph">
 <p><strong>Create Migration Artifact</strong></p>
 </div>
-<div class="ulist">
-<ul>
-<li>
+<div class="paragraph">
 <p>Artifact Structure</p>
+</div>
 <div class="paragraph">
 <p>The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment.</p>
-</div>
-</li>
-</ul>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -218,10 +214,15 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Create manifest.yml</p>
+<p>Create <code>manifest.yml</code> using vi command:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap_versio4n: 2.5
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi manifest.yml</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap_version: 2.6
 platform: rpm
 components:
   - name: controller
@@ -265,16 +266,12 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Access the controller node and gather the secret key and add to the controller_secret_key value in
-secrets.yml file.</p>
+<p>Access the *hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/tower/SECRET_KEY</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh hub.lab</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>Access the hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'</code></pre>
@@ -282,11 +279,19 @@ secrets.yml file.</p>
 </div>
 </li>
 <li>
-<p>Access the hub node and gather the database_fields.symmetric.key value and add to the
-hub_db_fields_encryption_key value in secrets.yml file.</p>
+<p>Access the <strong>hub node</strong> from the <strong>bastion</strong> host and gather the <code>database_fields.symmetric.key</code> value and add to the
+<code>hub_db_fields_encryption_key</code> value in <code>secrets.yml</code> file.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/pulp/certs/database_fields.symmetric.key</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the Hub node and run:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># grep '^DATABASES' /etc/pulp/settings.py</code></pre>
 </div>
 </div>
 </li>
@@ -300,26 +305,31 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Access the Controller node and run to get the database settings:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># awx-manage print_settings | grep '^DATABASES'</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Hub node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># grep '^DATABASES' /etc/pulp/settings.py</code></pre>
-</div>
-</div>
-</li>
-<li>
 <p>Access the Gateway node and run:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># aap-gateway-manage print_settings | grep '^DATABASES'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the <strong>controller node</strong> from the <strong>bastion</strong> host and gather the secret key and add to the controller_secret_key value in <code>secrets.yml</code> file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh controller.lab</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># cat /etc/tower/SECRET_KEY</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the Controller node and run to get the database settings:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># awx-manage print_settings | grep '^DATABASES'</code></pre>
 </div>
 </div>
 </li>
@@ -336,6 +346,43 @@ copy them to <code>/tmp/backups/artifact/controller/custom_configs</code>.</p>
 /etc/tower/conf.d/caching.py
 /etc/tower/conf.d/cluster_host_id.py</code></pre>
 </div>
+</div>
+</li>
+<li>
+<p>From the <strong>migration_artifact</strong> directory on the Gateway node run the below commands to <strong>backup</strong> the databases contenta and Make sure you are a <code>sudo user</code>.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">using the below format to create command:
+ pg_dump -h &lt;pg_hostname&gt; -U &lt;component_pg_user&gt; -d &lt;component_pg_name&gt; --clean --create -Fc -f &lt;component&gt;/&lt;component&gt;.pgc</code></pre>
+</div>
+</div>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>To create the backup of <strong>Automation Controller</strong> database.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_dump -h database.lab -U awx -d awx --clean --create -Fc -f controller/awx.pgc</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To create the backup of <strong>Unified UI</strong> database.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_dump -h database.lab -U automationgateway -d automationgateway --clean --create -Fc -f gateway/automationgateway.pgc</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To create the backup of <strong>Automation Hub</strong> database.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_dump -h database.lab -U automationhub -d automationhub --clean --create -Fc -f hub/automationhub.pgc</code></pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </li>
 </ol>

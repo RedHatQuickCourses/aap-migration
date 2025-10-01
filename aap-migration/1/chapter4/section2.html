@@ -171,21 +171,10 @@
 <p>Scale down the AAP Gateway Operator and Controller Operator:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager</code></pre>
 </div>
 </div>
 </li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ruby hljs" data-lang="ruby">deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
 <p>Scale up the idled Postgres StatefulSet:</p>
 <div class="listingblock execute">
@@ -218,13 +207,12 @@ spec:
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-pvc.yaml
-persistentvolumeclaim/aap-temp-pvc created</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-pvc.yaml</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Obtain existing postgres image to use for temporary deployment:</p>
+<p>Obtain existing postgres image to use for temporary deployment and <code>copy</code> the image name:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo $(oc get pod/aap-postgres-15-0 -o jsonpath="{.spec.containers[].image}")</code></pre>
@@ -233,6 +221,11 @@ persistentvolumeclaim/aap-temp-pvc created</code></pre>
 </li>
 <li>
 <p>Create temporary postgres deployment with mounted temporary pvc: aap-temp-postgres.yaml</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vim aap-temp-postgres.yaml</code></pre>
+</div>
+</div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">---
@@ -272,8 +265,7 @@ spec:
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-postgres.yaml
-deployment.apps/aap-temp-postgres created</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-postgres.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -282,15 +274,20 @@ deployment.apps/aap-temp-postgres created</code></pre>
 (obtain the pod name and set as an ENV variable)</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
-
-
-(test the env var)
-echo $AAP_TEMP_POSTGRES
-aap-temp-postgres-7b6c57f87f-s2ldp
-
-(copy the artifact and checksum to the pvc)
-oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo $AAP_TEMP_POSTGRES</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the Created artifact created from <strong>Chapter 2</strong> to this system:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code></pre>
 </div>
 </div>
@@ -311,19 +308,27 @@ d`"
 echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64
 -d`"
 echo "" done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-
-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"
-
-(exec into temporary postgres deployment and cd to the mounted pvc containing copied artifact)
-
-oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
-(inside pod) cd /tmp/aap-temp-pvc &amp;&amp; ls -l
-total 2240
--rw-r--r--. 1 1000900000 1000900000 2273280 Jun 13 17:41 artifact.tar
--rw-r--r--. 1 1000900000 1000900000
-79 Jun 13 17:42 artifact.tar.sha256
-
-(drop controller db)
+configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now <code>exec</code> into temporary postgres deployment and cd to the mounted pvc containing copied artifact)</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /tmp/aap-temp-pvc &amp;&amp; ls -l</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(drop controller db)
 dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
+
 (alter user temporarily with createdb role)
 postgres=# ALTER USER automationcontroller CREATEDB;
 
