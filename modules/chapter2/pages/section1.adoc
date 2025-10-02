@@ -81,7 +81,7 @@ Note: Encrypt this file before transfer.
 
 For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running `sudo -i` before running each of the commands listed below.
 
-.. Access the *hub node and gather the secret key and add to the hub_secret_key value in secrets.yml file.
+.. Access the *hub node* and gather the secret key and add to the hub_secret_key value in secrets.yml file.
 +
 [source,bash,role=execute]
 ----
@@ -90,37 +90,42 @@ ssh hub.lab
 +
 [source,bash,role=execute]
 ----
-# grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
+grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 ----
 
-.. Access the *hub node* from the *bastion* host and gather the `database_fields.symmetric.key` value and add to the
+.. On the *hub node* gather the `database_fields.symmetric.key` value and add to the
 `hub_db_fields_encryption_key` value in `secrets.yml` file.
 +
 [source,bash,role=execute]
 ----
-# cat /etc/pulp/certs/database_fields.symmetric.key
+cat /etc/pulp/certs/database_fields.symmetric.key
 ----
 
-.. Access the Hub node and run:
+.. On the Hub node you can run the below command to get the database realted information which will be used later to take backup.
 +
 [source,bash,role=execute]
 ----
-# grep '^DATABASES' /etc/pulp/settings.py
+grep '^DATABASES' /etc/pulp/settings.py
 ----
 
-.. Access the gateway node and gather the secret key and add to the gateway_secret_key value in secrets.yml
+.. Access the *gateway node* and gather the secret key and add to the gateway_secret_key value in secrets.yml
 file.
 +
 [source,bash,role=execute]
 ----
-# cat /etc/ansible-automation-platform/gateway/SECRET_KEY
+ssh gateway.lab  
 ----
-
-.. Access the Gateway node and run:
 +
 [source,bash,role=execute]
 ----
-# aap-gateway-manage print_settings | grep '^DATABASES'
+cat /etc/ansible-automation-platform/gateway/SECRET_KEY
+----
+
+.. On the *gateway node* you can run the below command to get the database realted information which will be used later to take backup:
++
+[source,bash,role=execute]
+----
+aap-gateway-manage print_settings | grep '^DATABASES'
 ----
 
 .. Access the *controller node* from the *bastion* host and gather the secret key and add to the controller_secret_key value in `secrets.yml` file.
@@ -132,30 +137,17 @@ ssh controller.lab
 +
 [source,bash,role=execute]
 ----
-# cat /etc/tower/SECRET_KEY
+cat /etc/tower/SECRET_KEY
 ----
 
-.. Access the Controller node and run to get the database settings:
+.. Access the Controller node you can run the below command to get the database realted information which will be used later to take backup:
 +
 [source,bash,role=execute]
 ----
-# awx-manage print_settings | grep '^DATABASES'
+awx-manage print_settings | grep '^DATABASES'
 ----
 
-.. Export Automation Controller custom configurations If any custom settings exists on the `/etc/tower/conf.d`,
-copy them to `/tmp/backups/artifact/controller/custom_configs`.
-
-.. Configuration files on controller which are managed by the installer and not considered custom:
-+
-[source,bash,role=execute]
-----
-/etc/tower/conf.d/postgres.py
-/etc/tower/conf.d/channels.py
-/etc/tower/conf.d/caching.py
-/etc/tower/conf.d/cluster_host_id.py
-----
-
-.. From the *migration_artifact* directory on the Gateway node run the below commands to *backup* the databases contenta and Make sure you are a `sudo user`. 
+.. From the *migration_artifact* directory on the *gateway node* run the below commands from *migration_artifact* directory to create *backup* the databases. and Make sure you are a `sudo user` and the database password in the previous chapter that we set was *redhat* for database. 
 +
 [source,bash,role=execute]
 ----
@@ -167,7 +159,7 @@ using the below format to create command:
 +
 [source,bash,role=execute]
 ----
-pg_dump -h database.lab -U awx -d awx --clean --create -Fc -f controller/awx.pgc
+pg_dump -h database.lab -U awx -d awx --clean --create -Fc -f controller/automationcontroller.pgc
 ----
 
 ... To create the backup of *Unified UI* database.
@@ -184,19 +176,156 @@ pg_dump -h database.lab -U automationgateway -d automationgateway --clean --crea
 pg_dump -h database.lab -U automationhub -d automationhub --clean --create -Fc -f hub/automationhub.pgc
 ----
 
-Package the artifact
+.. Export Automation Controller custom configurations If any custom settings exists on the `/etc/tower/conf.d`,
+copy them to `/tmp/backups/artifact/controller/custom_configs`.
+
+. Configuration files on controller which are managed by the installer and not considered custom:
++
 [source,bash,role=execute]
 ----
-# cd /tmp/backups/artifact/
-# [ -f sha256sum.txt ] && rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec
-sha256sum {} \; >> sha256sum.txt
-# cat sha256sum.txt
-# cd ..
-# tar cf artifact.tar artifact
-# sha256sum artifact.tar > artifact.tar.sha256
-# sha256sum --check artifact.tar.sha256
-# tar tvf artifact.tar
+/etc/tower/conf.d/postgres.py
+/etc/tower/conf.d/channels.py
+/etc/tower/conf.d/caching.py
+/etc/tower/conf.d/cluster_host_id.py
 ----
 
-- Download the `artifact.tar` and `artifact.tar.sha256` to your local machine or transfer to the target
-node with the scp command.
+.. From the *bastion* take the ssh to the `controller.lab` node.
++
+[source,bash,role=execute]
+----
+ssh controller.lab  
+----
+
+.. create a custom_config of the controller.
++
+[source,bash,role=execute]
+----
+sudo -i
+----
++
+[source,bash,role=execute]
+----
+cd /etc/tower/conf.d
+----
++
+[source,bash,role=execute]
+----
+tar -rf custom_config.tar.gz execution_environments.py ha.py container_groups.py gateway.py insights.py subscription_usage_model.py
+----
++
+[source,bash,role=execute]
+----
+mv custom_config.tar.gz /home/lab-user/
+chown lab-user /home/lab-user/custom_config.tar.gz
+----
++
+[source,bash,role=execute]
+----
+exit
+----
++
+[source,bash,role=execute]
+----
+exit
+----
+
+.. Now you are on the *bastion* node. 
++
+[source,bash,role=execute]
+----
+scp controller.lab:/home/lab-user/custom_config.tar.gz .
+----
++
+[source,bash,role=execute]
+----
+scp custom_config.tar.gz gateway.lab:/home/lab-user/migration_artifact/controller/custom_configs/
+----
+
+.. Now let's go to `gateway node` and make the Controller custom config ready. 
++
+[source,bash,role=execute]
+----
+ssh gateway.lab  
+----
++
+[source,bash,role=execute]
+----
+cd /home/lab-user/migration_artifact/controller/custom_configs
+----
++
+[source,bash,role=execute]
+----
+tar -xvf custom_config.tar.gz 
+----
++
+[source,bash,role=execute]
+----
+rm -rf custom_config.tar.gz
+----
+
+.. Package the Migration artifact and send it to the system. 
++
+[source,bash,role=execute]
+----
+cd /home/lab-user/migration_artifact/
+----
++
+[source,bash,role=execute]
+----
+[ -f sha256sum.txt ] && rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec sha256sum {} \; >> sha256sum.txt
+----
++
+[source,bash,role=execute]
+----
+cat sha256sum.txt
+cd ..
+----
++
+[source,bash,role=execute]
+----
+tar cf migration_artifact.tar migration_artifact
+sha256sum migration_artifact.tar > migration_artifact.tar.sha256
+sha256sum --check migration_artifact.tar.sha256
+tar tvf migration_artifact.tar
+----
+
+- Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer to the target node with the scp command for that exit the gateway node:
++
+[source,bash,role=execute]
+----
+[lab-user@gateway tmp]$ exit
+----
+
+.. Bring the content to the *bastion* system.
++
+[source,bash,role=execute]
+----
+scp gateway.lab:/tmp/migration_artifact.tar .
+scp gateway.lab:/tmp/migration_artifact.tar.sha256  .
+----
++
+[source,bash,role=execute]
+----
+exit
+----
+
+... Now to copy this to your local machine please use the 
+*Login Command* and *password* from the RHDP page as the port and *bastion* hostname will be diffrent for your systems: 
++
+[source,bash,role=execute]
+----
+scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .
+----
++
+[source,bash,role=execute]
+----
+scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar.sha256 .
+----
++
+[source,bash,role=execute]
+----
+ll migration*
+----
+
+Your lab work is done and now the files `migration_artifact.tar` and `migration_artifact.tar.sha256` can be used to migrate to any other deployment method either its *Cotainerized Ansible Automation platform* or *Operator Ansible Automation platform* . 
+
