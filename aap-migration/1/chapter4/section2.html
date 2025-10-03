@@ -91,6 +91,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter3/section1.html">Making Target Environment Ready</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter3/section2.html">Performing Migration LAB</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -153,6 +156,18 @@
 <h1 class="page">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</h1>
 <div class="ulist">
 <ul>
+<li>
+<p>Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.</p>
+</li>
+<li>
+<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems. Make sure to replace the <code>-P &lt;port-number&gt;</code> and hostname according to your <strong>RHDP login</strong>.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
+</div>
+</div>
+</li>
 <li>
 <p>Begin by scaling down the AAP deployment using idle_aap:</p>
 <div class="listingblock execute">
@@ -284,8 +299,8 @@ spec:
 <p>Copy the Created artifact created from <strong>Chapter 2</strong> to this system:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
-oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code></pre>
 </div>
 </div>
 </li>
@@ -319,22 +334,65 @@ done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postg
 </div>
 <div class="listingblock execute">
 <div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sha256sum --check migration_artifact.tar.sha256</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar xf migration_artifact.tar &amp;&amp; cd migration_artifact &amp;&amp; sha256sum --check sha256sum.txt</code></pre>
+</div>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Drop the automationcontroller Database and Provide the <code>POSTGRES ADMIN PASSWORD</code> to perform the operation.</p>
+<div class="listingblock execute">
+<div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(drop controller db)
-dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
-
-psql -U postgres -h aap-postgres-15
+dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15
 
 (alter user temporarily with createdb role)
 postgres=# ALTER USER automationcontroller CREATEDB;
 
-(create the db)
-createdb -h aap-postgres-15 -U automationcontroller automationcontroller
-(revert temporary user permission)
+postgres=\q</code></pre>
+</div>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a new database called automationcontroller using autoamtion Controller passowrd from <code>aap-controller-postgres-configuration</code>.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">createdb -h aap-postgres-15 -U automationcontroller automationcontroller</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Revert temporary user permission</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15
+
 postgres=# ALTER USER automationcontroller NOCREATEDB;
+postgres=# \q</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restoring the database form the migration_artifact directory from the container and please make sure the provide their repecitve database passowrd while resotring the database.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(restore controller db)
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc
 
-
-(restore controller db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/awx.pgc
 (restore hub db)
 pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d automationhub hub/automationhub.pgc
 
@@ -344,6 +402,9 @@ pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gatew
 (exit pod)
 exit</code></pre>
 </div>
+</div>
+</li>
+</ol>
 </div>
 </li>
 <li>
@@ -365,14 +426,12 @@ oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
 <p>Clean up Temporary Postgres and PVC:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-postgres.yaml
-deployment.apps "aap-temp-postgres" deleted</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-postgres.yaml</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-pvc.yaml
-persistentvolumeclaim "aap-temp-pvc" deleted</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-pvc.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -386,10 +445,7 @@ persistentvolumeclaim "aap-temp-pvc" deleted</code></pre>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">- oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager
-deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager</code></pre>
 </div>
 </div>
 <div class="ulist">
