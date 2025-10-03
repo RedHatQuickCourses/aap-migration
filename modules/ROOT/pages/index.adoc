@@ -40,8 +40,11 @@ Test & Validate the migrated content
 
 This course assumes that you have the following prior experience:
 
-* Course or experience...
-* Course or experience...
+- Intermediate knowledge of Ansible Automation Platform (AAP) installation and configuration.
+
+- Solid understanding of Red Hat Enterprise Linux (RHEL) command execution, including knowing which administrative commands to run in specific contexts.
+
+- Working knowledge of either Containerized or Operator deployment methods for Ansible Automation Platform.
 
 == Contributors
 

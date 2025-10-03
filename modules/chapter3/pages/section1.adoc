@@ -1,15 +1,29 @@
-= Performing Migration LAB
+= Making Target Environment Ready
 
-- `scp` the `artifact.tar` file to the New systems. 
+Before start working on the Migration lets clean the installed Ansible Automation platform version of 2.4 from the infrastructure and for that simple run the below command from the *bastion* host: 
+
+[source,bash,role=execute]
+----
+ansible-playbook /home/lab-user/patch.yml -i "controller.lab," -i "hub.lab," -i "database.lab,"
+----
+
+- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. 
++
+[source,bash,role=execute]
+----
+adding later after testing
+----
+
+- Go to the *bastion* host. using the RHDP login page creds. 
 
 - Extract the Artifact on the home folder for the user running the containerized containers.
 +
 [source]
 ----
 $ cd ~
-$ sha256sum --check artifact.tar.sha256
-$ tar xf artifact.tar
-$ cd artifact
+$ sha256sum --check migration_artifact.tar.sha256
+$ tar xf migration_artifact.tar
+$ cd migration_artifact
 $ sha256sum --check sha256sum.txt
 ----
 
@@ -17,190 +31,82 @@ $ sha256sum --check sha256sum.txt
 
   $ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"
 
-- Create a backup of the initial containerized environment:
+*Lets have the Containerized setup ready*
+
+- Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Containerized Setup Bundle*.
 +
+Note: Please follow above and the next step one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.
+
+. Download the installer file to the VM: 
++ 
 [source,bash,role=execute]
-----
- $ ansible-playbook -i <path_to_inventory> ansible.containerized_installer.backup
-----
-
-- In all nodes, if Performance Co-Pilot is configured, run the following command:
-
-.. Access the Automation Controller node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user stop receptor
-----
-
-.. Access the Automation Hub node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2
-----
-
-.. Access the Automation EDA node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-
-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2
-automation-eda-activation-worker-1 automation-eda-activation-worker-2
-----
-
-.. Access the Automation Gateway node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-gateway automation-gateway-proxy
-----
-
-.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop redis-unix redis-tcp
-----
-
- Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
-
-To perform a restore on an installer-managed database, you'll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
-The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.
-
-- On the database node run the following command: 
-+
-[source,bash,role=execute]
-----
-$ podman run -it --rm --name postgresql_restore_temp --network host --volume
-~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume
-~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume
-~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume
-~/artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-
-15:latest bash
 ---- 
+ wget -O aap.tar.gz "<paste-link-here taken from step 3>"
+----
 
-Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.
+. Extract the *aap.tar.gz* file using the following command:
++ 
+[source,bash,role=execute]
+---- 
+ tar -xvf aap.tar.gz
+----
 
- Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.
+. Using the *cd* command, enter the extracted folder. Then, use the *vim* command, open the *inventory-growth* file and make the following changes, wherever they appear throughout the entire *inventory-growth* file:
++ 
+[source,bash,role=execute]
+---- 
+ cd <extracted-folder-from-step-6>
+ vim inventory-growth
 
-*Create a DB role* 
+<set your own> → redhat
 
-- When inside the container, access the database and ensure the users have the CREATEDB role.
+<set your own> ← This value can be customized as per your need but remember to use the same while doing the login after the deployment. 
+
+and 
+
+db.example.org → database.lab
+----
++
+Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank].
+
+. Now lets add the addition details of the hosts where it needs to either install or upgrade the components: 
 +
 [source,bash,role=execute]
 ----
-$ psql -h <pg_hostname> -U postgres
----- 
+[automationgateway]
+gateway.lab  
 
-.. For each component name, add the CREATEDB role to the Owner. E.g.:
+[automationcontroller]
+controller.lab
 
-[source]
+[automationcontroller:vars]
+peers=execution_nodes
+
+[execution_nodes]
+
+[automationhub]
+hub.lab
+
+[automationedacontroller]
+eda.lab
+
+[database]
+database.lab
+
+[all:vars]
 ----
- postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# \q
-----
 
-- With the CREATEDB in place, access the path where the artifact is mounted, and you may run the `pg_restore` commands.
+. Once the inventory file is ready follow the below steps to do the installation:
 +
 [source,bash,role=execute]
 ----
-bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h <pg_hostname> -U
-<component_pg_user> -d template1 <component>/<component>.pgc
+$ ansible-playbook -i inventory-growth ansible.containerized_installer.install
 ----
 
-After the restore, remove the permissions from the user E.g.:
- 
-[source,bash,role=execute]
-----
-postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# \q
-----
+. Use the user *admin* and the *password* set during the time of installation. In the above video I set it to *redhat*. 
 
-Replace `awx` with the each user containing the role. Start the containerized services except the database in all nodes, if Performance Co-Pilot is configured, run the following command:
- 
-[source,bash,role=execute]
-----
-$ systemctl --user start pcp
-----
+ Note: Try to use stronger password while doing the enterprise deployment 
 
-- All the below services needs to be started again on all the nodes: 
+. Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab.
 
-.. Access the Automation Controller node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user start receptor
-----
-
-.. Access the Automation Hub node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2
----- 
-
-.. Access the Automation EDA node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2
-----
-
-.. Access the Automation Gateway node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-gateway automation-gateway-proxy
----- 
-
-.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start redis-unix redis-tcp
-----
-
-*Target Environment Post-Import Reconciliation*
-
-
-- Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
-+ 
-[source,bash,role=execute]
-----
-$ podman exec -it automation-gateway bash
-$ aap-gateway-manage migrate
-$ aap-gateway-manage shell_plus
->>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()
----- 
-
-- Re-run the containerized installer on the target environment using the same inventory from the installation.
-
-- Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
-+ 
-[source,bash,role=execute]
-----
-$ podman exec -it automation-controller-task bash
-$ awx-manage list_instances
-----
-
-- Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[ungrouped capacity=0]
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="..."
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="..."
-Remove those nodes with awx-manage:
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org
-
+. After *Login* run the *Project sync* for the *Demo project* to confirm the job is getting executed.

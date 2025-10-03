@@ -1,12 +1,5 @@
 = Migration Artifact Collection LAB
 
-Create a complete backup of the source environment using the below command before proceeding forward. 
-
-[source,bash,role=execute]
-----
- ./setup.sh -b
-----
-
 The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:
 
 - Simply `ssh` the hostname from the *bastion* host and perform the activity on the `gateway` node.
@@ -42,7 +35,7 @@ The below architecture we will be creating so that it can be further moved to th
 mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub migration_artifact/gateway && touch migration_artifact/manifest.yml migration_artifact/secrets.yml migration_artifact/sha256sum.txt
 ----
 
-- Create `manifest.yml` using vi command:
+- Edit `manifest.yml` using vi command:
 +
 [source,bash,role=execute]
 ----
@@ -62,7 +55,7 @@ components:
     version: 2.6.0
 ----
 
-- Creating a `secrets.yml` which will be containg the below information as this is different for every environment so create it accordingly. 
+- Edit `secrets.yml` file which will be containg the below information as this is different for every environment so create it accordingly. 
 +
 [source,bash,role=execute]
 ----
@@ -93,8 +86,7 @@ ssh hub.lab
 grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 ----
 
-.. On the *hub node* gather the `database_fields.symmetric.key` value and add to the
-`hub_db_fields_encryption_key` value in `secrets.yml` file.
+.. On the *hub node* gather the `database_fields.symmetric.key` value and add to the `hub_db_fields_encryption_key` value in `secrets.yml` file.
 +
 [source,bash,role=execute]
 ----
@@ -108,7 +100,7 @@ cat /etc/pulp/certs/database_fields.symmetric.key
 grep '^DATABASES' /etc/pulp/settings.py
 ----
 
-.. Access the *gateway node* and gather the secret key and add to the gateway_secret_key value in secrets.yml
+.. Access the *gateway node* and gather the secret key and add to the gateway_secret_key value in `secrets.yml`.
 file.
 +
 [source,bash,role=execute]
@@ -140,14 +132,14 @@ ssh controller.lab
 cat /etc/tower/SECRET_KEY
 ----
 
-.. Access the Controller node you can run the below command to get the database realted information which will be used later to take backup:
+.. Access the *controller node* you can run the below command to get the database realted information which will be used later to take backup:
 +
 [source,bash,role=execute]
 ----
 awx-manage print_settings | grep '^DATABASES'
 ----
 
-.. From the *migration_artifact* directory on the *gateway node* run the below commands from *migration_artifact* directory to create *backup* the databases. and Make sure you are a `sudo user` and the database password in the previous chapter that we set was *redhat* for database. 
+.. From the *migration_artifact* directory on the *gateway node* run the below commands to create the databases *backup*. and Make sure you are a `sudo user` and the database password is same as of previous chapter i.e. *redhat* for all databases. 
 +
 [source,bash,role=execute]
 ----
@@ -300,8 +292,8 @@ tar tvf migration_artifact.tar
 +
 [source,bash,role=execute]
 ----
-scp gateway.lab:/tmp/migration_artifact.tar .
-scp gateway.lab:/tmp/migration_artifact.tar.sha256  .
+scp gateway.lab:/home/lab-user/migration_artifact.tar .
+scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .
 ----
 +
 [source,bash,role=execute]
@@ -309,8 +301,7 @@ scp gateway.lab:/tmp/migration_artifact.tar.sha256  .
 exit
 ----
 
-... Now to copy this to your local machine please use the 
-*Login Command* and *password* from the RHDP page as the port and *bastion* hostname will be diffrent for your systems: 
+... Now to copy this to your local machine please use the *Login Command* and *password* from the RHDP page as the port and *bastion* hostname will be diffrent for your systems: 
 +
 [source,bash,role=execute]
 ----
@@ -327,5 +318,4 @@ scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar.
 ll migration*
 ----
 
-Your lab work is done and now the files `migration_artifact.tar` and `migration_artifact.tar.sha256` can be used to migrate to any other deployment method either its *Cotainerized Ansible Automation platform* or *Operator Ansible Automation platform* . 
-
+The lab work is now concluded. The resulting `migration_artifact.tar` and `migration_artifact.tar.sha256` files can now be used to perform the migration to a new deployment method. This includes migrating to either the Containerized Ansible Automation Platform or the Operator Ansible Automation Platform.

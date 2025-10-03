@@ -11,7 +11,7 @@ all the above steps followed in the video are shared below:
 
 . We are going to follow a *RPM growth topology* approach for this upgrade. Where we have each system for new componenets and use the exsiting one to upgrade for the same componenets.  
 
-. Go to the https://nightlies.testing.ansible.com/ansible-tower_nightlies_m8u16fz56qr6q7/nightly_ng_2.6/setup-bundle/x86_64/[Installer,window=_blank] link and Get the installer link for *ansible-automation-platform-setup-bundle-latest.tar.gz*.
+. Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Setup Bundle*.
 +
 Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and copy the link if you are having trouble.  
 
@@ -100,7 +100,7 @@ ansible_become=true
 +
 [source,bash,role=execute]
 ----
-./setup.sh -i inventory-growth -- -e gpgcheck=0 
+./setup.sh -i inventory-growth
 ----
 
 . Simply ssh the hostname from the *bastion* host and get the *external_IP* of the system to access the AAP Dashboard.
