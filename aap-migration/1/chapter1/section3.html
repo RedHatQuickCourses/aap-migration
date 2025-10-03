@@ -90,7 +90,7 @@
     <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Performing Migration LAB</a>
+    <a class="nav-link" href="../chapter3/section1.html">Making Target Environment Ready</a>
   </li>
 </ul>
   </li>
@@ -173,7 +173,7 @@ Your browser does not support the video tag.
 <p>We are going to follow a <strong>RPM growth topology</strong> approach for this upgrade. Where we have each system for new componenets and use the exsiting one to upgrade for the same componenets.</p>
 </li>
 <li>
-<p>Go to the <a href="https://nightlies.testing.ansible.com/ansible-tower_nightlies_m8u16fz56qr6q7/nightly_ng_2.6/setup-bundle/x86_64/" target="_blank" rel="noopener">Installer</a> link and Get the installer link for <strong>ansible-automation-platform-setup-bundle-latest.tar.gz</strong>.</p>
+<p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and Get the installer link for <strong>Ansible Automation Platform 2.6 Setup Bundle</strong>.</p>
 <div class="paragraph">
 <p>Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and copy the link if you are having trouble.</p>
 </div>
@@ -269,7 +269,7 @@ ansible_become=true</code></pre>
 <p>Once the inventory file is ready follow the below steps to do the installation/Upgrade:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./setup.sh -i inventory-growth -- -e gpgcheck=0</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./setup.sh -i inventory-growth</code></pre>
 </div>
 </div>
 </li>

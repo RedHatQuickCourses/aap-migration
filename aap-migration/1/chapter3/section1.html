@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Performing Migration LAB :: Fast-Track Ansible Automation Platform Migration</title>
+    <title>Making Target Environment Ready :: Fast-Track Ansible Automation Platform Migration</title>
     <link rel="prev" href="index.html">
     <link rel="next" href="../chapter4/index.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -90,7 +90,7 @@
     <a class="nav-link" href="index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section1.html">Performing Migration LAB</a>
+    <a class="nav-link" href="section1.html">Making Target Environment Ready</a>
   </li>
 </ul>
   </li>
@@ -142,7 +142,7 @@
   <ul>
     <li><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></li>
     <li><a href="index.html">AAP RPM 2.6 to AAP Containerized 2.6</a></li>
-    <li><a href="section1.html">Performing Migration LAB</a></li>
+    <li><a href="section1.html">Making Target Environment Ready</a></li>
   </ul>
 </nav>
 </div>
@@ -151,20 +151,36 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Performing Migration LAB</h1>
+<h1 class="page">Making Target Environment Ready</h1>
+<div class="paragraph">
+<p>Before start working on the Migration lets clean the installed Ansible Automation platform version of 2.4 from the infrastructure and for that simple run the below command from the <strong>bastion</strong> host:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ansible-playbook /home/lab-user/patch.yml -i "controller.lab," -i "hub.lab," -i "database.lab,"</code></pre>
+</div>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>scp</code> the <code>artifact.tar</code> file to the New systems.</p>
+<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">adding later after testing</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Go to the <strong>bastion</strong> host. using the RHDP login page creds.</p>
 </li>
 <li>
 <p>Extract the Artifact on the home folder for the user running the containerized containers.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ cd ~
-$ sha256sum --check artifact.tar.sha256
-$ tar xf artifact.tar
-$ cd artifact
+$ sha256sum --check migration_artifact.tar.sha256
+$ tar xf migration_artifact.tar
+$ cd migration_artifact
 $ sha256sum --check sha256sum.txt</code></pre>
 </div>
 </div>
@@ -179,255 +195,108 @@ $ sha256sum --check sha256sum.txt</code></pre>
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Lets have the Containerized setup ready</strong></p>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>Create a backup of the initial containerized environment:</p>
+<p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and Get the installer link for <strong>Ansible Automation Platform 2.6 Containerized Setup Bundle</strong>.</p>
+<div class="paragraph">
+<p>Note: Please follow above and the next step one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download the installer file to the VM:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ ansible-playbook -i &lt;path_to_inventory&gt; ansible.containerized_installer.backup</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> wget -O aap.tar.gz "&lt;paste-link-here taken from step 3&gt;"</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>In all nodes, if Performance Co-Pilot is configured, run the following command:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Access the Automation Controller node and run:</p>
+<p>Extract the <strong>aap.tar.gz</strong> file using the following command:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user stop receptor</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> tar -xvf aap.tar.gz</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Access the Automation Hub node and run:</p>
+<p>Using the <strong>cd</strong> command, enter the extracted folder. Then, use the <strong>vim</strong> command, open the <strong>inventory-growth</strong> file and make the following changes, wherever they appear throughout the entire <strong>inventory-growth</strong> file:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> cd &lt;extracted-folder-from-step-6&gt;
+ vim inventory-growth
+
+&lt;set your own&gt; → redhat
+
+&lt;set your own&gt; ← This value can be customized as per your need but remember to use the same while doing the login after the deployment.
+
+and
+
+db.example.org → database.lab</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: Please click this link to learn how to use <a href="https://www.geeksforgeeks.org/basic-vim-commands/" target="_blank" rel="noopener">Vim basic operations</a>.</p>
+</div>
+</li>
+<li>
+<p>Now lets add the addition details of the hosts where it needs to either install or upgrade the components:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[automationgateway]
+gateway.lab
+
+[automationcontroller]
+controller.lab
+
+[automationcontroller:vars]
+peers=execution_nodes
+
+[execution_nodes]
+
+[automationhub]
+hub.lab
+
+[automationedacontroller]
+eda.lab
+
+[database]
+database.lab
+
+[all:vars]</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Access the Automation EDA node and run:</p>
+<p>Once the inventory file is ready follow the below steps to do the installation:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-
-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2
-automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ansible-playbook -i inventory-growth ansible.containerized_installer.install</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-gateway automation-gateway-proxy</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop redis-unix redis-tcp</code></pre>
-</div>
-</div>
+<p>Use the user <strong>admin</strong> and the <strong>password</strong> set during the time of installation. In the above video I set it to <strong>redhat</strong>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.</pre>
+<pre>Note: Try to use stronger password while doing the enterprise deployment</pre>
 </div>
 </div>
+</li>
+<li>
+<p>Provide the <strong>Red Hat login ID</strong> to get the subscription for attaching it to the AAP and <strong>60-day subscription to Red Hat Ansible® Automation Platform</strong> or <strong>Red Hat Developer Subscription for Individuals</strong> subscription can be used for this lab.</p>
+</li>
+<li>
+<p>After <strong>Login</strong> run the <strong>Project sync</strong> for the <strong>Demo project</strong> to confirm the job is getting executed.</p>
 </li>
 </ol>
 </div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>To perform a restore on an installer-managed database, you&#8217;ll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
-The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>On the database node run the following command:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman run -it --rm --name postgresql_restore_temp --network host --volume
-~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume
-~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume
-~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume
-~/artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-
-15:latest bash</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Create a DB role</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>When inside the container, access the database and ensure the users have the CREATEDB role.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -h &lt;pg_hostname&gt; -U postgres</code></pre>
-</div>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>For each component name, add the CREATEDB role to the Owner. E.g.:</p>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"> postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# \q</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>With the CREATEDB in place, access the path where the artifact is mounted, and you may run the <code>pg_restore</code> commands.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h &lt;pg_hostname&gt; -U
-&lt;component_pg_user&gt; -d template1 &lt;component&gt;/&lt;component&gt;.pgc</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>After the restore, remove the permissions from the user E.g.:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# \q</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Replace <code>awx</code> with the each user containing the role. Start the containerized services except the database in all nodes, if Performance Co-Pilot is configured, run the following command:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start pcp</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>All the below services needs to be started again on all the nodes:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Access the Automation Controller node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
-$ systemctl --user start receptor</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Hub node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation EDA node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Gateway node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-gateway automation-gateway-proxy</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start redis-unix redis-tcp</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Target Environment Post-Import Reconciliation</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman exec -it automation-gateway bash
-$ aap-gateway-manage migrate
-$ aap-gateway-manage shell_plus
-&gt;&gt;&gt; HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Re-run the containerized installer on the target environment using the same inventory from the installation.</p>
-</li>
-<li>
-<p>Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman exec -it automation-controller-task bash
-$ awx-manage list_instances</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="&#8230;&#8203;"
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="&#8230;&#8203;"
-Remove those nodes with awx-manage:
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</p>
 </li>
 </ul>
 </div>

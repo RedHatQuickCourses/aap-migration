@@ -90,7 +90,7 @@
     <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter3/section1.html">Performing Migration LAB</a>
+    <a class="nav-link" href="../chapter3/section1.html">Making Target Environment Ready</a>
   </li>
 </ul>
   </li>
@@ -153,14 +153,6 @@
 <article class="doc">
 <h1 class="page">Migration Artifact Collection LAB</h1>
 <div class="paragraph">
-<p>Create a complete backup of the source environment using the below command before proceeding forward.</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> ./setup.sh -b</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:</p>
 </div>
 <div class="ulist">
@@ -207,7 +199,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Create <code>manifest.yml</code> using vi command:</p>
+<p>Edit <code>manifest.yml</code> using vi command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi manifest.yml</code></pre>
@@ -228,7 +220,7 @@ components:
 </div>
 </li>
 <li>
-<p>Creating a <code>secrets.yml</code> which will be containg the below information as this is different for every environment so create it accordingly.</p>
+<p>Edit <code>secrets.yml</code> file which will be containg the below information as this is different for every environment so create it accordingly.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">controller_pg_database: &lt;redacted&gt;
@@ -272,8 +264,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 </div>
 </li>
 <li>
-<p>On the <strong>hub node</strong> gather the <code>database_fields.symmetric.key</code> value and add to the
-<code>hub_db_fields_encryption_key</code> value in <code>secrets.yml</code> file.</p>
+<p>On the <strong>hub node</strong> gather the <code>database_fields.symmetric.key</code> value and add to the <code>hub_db_fields_encryption_key</code> value in <code>secrets.yml</code> file.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /etc/pulp/certs/database_fields.symmetric.key</code></pre>
@@ -289,7 +280,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 </div>
 </li>
 <li>
-<p>Access the <strong>gateway node</strong> and gather the secret key and add to the gateway_secret_key value in secrets.yml
+<p>Access the <strong>gateway node</strong> and gather the secret key and add to the gateway_secret_key value in <code>secrets.yml</code>.
 file.</p>
 <div class="listingblock execute">
 <div class="content">
@@ -324,7 +315,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Access the Controller node you can run the below command to get the database realted information which will be used later to take backup:</p>
+<p>Access the <strong>controller node</strong> you can run the below command to get the database realted information which will be used later to take backup:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage print_settings | grep '^DATABASES'</code></pre>
@@ -332,7 +323,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong> run the below commands from <strong>migration_artifact</strong> directory to create <strong>backup</strong> the databases. and Make sure you are a <code>sudo user</code> and the database password in the previous chapter that we set was <strong>redhat</strong> for database.</p>
+<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong> run the below commands to create the databases <strong>backup</strong>. and Make sure you are a <code>sudo user</code> and the database password is same as of previous chapter i.e. <strong>redhat</strong> for all databases.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">using the below format to create command:
@@ -508,8 +499,8 @@ tar tvf migration_artifact.tar</code></pre>
 <p>Bring the content to the <strong>bastion</strong> system.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp gateway.lab:/tmp/migration_artifact.tar .
-scp gateway.lab:/tmp/migration_artifact.tar.sha256  .</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp gateway.lab:/home/lab-user/migration_artifact.tar .
+scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
@@ -520,8 +511,7 @@ scp gateway.lab:/tmp/migration_artifact.tar.sha256  .</code></pre>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
-<p>Now to copy this to your local machine please use the
-<strong>Login Command</strong> and <strong>password</strong> from the RHDP page as the port and <strong>bastion</strong> hostname will be diffrent for your systems:</p>
+<p>Now to copy this to your local machine please use the <strong>Login Command</strong> and <strong>password</strong> from the RHDP page as the port and <strong>bastion</strong> hostname will be diffrent for your systems:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .</code></pre>
@@ -544,7 +534,7 @@ scp gateway.lab:/tmp/migration_artifact.tar.sha256  .</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>Your lab work is done and now the files <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> can be used to migrate to any other deployment method either its <strong>Cotainerized Ansible Automation platform</strong> or <strong>Operator Ansible Automation platform</strong> .</p>
+<p>The lab work is now concluded. The resulting <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> files can now be used to perform the migration to a new deployment method. This includes migrating to either the Containerized Ansible Automation Platform or the Operator Ansible Automation Platform.</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="index.html">Migration Artifact</a></span>
