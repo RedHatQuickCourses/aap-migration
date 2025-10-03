@@ -1,5 +1,7 @@
 = Performing Migration LAB
 
+- Confirm the current environment is stable and fully operational before beginning the migration.
+
 - Create a backup of the initial containerized environment:
 +
 [source,bash,role=execute]

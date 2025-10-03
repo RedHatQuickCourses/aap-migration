@@ -1,5 +1,15 @@
 = Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6. 
 
+- Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.
+
+- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. Make sure to replace the `-P <port-number>` and hostname according to your *RHDP login*. 
++
+[source,bash,role=execute]
+----
+scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+----
+
 - Begin by scaling down the AAP deployment using idle_aap:
 + 
 [source,bash,role=execute]
@@ -124,8 +134,8 @@ echo $AAP_TEMP_POSTGRES
 + 
 [source,bash,role=execute]
 ----
-oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
-oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 ----
 
 - Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)
@@ -149,32 +159,65 @@ done && echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-conf
 ----
 oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
 ----
-
 + 
 [source,bash,role=execute]
 ----
 cd /tmp/aap-temp-pvc && ls -l
 ----
++ 
+[source,bash,role=execute]
+----
+sha256sum --check migration_artifact.tar.sha256 
+----
++ 
+[source,bash,role=execute]
+----
+tar xf migration_artifact.tar && cd migration_artifact && sha256sum --check sha256sum.txt
+----
 
+.. Drop the automationcontroller Database and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
 + 
 [source,bash,role=execute]
 ----
 (drop controller db)
 dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
+----
 
++ 
+[source,bash,role=execute]
+----
 psql -U postgres -h aap-postgres-15
 
 (alter user temporarily with createdb role)
 postgres=# ALTER USER automationcontroller CREATEDB;
 
-(create the db)
+postgres=\q
+----
+
+.. Create a new database called automationcontroller using autoamtion Controller passowrd from `aap-controller-postgres-configuration`.
++ 
+[source,bash,role=execute]
+----
 createdb -h aap-postgres-15 -U automationcontroller automationcontroller
-(revert temporary user permission)
+----
+
+.. Revert temporary user permission
++ 
+[source,bash,role=execute]
+----
+psql -U postgres -h aap-postgres-15
+
 postgres=# ALTER USER automationcontroller NOCREATEDB;
+postgres=# \q
+----
 
-
+.. Restoring the database form the migration_artifact directory from the container and please make sure the provide their repecitve database passowrd while resotring the database. 
++ 
+[source,bash,role=execute]
+----
 (restore controller db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/awx.pgc
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc
+
 (restore hub db)
 pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d automationhub hub/automationhub.pgc
 
@@ -204,23 +247,18 @@ oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
 [source,bash,role=execute]
 ----
 oc delete -f aap-temp-postgres.yaml
-deployment.apps "aap-temp-postgres" deleted
 ----
 + 
 [source,bash,role=execute]
 ----
 oc delete -f aap-temp-pvc.yaml
-persistentvolumeclaim "aap-temp-pvc" deleted
 ---- 
 
 Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)
 + 
 [source,bash,role=execute]
 ----
-- oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-
-controller-operator-controller-manager
-deployment.apps/aap-gateway-operator-controller-manager scaled
-deployment.apps/automation-controller-operator-controller-manager scaled
+oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
 ---- 
 
 - Scale AAP back up using idle_aap
