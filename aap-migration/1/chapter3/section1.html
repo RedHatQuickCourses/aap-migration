@@ -155,46 +155,25 @@
 </aside>
 <article class="doc">
 <h1 class="page">Making Target Environment Ready</h1>
-<div class="paragraph">
-<p>Before start working on the Migration lets clean the installed Ansible Automation platform version of 2.4 from the infrastructure and for that simple run the below command from the <strong>bastion</strong> host:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ansible-playbook /home/lab-user/patch.yml -i "controller.lab," -i "hub.lab," -i "database.lab,"</code></pre>
-</div>
-</div>
 <div class="ulist">
 <ul>
-<li>
-<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">adding later after testing</code></pre>
-</div>
-</div>
-</li>
 <li>
 <p>Go to the <strong>bastion</strong> host. using the RHDP login page creds.</p>
 </li>
 <li>
-<p>Extract the Artifact on the home folder for the user running the containerized containers.</p>
-<div class="listingblock">
+<p>You will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems.</p>
+<div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">$ cd ~
-$ sha256sum --check migration_artifact.tar.sha256
-$ tar xf migration_artifact.tar
-$ cd migration_artifact
-$ sha256sum --check sha256sum.txt</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar.gz conatiner.lab:/home/lab-user/
+scp migration_artifact.tar.gz.sha256 conatiner.lab:/home/lab-user/</code></pre>
 </div>
 </div>
-<div class="literalblock">
+</li>
+<li>
+<p>Install the required and useful utilities:</p>
+<div class="listingblock execute">
 <div class="content">
-<pre>Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ sudo dnf install -y wget git-core rsync vim ansible-core</code></pre>
 </div>
 </div>
 </li>
@@ -235,45 +214,15 @@ $ sha256sum --check sha256sum.txt</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> cd &lt;extracted-folder-from-step-6&gt;
  vim inventory-growth
 
+aap.example.org -&gt; container.lab
+
 &lt;set your own&gt; → redhat
 
-&lt;set your own&gt; ← This value can be customized as per your need but remember to use the same while doing the login after the deployment.
-
-and
-
-db.example.org → database.lab</code></pre>
+&lt;set your own&gt; ← This value can be customized as per your need but remember to use the same while doing the login after the deployment.</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Note: Please click this link to learn how to use <a href="https://www.geeksforgeeks.org/basic-vim-commands/" target="_blank" rel="noopener">Vim basic operations</a>.</p>
-</div>
-</li>
-<li>
-<p>Now lets add the addition details of the hosts where it needs to either install or upgrade the components:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[automationgateway]
-gateway.lab
-
-[automationcontroller]
-controller.lab
-
-[automationcontroller:vars]
-peers=execution_nodes
-
-[execution_nodes]
-
-[automationhub]
-hub.lab
-
-[automationedacontroller]
-eda.lab
-
-[database]
-database.lab
-
-[all:vars]</code></pre>
-</div>
 </div>
 </li>
 <li>

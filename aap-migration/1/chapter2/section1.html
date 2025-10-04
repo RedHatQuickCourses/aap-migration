@@ -202,7 +202,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Edit <code>manifest.yml</code> using vi command:</p>
+<p>Edit the manifest.yml file using the vi command. This file is for reference only; it shows the backup version we are collecting.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi manifest.yml</code></pre>
@@ -363,99 +363,10 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Export Automation Controller custom configurations If any custom settings exists on the <code>/etc/tower/conf.d</code>,
-copy them to <code>/tmp/backups/artifact/controller/custom_configs</code>.</p>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Configuration files on controller which are managed by the installer and not considered custom:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/etc/tower/conf.d/postgres.py
-/etc/tower/conf.d/channels.py
-/etc/tower/conf.d/caching.py
-/etc/tower/conf.d/cluster_host_id.py</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>From the <strong>bastion</strong> take the ssh to the <code>controller.lab</code> node.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh controller.lab</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>create a custom_config of the controller.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -i</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /etc/tower/conf.d</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar -rf custom_config.tar.gz execution_environments.py ha.py container_groups.py gateway.py insights.py subscription_usage_model.py</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mv custom_config.tar.gz /home/lab-user/
-chown lab-user /home/lab-user/custom_config.tar.gz</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Now you are on the <strong>bastion</strong> node.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp controller.lab:/home/lab-user/custom_config.tar.gz .</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp custom_config.tar.gz gateway.lab:/home/lab-user/migration_artifact/controller/custom_configs/</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Now let&#8217;s go to <code>gateway node</code> and make the Controller custom config ready.</p>
+<p>Now let&#8217;s go to <code>gateway node</code> and perfom the activity.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gateway.lab</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /home/lab-user/migration_artifact/controller/custom_configs</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar -xvf custom_config.tar.gz</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf custom_config.tar.gz</code></pre>
 </div>
 </div>
 </li>
@@ -510,28 +421,6 @@ scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
 </div>
-</div>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>Now to copy this to your local machine please use the <strong>Login Command</strong> and <strong>password</strong> from the RHDP page as the port and <strong>bastion</strong> hostname will be diffrent for your systems:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar.sha256 .</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ll migration*</code></pre>
-</div>
-</div>
-</li>
-</ol>
 </div>
 </li>
 </ol>

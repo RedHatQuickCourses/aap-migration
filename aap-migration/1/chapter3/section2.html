@@ -158,14 +158,12 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Confirm the current environment is stable and fully operational before beginning the migration.</p>
+<p>Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.</p>
 </li>
-<li>
-<p>Create a backup of the initial containerized environment:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ ansible-playbook -i &lt;path_to_inventory&gt; ansible.containerized_installer.backup</code></pre>
+</ul>
 </div>
+<div class="paragraph">
+<p>The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the <code>container.lab</code> system only but you might be having different systems so highlighting which command needs to run on which node:</p>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
@@ -183,14 +181,6 @@ $ systemctl --user stop receptor</code></pre>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation EDA node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2 automation-eda-activation-worker-1  automation-eda-activation-worker-2</code></pre>
 </div>
 </div>
 </li>
@@ -217,9 +207,6 @@ $ systemctl --user stop receptor</code></pre>
 </li>
 </ol>
 </div>
-</li>
-</ul>
-</div>
 <div class="paragraph">
 <p>To perform a restore on an installer-managed database, you&#8217;ll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.</p>
 </div>
@@ -229,7 +216,7 @@ $ systemctl --user stop receptor</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>Access the <strong>database node</strong> and execute the commands in the below order:</p>
+<p>Execute the commands in the below order:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh database.lab</code></pre>
@@ -237,7 +224,7 @@ $ systemctl --user stop receptor</code></pre>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-15:latest bash</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash</code></pre>
 </div>
 </div>
 </li>
@@ -245,11 +232,6 @@ $ systemctl --user stop receptor</code></pre>
 </div>
 <div class="paragraph">
 <p>Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.</pre>
-</div>
 </div>
 <div class="paragraph">
 <p><strong>Create a DB role</strong></p>
@@ -260,22 +242,19 @@ $ systemctl --user stop receptor</code></pre>
 <p>When inside the container, access the database and ensure the users have the CREATEDB role.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -h &lt;pg_hostname&gt; -U postgres</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ psql -h localhost -U postgres</code></pre>
 </div>
 </div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>For each component name, add the CREATEDB role to the Owner. E.g.:</p>
 </li>
-</ol>
-</div>
+<li>
+<p>For each component name, add the CREATEDB role to the Owner.</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs"> postgres=# ALTER ROLE awx WITH CREATEDB;
+ postgres=# ALTER ROLE gateway WITH CREATEDB;
  postgres=# \q</code></pre>
 </div>
 </div>
@@ -285,25 +264,30 @@ $ systemctl --user stop receptor</code></pre>
 <p>With the CREATEDB in place, access the path where the artifact is mounted, and you may run the <code>pg_restore</code> commands.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h &lt;pg_hostname&gt; -U
-&lt;component_pg_user&gt; -d template1 &lt;component&gt;/&lt;component&gt;.pgc</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /var/lib/pgsql/backups
+sha256sum --check migration_artifact.tar.sha256
+tar xf migration_artifact.tar
+cd migration_artifact
+sha256sum --check sha256sum.txt</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_restore --clean --create --no-owner -h localhost -U awx -d template1 controller/automationcontroller.pgc</code></pre>
 </div>
 </div>
 </li>
+<li>
+<p>After the restore, remove the permissions from the user</p>
+</li>
 </ul>
-</div>
-<div class="paragraph">
-<p>After the restore, remove the permissions from the user E.g.:</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH NOCREATEDB;
+postgres=# ALTER ROLE gateway WITH CREATEDB;
 postgres=# \q</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Replace <code>awx</code> with the each user containing the role. Start the containerized services except the database in all nodes, run the following command:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -315,8 +299,7 @@ postgres=# \q</code></pre>
 <p>Access the Automation Controller node and run:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-controller-task automation-controller-web automation-controller-rsyslog
 $ systemctl --user start receptor</code></pre>
 </div>
 </div>
@@ -325,18 +308,7 @@ $ systemctl --user start receptor</code></pre>
 <p>Access the Automation Hub node and run:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Access the Automation EDA node and run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
 </div>
 </div>
 </li>
@@ -396,11 +368,13 @@ $ awx-manage list_instances</code></pre>
 heartbeat="&#8230;&#8203;"
 [DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
 runner-X.Y.Z heartbeat="&#8230;&#8203;"
-Remove those nodes with awx-manage:
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</p>
+Remove those nodes with awx-manage:</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>awx-manage deprovision_instance --host=node1.example.org
+awx-manage deprovision_instance --host=node2.example.org</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section1.html">Making Target Environment Ready</a></span>
