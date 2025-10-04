@@ -28,7 +28,7 @@ The below systems will be used in the exercise for the initial 2 chapters.
 |System 1 |gateway.lab
 |System 2 |controller.lab
 |System 3 |hub.lab
-|System 4 |eda.lab
+|System 4 |container.lab
 |System 5 |database.lab
 |===
 

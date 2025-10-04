@@ -1,13 +1,8 @@
 = Performing Migration LAB
 
-- Confirm the current environment is stable and fully operational before beginning the migration.
+- Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.
 
-- Create a backup of the initial containerized environment:
-+
-[source,bash,role=execute]
-----
- $ ansible-playbook -i <path_to_inventory> ansible.containerized_installer.backup
-----
+The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the `container.lab` system only but you might be having different systems so highlighting which command needs to run on which node: 
 
 .. Access the Automation Controller node and run:
 +
@@ -22,13 +17,6 @@ $ systemctl --user stop receptor
 [source,bash,role=execute]
 ----
 $ systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
-----
-
-.. Access the Automation EDA node and run:
-+
-[source,bash,role=execute]
-----
-$ systemctl --user stop automation-eda-scheduler automation-eda-daphne automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-worker-2 automation-eda-activation-worker-1  automation-eda-activation-worker-2
 ----
 
 .. Access the Automation Gateway node and run:
@@ -51,7 +39,7 @@ To perform a restore on an installer-managed database, you'll need to use a temp
 
 The following command starts a temporary container named postgresql_restore_temp and opens a shell inside it. This command also mounts the necessary PostgreSQL certificates and the restore artifact.
 
-- Access the *database node* and execute the commands in the below order: 
+- Execute the commands in the below order: 
 +
 [source,bash,role=execute]
 ----
@@ -60,12 +48,10 @@ ssh database.lab
 +
 [source,bash,role=execute]
 ----
-$ podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel8/postgresql-15:latest bash
+$ podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash
 ---- 
 
 Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.
-
- Note: The command assumes the artifact is located in the current user's home directory. If it's elsewhere, be sure to replace ~/artifact with the correct path.
 
 *Create a DB role* 
 
@@ -73,14 +59,15 @@ Once executed, this command will provide you with a shell inside the container, 
 +
 [source,bash,role=execute]
 ----
-$ psql -h <pg_hostname> -U postgres
+$ psql -h localhost -U postgres
 ---- 
 
-.. For each component name, add the CREATEDB role to the Owner. E.g.:
+- For each component name, add the CREATEDB role to the Owner.
 
 [source]
 ----
  postgres=# ALTER ROLE awx WITH CREATEDB;
+ postgres=# ALTER ROLE gateway WITH CREATEDB;
  postgres=# \q
 ----
 
@@ -88,21 +75,26 @@ $ psql -h <pg_hostname> -U postgres
 +
 [source,bash,role=execute]
 ----
-bash$ cd /var/lib/pgsql/backups
-bash$ pg_restore --clean --create --no-owner -h <pg_hostname> -U
-<component_pg_user> -d template1 <component>/<component>.pgc
+cd /var/lib/pgsql/backups
+sha256sum --check migration_artifact.tar.sha256
+tar xf migration_artifact.tar
+cd migration_artifact
+sha256sum --check sha256sum.txt
+----
++
+[source,bash,role=execute]
+----
+pg_restore --clean --create --no-owner -h localhost -U awx -d template1 controller/automationcontroller.pgc
 ----
 
-After the restore, remove the permissions from the user E.g.:
+- After the restore, remove the permissions from the user
  
 [source,bash,role=execute]
 ----
 postgres=# ALTER ROLE awx WITH NOCREATEDB;
+postgres=# ALTER ROLE gateway WITH CREATEDB;
 postgres=# \q
 ----
-
-Replace `awx` with the each user containing the role. Start the containerized services except the database in all nodes, run the following command:
- 
 
 - All the below services needs to be started again on all the nodes: 
 
@@ -110,8 +102,7 @@ Replace `awx` with the each user containing the role. Start the containerized se
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start automation-controller-task automation-controller-web
-automation-controller-rsyslog
+$ systemctl --user start automation-controller-task automation-controller-web automation-controller-rsyslog
 $ systemctl --user start receptor
 ----
 
@@ -119,18 +110,8 @@ $ systemctl --user start receptor
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start automation-hub-api automation-hub-content automation-hub-
-web automation-hub-worker-1 automation-hub-worker-2
+$ systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
 ---- 
-
-.. Access the Automation EDA node and run:
-+ 
-[source,bash,role=execute]
-----
-$ systemctl --user start automation-eda-scheduler automation-eda-daphne
-automation-eda-web automation-eda-api automation-eda-worker-1 automation-eda-
-worker-2 automation-eda-activation-worker-1 automation-eda-activation-worker-2
-----
 
 .. Access the Automation Gateway node and run:
 + 
@@ -177,6 +158,7 @@ heartbeat="..."
 [DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
 runner-X.Y.Z heartbeat="..."
 Remove those nodes with awx-manage:
+
 awx-manage deprovision_instance --host=node1.example.org
 awx-manage deprovision_instance --host=node2.example.org
 

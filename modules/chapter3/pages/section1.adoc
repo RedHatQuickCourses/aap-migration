@@ -1,36 +1,22 @@
 = Making Target Environment Ready
 
-Before start working on the Migration lets clean the installed Ansible Automation platform version of 2.4 from the infrastructure and for that simple run the below command from the *bastion* host: 
+- Go to the *bastion* host. using the RHDP login page creds.
 
-[source,bash,role=execute]
-----
-ansible-playbook /home/lab-user/patch.yml -i "controller.lab," -i "hub.lab," -i "database.lab,"
-----
-
-- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. 
+- You will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. 
 +
 [source,bash,role=execute]
 ----
-adding later after testing
+scp migration_artifact.tar.gz conatiner.lab:/home/lab-user/
+scp migration_artifact.tar.gz.sha256 conatiner.lab:/home/lab-user/
 ----
 
-- Go to the *bastion* host. using the RHDP login page creds. 
-
-- Extract the Artifact on the home folder for the user running the containerized containers.
+- Install the required and useful utilities:
 +
-[source]
+[source,bash,role=execute]
 ----
-$ cd ~
-$ sha256sum --check migration_artifact.tar.sha256
-$ tar xf migration_artifact.tar
-$ cd migration_artifact
-$ sha256sum --check sha256sum.txt
+ $ sudo dnf install -y wget git-core rsync vim ansible-core
 ----
-
- Note: The __hub_database_fields comes from the hub_db_fields_encryption_key in your secret. Extra Variables file:
-
-  $ ansible-playbook -i inventory ansible.containerized_installer.install -e @~/artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"
-
+ 
 *Lets have the Containerized setup ready*
 
 - Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Containerized Setup Bundle*.
@@ -58,43 +44,15 @@ Note: Please follow above and the next step one after another in order to avoid 
  cd <extracted-folder-from-step-6>
  vim inventory-growth
 
+aap.example.org -> container.lab
+
 <set your own> → redhat
 
 <set your own> ← This value can be customized as per your need but remember to use the same while doing the login after the deployment. 
-
-and 
-
-db.example.org → database.lab
 ----
 +
 Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank].
 
-. Now lets add the addition details of the hosts where it needs to either install or upgrade the components: 
-+
-[source,bash,role=execute]
-----
-[automationgateway]
-gateway.lab  
-
-[automationcontroller]
-controller.lab
-
-[automationcontroller:vars]
-peers=execution_nodes
-
-[execution_nodes]
-
-[automationhub]
-hub.lab
-
-[automationedacontroller]
-eda.lab
-
-[database]
-database.lab
-
-[all:vars]
-----
 
 . Once the inventory file is ready follow the below steps to do the installation:
 +
