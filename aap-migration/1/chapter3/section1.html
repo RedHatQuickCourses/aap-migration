@@ -164,8 +164,8 @@
 <p>You will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar.gz conatiner.lab:/home/lab-user/
-scp migration_artifact.tar.gz.sha256 conatiner.lab:/home/lab-user/</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar container.lab:/home/lab-user/
+scp migration_artifact.tar.sha256 container.lab:/home/lab-user/</code></pre>
 </div>
 </div>
 </li>
@@ -173,7 +173,12 @@ scp migration_artifact.tar.gz.sha256 conatiner.lab:/home/lab-user/</code></pre>
 <p>Install the required and useful utilities:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ sudo dnf install -y wget git-core rsync vim ansible-core</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh container.lab</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dnf install -y wget git-core rsync vim ansible-core</code></pre>
 </div>
 </div>
 </li>

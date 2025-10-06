@@ -417,9 +417,17 @@ tar tvf migration_artifact.tar</code></pre>
 scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .</code></pre>
 </div>
 </div>
+</li>
+<li>
+<p>Now to copy this to your local machine please use the <strong>Login Command</strong> and <strong>password</strong> from the RHDP page as the <strong>port</strong> and <strong>bastion</strong> hostname will be diffrent for your systems:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar.sha256 .</code></pre>
 </div>
 </div>
 </li>
