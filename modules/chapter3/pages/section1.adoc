@@ -6,15 +6,20 @@
 +
 [source,bash,role=execute]
 ----
-scp migration_artifact.tar.gz conatiner.lab:/home/lab-user/
-scp migration_artifact.tar.gz.sha256 conatiner.lab:/home/lab-user/
+scp migration_artifact.tar container.lab:/home/lab-user/
+scp migration_artifact.tar.sha256 container.lab:/home/lab-user/
 ----
 
 - Install the required and useful utilities:
 +
 [source,bash,role=execute]
 ----
- $ sudo dnf install -y wget git-core rsync vim ansible-core
+ssh container.lab 
+----
++
+[source,bash,role=execute]
+----
+sudo dnf install -y wget git-core rsync vim ansible-core
 ----
  
 *Lets have the Containerized setup ready*

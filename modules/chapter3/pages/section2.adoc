@@ -8,29 +8,29 @@ The first essential step is to halt the services so we can perform the restore. 
 +
 [source,bash,role=execute]
 ----
-$ systemctl --user stop automation-controller-task automation-controller-web automation-controller-rsyslog
-$ systemctl --user stop receptor
+systemctl --user stop automation-controller-task automation-controller-web automation-controller-rsyslog
+systemctl --user stop receptor
 ----
 
 .. Access the Automation Hub node and run:
 +
 [source,bash,role=execute]
 ----
-$ systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
+systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
 ----
 
 .. Access the Automation Gateway node and run:
 +
 [source,bash,role=execute]
 ----
-$ systemctl --user stop automation-gateway automation-gateway-proxy
+systemctl --user stop automation-gateway automation-gateway-proxy
 ----
 
 .. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
 +
 [source,bash,role=execute]
 ----
-$ systemctl --user stop redis-unix redis-tcp
+systemctl --user stop redis-unix redis-tcp
 ----
 
  Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
@@ -48,7 +48,7 @@ ssh database.lab
 +
 [source,bash,role=execute]
 ----
-$ podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash
+podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash
 ---- 
 
 Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.
@@ -59,7 +59,7 @@ Once executed, this command will provide you with a shell inside the container, 
 +
 [source,bash,role=execute]
 ----
-$ psql -h localhost -U postgres
+psql -h localhost -U postgres
 ---- 
 
 - For each component name, add the CREATEDB role to the Owner.
@@ -102,29 +102,29 @@ postgres=# \q
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start automation-controller-task automation-controller-web automation-controller-rsyslog
-$ systemctl --user start receptor
+systemctl --user start automation-controller-task automation-controller-web automation-controller-rsyslog
+systemctl --user start receptor
 ----
 
 .. Access the Automation Hub node and run:
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
+systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
 ---- 
 
 .. Access the Automation Gateway node and run:
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start automation-gateway automation-gateway-proxy
+systemctl --user start automation-gateway automation-gateway-proxy
 ---- 
 
 .. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
 + 
 [source,bash,role=execute]
 ----
-$ systemctl --user start redis-unix redis-tcp
+systemctl --user start redis-unix redis-tcp
 ----
 
 *Target Environment Post-Import Reconciliation*
@@ -134,9 +134,9 @@ $ systemctl --user start redis-unix redis-tcp
 + 
 [source,bash,role=execute]
 ----
-$ podman exec -it automation-gateway bash
-$ aap-gateway-manage migrate
-$ aap-gateway-manage shell_plus
+podman exec -it automation-gateway bash
+aap-gateway-manage migrate
+aap-gateway-manage shell_plus
 >>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
 ServiceCluster.objects.all().delete()
 ---- 
@@ -147,8 +147,8 @@ ServiceCluster.objects.all().delete()
 + 
 [source,bash,role=execute]
 ----
-$ podman exec -it automation-controller-task bash
-$ awx-manage list_instances
+podman exec -it automation-controller-task bash
+awx-manage list_instances
 ----
 
 - Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:

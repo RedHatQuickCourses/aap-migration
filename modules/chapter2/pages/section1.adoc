@@ -215,10 +215,17 @@ tar tvf migration_artifact.tar
 scp gateway.lab:/home/lab-user/migration_artifact.tar .
 scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .
 ----
+
+.. Now to copy this to your local machine please use the *Login Command* and *password* from the RHDP page as the *port* and *bastion* hostname will be diffrent for your systems: 
 +
 [source,bash,role=execute]
 ----
-exit
+scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .
+----
++
+[source,bash,role=execute]
+----
+scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar.sha256 .
 ----
 
 The lab work is now concluded. The resulting `migration_artifact.tar` and `migration_artifact.tar.sha256` files can now be used to perform the migration to a new deployment method. This includes migrating to either the Containerized Ansible Automation Platform or the Operator Ansible Automation Platform.
