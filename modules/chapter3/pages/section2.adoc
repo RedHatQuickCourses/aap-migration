@@ -43,11 +43,6 @@ The following command starts a temporary container named postgresql_restore_temp
 +
 [source,bash,role=execute]
 ----
-ssh database.lab
-----
-+
-[source,bash,role=execute]
-----
 podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash
 ---- 
 
@@ -136,10 +131,24 @@ systemctl --user start redis-unix redis-tcp
 ----
 podman exec -it automation-gateway bash
 aap-gateway-manage migrate
+----
++ 
+[source,bash,role=execute]
+----
 aap-gateway-manage shell_plus
+----
++ 
+[source,bash,role=execute]
+----
 >>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
 ServiceCluster.objects.all().delete()
+>>> CTRL+D <-- to exit
 ---- 
++ 
+[source,bash,role=execute]
+----
+exit
+----
 
 - Re-run the containerized installer on the target environment using the same inventory from the installation.
 
@@ -150,15 +159,16 @@ ServiceCluster.objects.all().delete()
 podman exec -it automation-controller-task bash
 awx-manage list_instances
 ----
++ 
+[source,bash,role=execute]
+----
+exit
+----
 
-- Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[ungrouped capacity=0]
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="..."
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="..."
-Remove those nodes with awx-manage:
-
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org
-
+- Migration successful! Your new deployment is ready to go.
++
+[source,bash,role=execute]
+----
+cd
+cat external_ip
+----
