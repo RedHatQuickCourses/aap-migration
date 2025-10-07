@@ -209,13 +209,11 @@ systemctl --user stop receptor</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop redis-unix redis-tcp</code></pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.</pre>
-</div>
-</div>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.</p>
 </div>
 <div class="paragraph">
 <p>To perform a restore on an installer-managed database, you&#8217;ll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.</p>
