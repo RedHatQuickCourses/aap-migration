@@ -43,6 +43,11 @@ The following command starts a temporary container named postgresql_restore_temp
 +
 [source,bash,role=execute]
 ----
+tar xf migration_artifact.tar
+----
++
+[source,bash,role=execute]
+----
 podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash
 ---- 
 
@@ -58,22 +63,18 @@ psql -h localhost -U postgres
 ---- 
 
 - For each component name, add the CREATEDB role to the Owner.
-
-[source]
++
+[source,bash,role=execute]
 ----
- postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# ALTER ROLE gateway WITH CREATEDB;
- postgres=# \q
+postgres=# ALTER ROLE awx WITH CREATEDB;
+postgres=# \q
 ----
 
 - With the CREATEDB in place, access the path where the artifact is mounted, and you may run the `pg_restore` commands.
 +
 [source,bash,role=execute]
 ----
-cd /var/lib/pgsql/backups
-sha256sum --check migration_artifact.tar.sha256
-tar xf migration_artifact.tar
-cd migration_artifact
+cd /var/lib/pgsql/backups/
 sha256sum --check sha256sum.txt
 ----
 +
@@ -83,12 +84,16 @@ pg_restore --clean --create --no-owner -h localhost -U awx -d template1 controll
 ----
 
 - After the restore, remove the permissions from the user
- 
++
 [source,bash,role=execute]
 ----
 postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# ALTER ROLE gateway WITH CREATEDB;
 postgres=# \q
+----
++ 
+[source,bash,role=execute]
+----
+exit
 ----
 
 - All the below services needs to be started again on all the nodes: 

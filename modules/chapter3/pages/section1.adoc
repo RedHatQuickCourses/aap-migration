@@ -56,14 +56,13 @@ aap.example.org -> container.lab
 <set your own> ← This value can be customized as per your need but remember to use the same while doing the login after the deployment. 
 ----
 +
-Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank].
-
+Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank] and also to remove any node under `[automationeda]`. 
 
 . Once the inventory file is ready follow the below steps to do the installation:
 +
 [source,bash,role=execute]
 ----
-$ ansible-playbook -i inventory-growth ansible.containerized_installer.install
+ansible-playbook -i inventory-growth ansible.containerized_installer.install
 ----
 
 . Use the user *admin* and the *password* set during the time of installation. In the above video I set it to *redhat*. 

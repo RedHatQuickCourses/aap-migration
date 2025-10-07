@@ -83,21 +83,21 @@ ssh hub.lab
 +
 [source,bash,role=execute]
 ----
-grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
+sudo grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 ----
 
 .. On the *hub node* gather the `database_fields.symmetric.key` value and add to the `hub_db_fields_encryption_key` value in `secrets.yml` file.
 +
 [source,bash,role=execute]
 ----
-cat /etc/pulp/certs/database_fields.symmetric.key
+sudo cat /etc/pulp/certs/database_fields.symmetric.key
 ----
 
 .. On the Hub node you can run the below command to get the database realted information which will be used later to take backup.
 +
 [source,bash,role=execute]
 ----
-grep '^DATABASES' /etc/pulp/settings.py
+sudo  grep '^DATABASES' /etc/pulp/settings.py
 ----
 
 .. Access the *gateway node* and gather the secret key and add to the gateway_secret_key value in `secrets.yml`.
@@ -110,14 +110,14 @@ ssh gateway.lab
 +
 [source,bash,role=execute]
 ----
-cat /etc/ansible-automation-platform/gateway/SECRET_KEY
+sudo  cat /etc/ansible-automation-platform/gateway/SECRET_KEY
 ----
 
 .. On the *gateway node* you can run the below command to get the database realted information which will be used later to take backup:
 +
 [source,bash,role=execute]
 ----
-aap-gateway-manage print_settings | grep '^DATABASES'
+sudo  aap-gateway-manage print_settings | grep '^DATABASES'
 ----
 
 .. Access the *controller node* from the *bastion* host and gather the secret key and add to the controller_secret_key value in `secrets.yml` file.
@@ -129,14 +129,14 @@ ssh controller.lab
 +
 [source,bash,role=execute]
 ----
-cat /etc/tower/SECRET_KEY
+sudo  cat /etc/tower/SECRET_KEY
 ----
 
 .. Access the *controller node* you can run the below command to get the database realted information which will be used later to take backup:
 +
 [source,bash,role=execute]
 ----
-awx-manage print_settings | grep '^DATABASES'
+sudo awx-manage print_settings | grep '^DATABASES'
 ----
 
 .. From the *migration_artifact* directory on the *gateway node* run the below commands to create the databases *backup*. and Make sure you are a `sudo user` and the database password is same as of previous chapter i.e. *redhat* for all databases. 
