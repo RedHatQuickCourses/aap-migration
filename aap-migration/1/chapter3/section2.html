@@ -219,6 +219,11 @@ systemctl --user stop receptor</code></pre>
 <p>Execute the commands in the below order:</p>
 <div class="listingblock execute">
 <div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar xf migration_artifact.tar</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash</code></pre>
 </div>
 </div>
@@ -243,26 +248,18 @@ systemctl --user stop receptor</code></pre>
 </li>
 <li>
 <p>For each component name, add the CREATEDB role to the Owner.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
+<div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs"> postgres=# ALTER ROLE awx WITH CREATEDB;
- postgres=# ALTER ROLE gateway WITH CREATEDB;
- postgres=# \q</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH CREATEDB;
+postgres=# \q</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>With the CREATEDB in place, access the path where the artifact is mounted, and you may run the <code>pg_restore</code> commands.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /var/lib/pgsql/backups
-sha256sum --check migration_artifact.tar.sha256
-tar xf migration_artifact.tar
-cd migration_artifact
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /var/lib/pgsql/backups/
 sha256sum --check sha256sum.txt</code></pre>
 </div>
 </div>
@@ -274,18 +271,18 @@ sha256sum --check sha256sum.txt</code></pre>
 </li>
 <li>
 <p>After the restore, remove the permissions from the user</p>
-</li>
-</ul>
-</div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH NOCREATEDB;
-postgres=# ALTER ROLE gateway WITH CREATEDB;
 postgres=# \q</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
+</li>
 <li>
 <p>All the below services needs to be started again on all the nodes:</p>
 <div class="olist loweralpha">

@@ -262,7 +262,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'</code></pre>
 </div>
 </div>
 </li>
@@ -270,7 +270,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <p>On the <strong>hub node</strong> gather the <code>database_fields.symmetric.key</code> value and add to the <code>hub_db_fields_encryption_key</code> value in <code>secrets.yml</code> file.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /etc/pulp/certs/database_fields.symmetric.key</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo cat /etc/pulp/certs/database_fields.symmetric.key</code></pre>
 </div>
 </div>
 </li>
@@ -278,7 +278,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <p>On the Hub node you can run the below command to get the database realted information which will be used later to take backup.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep '^DATABASES' /etc/pulp/settings.py</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  grep '^DATABASES' /etc/pulp/settings.py</code></pre>
 </div>
 </div>
 </li>
@@ -292,7 +292,7 @@ file.</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /etc/ansible-automation-platform/gateway/SECRET_KEY</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  cat /etc/ansible-automation-platform/gateway/SECRET_KEY</code></pre>
 </div>
 </div>
 </li>
@@ -300,7 +300,7 @@ file.</p>
 <p>On the <strong>gateway node</strong> you can run the below command to get the database realted information which will be used later to take backup:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap-gateway-manage print_settings | grep '^DATABASES'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  aap-gateway-manage print_settings | grep '^DATABASES'</code></pre>
 </div>
 </div>
 </li>
@@ -313,7 +313,7 @@ file.</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /etc/tower/SECRET_KEY</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  cat /etc/tower/SECRET_KEY</code></pre>
 </div>
 </div>
 </li>
@@ -321,7 +321,7 @@ file.</p>
 <p>Access the <strong>controller node</strong> you can run the below command to get the database realted information which will be used later to take backup:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage print_settings | grep '^DATABASES'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo awx-manage print_settings | grep '^DATABASES'</code></pre>
 </div>
 </div>
 </li>
