@@ -37,7 +37,7 @@ systemctl --user stop automation-gateway automation-gateway-proxy
 systemctl --user stop redis-unix redis-tcp
 ----
 
- Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
+Note: In an enterprise deployment, the components will be running on different nodes. Execute the commands on the respective component node.
 
 To perform a restore on an installer-managed database, you'll need to use a temporary container to run the psql and pg_restore commands. This container must be created from the database node.
 
