@@ -219,11 +219,6 @@ systemctl --user stop receptor</code></pre>
 <p>Execute the commands in the below order:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh database.lab</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman run -it --rm --name postgresql_restore_temp --network host --volume ~/aap/tls/extracted:/etc/pki/ca-trust/extracted:z --volume ~/aap/postgresql/server.crt:/var/lib/pgsql/server.crt:ro,z --volume ~/aap/postgresql/server.key:/var/lib/pgsql/server.key:ro,z --volume ~/migration_artifact:/var/lib/pgsql/backups:ro,z registry.redhat.io/rhel9/postgresql-15:latest bash</code></pre>
 </div>
 </div>
@@ -343,10 +338,24 @@ systemctl --user start receptor</code></pre>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-gateway bash
-aap-gateway-manage migrate
-aap-gateway-manage shell_plus
-&gt;&gt;&gt; HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()</code></pre>
+aap-gateway-manage migrate</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap-gateway-manage shell_plus</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">&gt;&gt;&gt; HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
+ServiceCluster.objects.all().delete()
+&gt;&gt;&gt; CTRL+D &lt;-- to exit</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
 </div>
 </div>
 </li>
@@ -361,20 +370,22 @@ ServiceCluster.objects.all().delete()</code></pre>
 awx-manage list_instances</code></pre>
 </div>
 </div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
 </li>
 <li>
-<p>Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z
-heartbeat="&#8230;&#8203;"
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-
-runner-X.Y.Z heartbeat="&#8230;&#8203;"
-Remove those nodes with awx-manage:</p>
+<p>Migration successful! Your new deployment is ready to go.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd
+cat external_ip</code></pre>
+</div>
+</div>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section1.html">Making Target Environment Ready</a></span>
