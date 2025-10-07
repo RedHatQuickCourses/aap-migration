@@ -2,6 +2,9 @@
 
 The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:
 
+video::migration_artifact.mp4[align="left",width=800,height=500]
+
+
 - Simply `ssh` the hostname from the *bastion* host and perform the activity on the `gateway` node.
 +
 [source,bash,role=execute]
@@ -201,8 +204,8 @@ sha256sum --check migration_artifact.tar.sha256
 tar tvf migration_artifact.tar
 ----
 
-- Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer to the target node with the scp command for that exit the gateway node:
-+
+Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer to the target node with the scp command for that exit the gateway node:
+
 [source,bash,role=execute]
 ----
 [lab-user@gateway tmp]$ exit

@@ -2,6 +2,10 @@
 
 - Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.
 
+video::container_migration.mp4[align="left",width=800,height=500]
+
+The above video is at 1.75X seed to demostrate the below steps.
+
 The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the `container.lab` system only but you might be having different systems so highlighting which command needs to run on which node: 
 
 .. Access the Automation Controller node and run:
@@ -83,7 +87,15 @@ sha256sum --check sha256sum.txt
 pg_restore --clean --create --no-owner -h localhost -U awx -d template1 controller/automationcontroller.pgc
 ----
 
+Note: 
+The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have show for controller only.  
+
 - After the restore, remove the permissions from the user
++
+[source,bash,role=execute]
+----
+psql -h localhost -U postgres
+---- 
 +
 [source,bash,role=execute]
 ----
@@ -111,7 +123,7 @@ systemctl --user start receptor
 [source,bash,role=execute]
 ----
 systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
----- 
+----
 
 .. Access the Automation Gateway node and run:
 + 

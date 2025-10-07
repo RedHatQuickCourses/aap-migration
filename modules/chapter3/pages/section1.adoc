@@ -2,6 +2,8 @@
 
 - Go to the *bastion* host. using the RHDP login page creds.
 
+video::aap2.6_container_install.mp4[align="left",width=800,height=500]
+
 - You will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. 
 +
 [source,bash,role=execute]
