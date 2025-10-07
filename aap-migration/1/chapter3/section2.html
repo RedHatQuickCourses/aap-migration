@@ -162,6 +162,16 @@
 </li>
 </ul>
 </div>
+<div class="videoblock text-left">
+<div class="content">
+<video src="_images/container_migration.mp4" width="800" height="500" controls>
+Your browser does not support the video tag.
+</video>
+</div>
+</div>
+<div class="paragraph">
+<p>The above video is at 1.75X seed to demostrate the below steps.</p>
+</div>
 <div class="paragraph">
 <p>The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the <code>container.lab</code> system only but you might be having different systems so highlighting which command needs to run on which node:</p>
 </div>
@@ -269,8 +279,21 @@ sha256sum --check sha256sum.txt</code></pre>
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note:
+The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have show for controller only.</p>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>After the restore, remove the permissions from the user</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -h localhost -U postgres</code></pre>
+</div>
+</div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH NOCREATEDB;
