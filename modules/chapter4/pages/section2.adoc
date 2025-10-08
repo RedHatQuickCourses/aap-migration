@@ -10,7 +10,7 @@ scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
 scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
 ----
 
-. Let start working on the project aap for the migration. 
+- Let start working on the project aap for the migration. 
 + 
 [source,bash,role=execute]
 ----
@@ -155,7 +155,7 @@ oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 [source,bash,role=execute]
 ----
 echo
-for secret in aap-controller-postgres-configuration aap-hub-postgres-configuration aap-gateway-postgres-configuration
+for secret in aap-controller-postgres-configuration aap-gateway-postgres-configuration
 do
   echo $secret
   echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
@@ -199,11 +199,6 @@ psql -U postgres -h aap-postgres-15
 ----
 postgres=# ALTER USER automationcontroller CREATEDB;
 postgres=\q
-----
-+ 
-[source,bash,role=execute]
-----
-exit
 ----
 
 . Create a new database called automationcontroller using autoamtion Controller passowrd from *Obtain password* step in config `aap-controller-postgres-configuration`:
