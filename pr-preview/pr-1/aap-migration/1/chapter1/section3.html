@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Performing Upgrade to Ansible Automation Platfrom 2.6 :: Fast-Track Ansible Automation Platform Migration</title>
+    <link rel="prev" href="section2.html">
+    <link rel="next" href="../chapter2/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Fast-Track Ansible Automation Platform Migration</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/aap-migration/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="aap-migration" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Fast-track Ansible Automation Platform Migration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section2.html">Ansible Automation Platfrom 2.4</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../chapter2/index.html">Migration Artifact</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter2/section1.html">Migration Artifact Collection LAB</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../chapter3/index.html">AAP RPM 2.6 to AAP Containerized 2.6</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter3/section1.html">Making Target Environment Ready</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter3/section2.html">Performing Migration LAB</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP Operator 2.6</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter4/section1.html">Operator Deployment LAB</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../chapter4/section2.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Fast-Track Ansible Automation Platform Migration</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Fast-Track Ansible Automation Platform Migration</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></li>
+    <li><a href="index.html">Fast-track Ansible Automation Platform Migration</a></li>
+    <li><a href="section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Performing Upgrade to Ansible Automation Platfrom 2.6</h1>
+<div class="paragraph">
+<p>This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of <strong>Ansible Automation Platform 2.6</strong>, featuring a new component called <code>Unified-ui</code>. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI.</p>
+</div>
+<div class="videoblock text-left">
+<div class="content">
+<video src="_images/aap2.6_after_migration.mp4" width="800" height="500" controls>
+Your browser does not support the video tag.
+</video>
+</div>
+</div>
+<div class="paragraph">
+<p>All the above steps followed in the video are shared below:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once the lab is deployed and you are accessing the system via <strong>ssh</strong> terminal make sure to run everything as a normal user only and use the sudo command to perform any root-level operations.</p>
+</li>
+<li>
+<p>We are going to follow a <strong>RPM growth topology</strong> approach for this upgrade. Where we have each system for new components and use the existing one to upgrade for the same components.</p>
+</li>
+<li>
+<p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and get the installer link for <strong>Ansible Automation Platform 2.6 Setup Bundle</strong>.</p>
+<div class="paragraph">
+<p>Note: Please follow steps 3 and 4, one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and then copy the link if you are having trouble.</p>
+</div>
+</li>
+<li>
+<p>Download the installer file to the VM:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> wget -O aap.tar.gz "&lt;paste-link-here taken from step 3&gt;"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Extract the <strong>aap.tar.gz</strong> file using the following command:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> tar -xvf aap.tar.gz</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Using the <strong>cd</strong> command, enter the extracted folder. Then, use the <strong>vim</strong> command, open the <strong>inventory-growth</strong> file and make the following changes, wherever they appear throughout the entire <strong>inventory-growth</strong> file:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> cd &lt;extracted-folder-from-step-6&gt;
+ vim inventory-growth
+
+&lt;set your own&gt; → redhat
+
+&lt;set your own&gt; ← This value can be customized as per your need but remember to use the same while doing the login after the deployment.
+
+and
+
+db.example.org → database.lab</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: Please click this link to learn how to use <a href="https://www.geeksforgeeks.org/basic-vim-commands/" target="_blank" rel="noopener">Vim basic operations</a>.</p>
+</div>
+</li>
+<li>
+<p>After the above changes the below variable should appear like below:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">automationgateway_admin_password=redhat
+automationgateway_pg_host=database.lab
+automationgateway_pg_password=redhat
+
+admin_password=redhat
+pg_host=database.lab
+pg_password=redhat
+
+automationhub_admin_password=redhat
+automationhub_pg_host=database.lab
+automationhub_pg_password=redhat</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now, let&#8217;s add the addition details of the hosts where it needs to either install or upgrade the components:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[automationgateway]
+gateway.lab
+
+[automationcontroller]
+controller.lab
+
+[automationcontroller:vars]
+peers=execution_nodes
+
+[execution_nodes]
+
+[automationhub]
+hub.lab
+
+[database]
+database.lab
+
+[all:vars]
+ansible_become=true</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Once the inventory file is ready follow the below steps to do the installation/upgrade:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./setup.sh -i inventory-growth</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Simply ssh the hostname from the <strong>bastion</strong> host and get the <strong>external_IP</strong> of the system to access the AAP Dashboard.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gateway.lab</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat external_ip</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the <strong>external_ip</strong> and paste it in the browser and you should be able to access the AAP 2.6 <strong>Login page</strong>.</p>
+</li>
+<li>
+<p>Use the user <strong>admin</strong> and the <strong>password</strong> set during the time of installation. In the above video I have set it to <strong>redhat</strong>.</p>
+<div class="literalblock">
+<div class="content">
+<pre>Note: Try to use a stronger password while doing the enterprise deployment</pre>
+</div>
+</div>
+</li>
+<li>
+<p>After <strong>Login</strong> run the <strong>Project sync</strong> for the <strong>Demo project</strong> to confirm that the job is getting executed and verify the data of the AAP 2.4.</p>
+</li>
+</ol>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="section2.html">Ansible Automation Platfrom 2.4</a></span>
+  <span class="next"><a href="../chapter2/index.html">Migration Artifact</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
