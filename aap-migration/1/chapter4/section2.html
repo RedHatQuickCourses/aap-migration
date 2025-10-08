@@ -167,8 +167,7 @@
 scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
+</li>
 <li>
 <p>Let start working on the project aap for the migration.</p>
 <div class="listingblock execute">
@@ -180,9 +179,6 @@ scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/la
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=0; done</code></pre>
 </div>
-</div>
-</li>
-</ol>
 </div>
 </li>
 </ul>
@@ -336,7 +332,7 @@ oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo
-for secret in aap-controller-postgres-configuration aap-hub-postgres-configuration aap-gateway-postgres-configuration
+for secret in aap-controller-postgres-configuration aap-gateway-postgres-configuration
 do
   echo $secret
   echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
@@ -383,11 +379,6 @@ sha256sum --check migration_artifact.tar.sha256</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER USER automationcontroller CREATEDB;
 postgres=\q</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
 </div>
 </div>
 </li>
