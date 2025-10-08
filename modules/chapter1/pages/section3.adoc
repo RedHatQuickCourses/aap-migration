@@ -1,19 +1,19 @@
-= Performing Upgrade to Ansible automation platfrom 2.6
+= Performing Upgrade to Ansible Automation Platfrom 2.6
 
-This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of **Ansible Automation Platform 2.6** having a new component called `Unified-ui`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI. 
+This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of **Ansible Automation Platform 2.6**, featuring a new component called `Unified-ui`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI. 
 
 
 video::aap2.6_after_migration.mp4[align="left",width=800,height=500]
 
-all the above steps followed in the video are shared below: 
+All the above steps followed in the video are shared below: 
 
 . Once the lab is deployed and you are accessing the system via *ssh* terminal make sure to run everything as a normal user only and use the sudo command to perform any root-level operations.
 
-. We are going to follow a *RPM growth topology* approach for this upgrade. Where we have each system for new componenets and use the exsiting one to upgrade for the same componenets.
+. We are going to follow a *RPM growth topology* approach for this upgrade. Where we have each system for new components and use the existing one to upgrade for the same components.
 
-. Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Setup Bundle*.
+. Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and get the installer link for *Ansible Automation Platform 2.6 Setup Bundle*.
 +
-Note: Please follow steps 3 and 4 one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and copy the link if you are having trouble.
+Note: Please follow steps 3 and 4, one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website, repeat step 3, and then copy the link if you are having trouble.
 
 . Download the installer file to the VM: 
 + 
@@ -47,7 +47,7 @@ db.example.org → database.lab
 +
 Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank].
 
-. After the above changes the below variable should appear like the below: 
+. After the above changes the below variable should appear like below: 
 + 
 [source,bash,role=execute]
 ---- 
@@ -64,7 +64,7 @@ automationhub_pg_host=database.lab
 automationhub_pg_password=redhat
 ----
 
-. Now lets add the addition details of the hosts where it needs to either install or upgrade the components: 
+. Now, let's add the addition details of the hosts where it needs to either install or upgrade the components: 
 +
 [source,bash,role=execute]
 ----
@@ -89,7 +89,7 @@ database.lab
 ansible_become=true
 ----
 
-. Once the inventory file is ready follow the below steps to do the installation/Upgrade:
+. Once the inventory file is ready follow the below steps to do the installation/upgrade:
 +
 [source,bash,role=execute]
 ----
@@ -110,8 +110,8 @@ cat external_ip
 
 . Copy the *external_ip* and paste it in the browser and you should be able to access the AAP 2.6 *Login page*. 
 
-. Use the user *admin* and the *password* set during the time of installation. In the above video I set it to *redhat*. 
+. Use the user *admin* and the *password* set during the time of installation. In the above video I have set it to *redhat*. 
 
- Note: Try to use stronger password while doing the enterprise deployment 
+ Note: Try to use a stronger password while doing the enterprise deployment 
 
-. After *Login* run the *Project sync* for the *Demo project* to confirm the job is getting executed and verify the data of the AAP 2.4. 
+. After *Login* run the *Project sync* for the *Demo project* to confirm that the job is getting executed and verify the data of the AAP 2.4. 

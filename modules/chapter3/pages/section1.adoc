@@ -1,6 +1,6 @@
 = Making Target Environment Ready
 
-- Go to the *bastion* host. using the RHDP login page creds.
+- Go to the *bastion* host using the RHDP login page creds.
 
 video::aap2.6_container_install.mp4[align="left",width=800,height=500]
 
@@ -24,11 +24,11 @@ ssh container.lab
 sudo dnf install -y wget git-core rsync vim ansible-core
 ----
  
-*Lets have the Containerized setup ready*
+*Let's have the Containerized setup ready*
 
 - Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Containerized Setup Bundle*.
 +
-Note: Please follow above and the next step one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.
+Note: Please follow above step and the next steps one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.
 
 . Download the installer file to the VM: 
 + 
@@ -67,9 +67,9 @@ Note: Please click this link to learn how to use https://www.geeksforgeeks.org/b
 ansible-playbook -i inventory-growth ansible.containerized_installer.install
 ----
 
-. Use the user *admin* and the *password* set during the time of installation. In the above video I set it to *redhat*. 
+. Use the user *admin* and the *password* set during the time of installation. In the above video I have set it to *redhat*. 
 
- Note: Try to use stronger password while doing the enterprise deployment 
+ Note: Try to use a stronger password while doing the enterprise deployment 
 
 . Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab.
 

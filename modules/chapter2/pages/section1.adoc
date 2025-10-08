@@ -1,6 +1,6 @@
 = Migration Artifact Collection LAB
 
-The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:
+The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or operator-based deployment. It should be organized as follows:
 
 video::migration_artifact.mp4[align="left",width=800,height=500]
 
@@ -16,7 +16,8 @@ ssh gateway.lab
 
 Artifact Structure
 
-The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment. 
+In the below architecture we will be creating so that it can be further moved to the environment either for the migration of container or operator-based deployment. 
+// we will be creating....(This looks like an incomplete sentence)
 
 [source,bash]
 ----
@@ -58,7 +59,8 @@ components:
     version: 2.6.0
 ----
 
-- Edit `secrets.yml` file which will be containg the below information as this is different for every environment so create it accordingly. 
+- Edit `secrets.yml` file to include the following information. Since this data is unique to each environment, please configure the values accordingly.
+
 +
 [source,bash,role=execute]
 ----
@@ -96,7 +98,7 @@ sudo grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 sudo cat /etc/pulp/certs/database_fields.symmetric.key
 ----
 
-.. On the Hub node you can run the below command to get the database realted information which will be used later to take backup.
+.. On the Hub node you can run the below command to get the database-related information which will be later used to take backup.
 +
 [source,bash,role=execute]
 ----
@@ -116,7 +118,7 @@ ssh gateway.lab
 sudo  cat /etc/ansible-automation-platform/gateway/SECRET_KEY
 ----
 
-.. On the *gateway node* you can run the below command to get the database realted information which will be used later to take backup:
+.. On the *gateway node* you can run the below command to get the database-related information which will be later used to take backup:
 +
 [source,bash,role=execute]
 ----
@@ -135,14 +137,14 @@ ssh controller.lab
 sudo  cat /etc/tower/SECRET_KEY
 ----
 
-.. Access the *controller node* you can run the below command to get the database realted information which will be used later to take backup:
+.. Accessing the *controller node* you can run the below command to get the database-related information which will be used later to take backup:
 +
 [source,bash,role=execute]
 ----
 sudo awx-manage print_settings | grep '^DATABASES'
 ----
 
-.. From the *migration_artifact* directory on the *gateway node* run the below commands to create the databases *backup*. and Make sure you are a `sudo user` and the database password is same as of previous chapter i.e. *redhat* for all databases. 
+.. From the *migration_artifact* directory on the *gateway node* run the below commands to create the database *backup*. Also, make sure that you are a `sudo user` and the database password is same as that of the previous chapter i.e. *redhat* for all databases. 
 +
 [source,bash,role=execute]
 ----
@@ -171,7 +173,7 @@ pg_dump -h database.lab -U automationgateway -d automationgateway --clean --crea
 pg_dump -h database.lab -U automationhub -d automationhub --clean --create -Fc -f hub/automationhub.pgc
 ----
 
-.. Now let's go to `gateway node` and perfom the activity.
+.. Now, let's go to `gateway node` and perfom the activity.
 +
 [source,bash,role=execute]
 ----
@@ -204,7 +206,8 @@ sha256sum --check migration_artifact.tar.sha256
 tar tvf migration_artifact.tar
 ----
 
-Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer to the target node with the scp command for that exit the gateway node:
+Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer them to the target node with the scp command for that exit the gateway node:
+// Revised suggestion: Download the migration_artifact.tar and migration_artifact.tar.sha256 files to your local machine. To transfer them to the target node with the scp command, you must first exit the gateway node.
 
 [source,bash,role=execute]
 ----

@@ -6,17 +6,17 @@ This comprehensive checklist guides you through the essential steps for a succes
 
 . Before the Upgrade
 ..  New Node Preparation:
-... Confirm all new nodes have been received.
+... Confirm that all the new nodes have been received.
 ... Validate new nodes: Check hardware (RAM, CPU, Disk), partitions, and network settings (NFS, DNS, NTP, Ports, URLs).
-... Verify new nodes are reachable from the installer system. 
-... Ensure the OS is consistent across all nodes.
+... Verify that new nodes are reachable from the installer system. 
+... Ensure that the OS is consistent across all nodes.
 ... Capture and document OS hardening details.
-... Determine if a dedicated installer user is there on the new nodes and have the sudo.
+... Determine if a dedicated installer user is there on the new nodes and that they have the sudo.
 ... Set up passwordless access to the new nodes for the installer.
 
 .. Backups and Documentation:
-... Ensure the upgrade guide or document is available and reviewed.
-... Confirm the setup bundle for your target version (e.g., 2.4/2.6) is available.
+... Ensure that the upgrade guide or document is available and reviewed.
+... Confirm that the setup bundle for your target version (e.g., 2.4/2.6) is available.
 ... Take a backup or snapshot of all existing nodes.
 ... Back up all associated databases.
 ... Capture the current load balancer (LB) configuration.
@@ -24,6 +24,6 @@ This comprehensive checklist guides you through the essential steps for a succes
 
 . After the Upgrade
 .. Verify functionality:
-... Confirm all data and configurations are present.
-... Ensure all jobs are executing properly.
-... Test user login and access to confirm it's working as expected.
+... Confirm that all data and configurations are present.
+... Ensure that all jobs are executing properly.
+... Test user login and access to confirm that it's working as expected.

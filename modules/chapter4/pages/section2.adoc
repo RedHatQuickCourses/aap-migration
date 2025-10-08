@@ -211,7 +211,7 @@ postgres=# ALTER USER automationcontroller NOCREATEDB;
 postgres=# \q
 ----
 
-.. Restoring the database form the migration_artifact directory from the container and please make sure the provide their repecitve database passowrd while resotring the database. 
+.. Restoring the database form the migration_artifact directory from the container and please make sure to provide their repecitve database passowrd while resotring the database. 
 + 
 [source,bash,role=execute]
 ----

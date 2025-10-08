@@ -1,9 +1,9 @@
-= Fast-Track Ansible Automation Platform Migration
+= Fast-track Ansible Automation Platform Migration
 :navtitle: Home
 
 == Introduction
 
-This course provides a step-by-step guide to migrating your Red Hat Ansible Automation Platform (AAP) from one deployment type to another. Whether you're moving from an RPM-based to a containerized deployment or transitioning to OpenShift. This course covers best practices, prerequisites, and execution workflows to ensure a smooth migration.
+This course provides a step-by-step guide to migrating your Red Hat Ansible Automation Platform (AAP) from one deployment type to another. Whether you're moving from an RPM-based to a containerized deployment or transitioning to OpenShift, this course covers best practices, prerequisites, and execution workflows to ensure a smooth migration.
 
 You’ll learn how to:
 
@@ -17,6 +17,7 @@ You’ll learn how to:
 
 
 Duration: FIXME hours
+// Can you please add the duration?
 
 == Objectives
 
