@@ -10,6 +10,20 @@ scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
 scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
 ----
 
+. Let start working on the project aap for the migration. 
++ 
+[source,bash,role=execute]
+----
+oc project aap
+----
++ 
+[source,bash,role=execute]
+----
+for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=0; done
+----
+
+*OR*
+
 - Begin by scaling down the AAP deployment using idle_aap:
 + 
 [source,bash,role=execute]
@@ -25,6 +39,8 @@ Wait for component pods to terminate. Only the 6 operator pods will remain runni
 ----
 oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
 ----
+
+*Starting Migration*
 
 - Scale up the idled Postgres StatefulSet:
 + 
@@ -123,10 +139,6 @@ oc create -f aap-temp-postgres.yaml
 [source,bash,role=execute]
 ----
 export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
-----
-+ 
-[source,bash,role=execute]
-----
 echo $AAP_TEMP_POSTGRES
 ----
 
@@ -138,7 +150,7 @@ oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
 ----
 
-- Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)
+- *Obtain passwords* Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)
 + 
 [source,bash,role=execute]
 ----
@@ -163,10 +175,6 @@ oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
 [source,bash,role=execute]
 ----
 cd /tmp/aap-temp-pvc && ls -l
-----
-+ 
-[source,bash,role=execute]
-----
 sha256sum --check migration_artifact.tar.sha256 
 ----
 + 
@@ -175,33 +183,37 @@ sha256sum --check migration_artifact.tar.sha256
 tar xf migration_artifact.tar && cd migration_artifact && sha256sum --check sha256sum.txt
 ----
 
-.. Drop the automationcontroller Database and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
+. Drop the automationcontroller Database and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
 + 
 [source,bash,role=execute]
 ----
-(drop controller db)
-dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)
+dropdb -h aap-postgres-15 automationcontroller
 ----
-
 + 
 [source,bash,role=execute]
 ----
 psql -U postgres -h aap-postgres-15
-
-(alter user temporarily with createdb role)
+----
++ 
+[source,bash,role=execute]
+----
 postgres=# ALTER USER automationcontroller CREATEDB;
-
 postgres=\q
 ----
++ 
+[source,bash,role=execute]
+----
+exit
+----
 
-.. Create a new database called automationcontroller using autoamtion Controller passowrd from `aap-controller-postgres-configuration`.
+. Create a new database called automationcontroller using autoamtion Controller passowrd from *Obtain password* step in config `aap-controller-postgres-configuration`:
 + 
 [source,bash,role=execute]
 ----
 createdb -h aap-postgres-15 -U automationcontroller automationcontroller
 ----
 
-.. Revert temporary user permission
+.. Revert temporary user permission and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
 + 
 [source,bash,role=execute]
 ----
@@ -215,16 +227,16 @@ postgres=# \q
 + 
 [source,bash,role=execute]
 ----
-(restore controller db)
 pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc
-
-(restore hub db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d automationhub hub/automationhub.pgc
-
-(restore gateway db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc
-
-(exit pod)
+----
++ 
+[source,bash,role=execute]
+----
+cat secrets.yml  
+----
++ 
+[source,bash,role=execute]
+----
 exit
 ----
 
@@ -232,14 +244,7 @@ exit
 + 
 [source,bash,role=execute]
 ----
-oc set data secret/aap-controller-secret-key secret_key="<unencoded
-controller_secret_key value from secrets.yml>"
-
-oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
-gateway_secret_key value from secrets.yml>"
-
-oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
-<unencoded hub_db_fields_encryption_key value from secrets.yml>"
+oc set data secret/aap-controller-secret-key secret_key="<unencoded controller_secret_key value from secrets.yml>"
 ---- 
 
 - Clean up Temporary Postgres and PVC:
@@ -254,21 +259,34 @@ oc delete -f aap-temp-postgres.yaml
 oc delete -f aap-temp-pvc.yaml
 ---- 
 
-Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)
+*Migration done*
+
+*Lets Scale the pods up*
+
+. Run the below command and wait for 15 minutes to bring the servies up and access the nodes. 
++ 
+[source,bash,role=execute]
+----
+for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=1; done
+----
+
+*OR*
+
+. Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)
 + 
 [source,bash,role=execute]
 ----
 oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
 ---- 
 
-- Scale AAP back up using idle_aap
+. Scale AAP back up using idle_aap
 + 
 [source,bash,role=execute]
 ----
 oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":false}}'
 ----
 
-ansibleautomationplatform.aap.ansible.com/aap patched
+*Verify you are able to access it via GUI*
 
 -  Wait for aap-gateway pod to be running and clean up old service endpoints:
 + 
@@ -278,48 +296,30 @@ ansibleautomationplatform.aap.ansible.com/aap patched
 pod/aap-gateway-6c989b846c-47b9l 2/2 Running 0 45s
 ----
 
--  Run aap-gateway-manage to deprovision instances
-(obtain controller pod) export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns=":metadata.name"
-| grep aap-controller-task)
+*Once you can access the GUI*
 
+-  Run aap-gateway-manage to deprovision instances which are not needed. if there is any:
 + 
 [source,bash,role=execute]
 ----
+export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns="Name:metadata.name" | grep aap-controller-task)
 echo $AAP_CONTROLLER_POD
-aap-controller-task-759b6d9759-r59q9
-(exec into controller pod)
 ----
 + 
 [source,bash,role=execute]
 ----
 oc exec -it $AAP_CONTROLLER_POD -- /bin/bash
-
-awx-manage list_instances
 ----
 
-+ 
+- In the controller pod run:
++
 [source,bash,role=execute]
 ----
-[controlplane capacity=642 policy=100%]
-aap-controller-task-759b6d9759-r59q9 capacity=642 node_type=control
-version=4.6.15 heartbeat="2025-06-12 21:39:48"
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-
-[default capacity=0 policy=100%]
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-node2.example.org capacity=0 node_type=execution version=ansible-runner-2.4.1
-heartbeat="2025-05-30 17:22:08"
-Remove old nodes with awx-manage (leave only aap-controller-task):
+awx-manage list_instances
+----
++
+[source,bash,role=execute]
+----
 awx-manage deprovision_instance --host=node1.example.org
 awx-manage deprovision_instance --host=node2.example.org
 ---- 
-
--  Run curl command to repair hub filesystem data
-+ 
-[source,bash,role=execute]
-----
-curl -d '{\"verify_checksums\": true }' -X POST -k https://<aap
-url>/api/galaxy/pulp/api/v3/repair/ -u <admin_user>:<restored_admin_password>
-----
