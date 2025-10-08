@@ -167,7 +167,31 @@
 scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
 </div>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Let start working on the project aap for the migration.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project aap</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=0; done</code></pre>
+</div>
+</div>
 </li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>OR</strong></p>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Begin by scaling down the AAP deployment using idle_aap:</p>
 <div class="listingblock execute">
@@ -187,6 +211,13 @@ scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/la
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Starting Migration</strong></p>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Scale up the idled Postgres StatefulSet:</p>
 <div class="listingblock execute">
@@ -286,12 +317,8 @@ spec:
 (obtain the pod name and set as an ENV variable)</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo $AAP_TEMP_POSTGRES</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
+echo $AAP_TEMP_POSTGRES</code></pre>
 </div>
 </div>
 </li>
@@ -305,7 +332,7 @@ oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code>
 </div>
 </li>
 <li>
-<p>Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)</p>
+<p><strong>Obtain passwords</strong> Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo
@@ -329,12 +356,8 @@ done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postg
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /tmp/aap-temp-pvc &amp;&amp; ls -l</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sha256sum --check migration_artifact.tar.sha256</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /tmp/aap-temp-pvc &amp;&amp; ls -l
+sha256sum --check migration_artifact.tar.sha256</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
@@ -342,41 +365,43 @@ done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postg
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar xf migration_artifact.tar &amp;&amp; cd migration_artifact &amp;&amp; sha256sum --check sha256sum.txt</code></pre>
 </div>
 </div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Drop the automationcontroller Database and Provide the <code>POSTGRES ADMIN PASSWORD</code> to perform the operation.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(drop controller db)
-dropdb -h aap-postgres-15 automationcontroller (supply postres admin password)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dropdb -h aap-postgres-15 automationcontroller</code></pre>
 </div>
-</div>
-</li>
-</ol>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15
-
-(alter user temporarily with createdb role)
-postgres=# ALTER USER automationcontroller CREATEDB;
-
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER USER automationcontroller CREATEDB;
 postgres=\q</code></pre>
 </div>
 </div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
+</li>
 <li>
-<p>Create a new database called automationcontroller using autoamtion Controller passowrd from <code>aap-controller-postgres-configuration</code>.</p>
+<p>Create a new database called automationcontroller using autoamtion Controller passowrd from <strong>Obtain password</strong> step in config <code>aap-controller-postgres-configuration</code>:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">createdb -h aap-postgres-15 -U automationcontroller automationcontroller</code></pre>
 </div>
 </div>
-</li>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
 <li>
-<p>Revert temporary user permission</p>
+<p>Revert temporary user permission and Provide the <code>POSTGRES ADMIN PASSWORD</code> to perform the operation.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15
@@ -390,18 +415,21 @@ postgres=# \q</code></pre>
 <p>Restoring the database form the migration_artifact directory from the container and please make sure the provide their repecitve database passowrd while resotring the database.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(restore controller db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc
-
-(restore hub db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationhub -d automationhub hub/automationhub.pgc
-
-(restore gateway db)
-pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc
-
-(exit pod)
-exit</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc</code></pre>
 </div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat secrets.yml</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </li>
 </ol>
@@ -411,14 +439,7 @@ exit</code></pre>
 <p>Replace db field encryption secrets:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-controller-secret-key secret_key="&lt;unencoded
-controller_secret_key value from secrets.yml&gt;"
-
-oc set data secret/aap-db-fields-encryption-secret secret_key="&lt;unencoded
-gateway_secret_key value from secrets.yml&gt;"
-
-oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
-&lt;unencoded hub_db_fields_encryption_key value from secrets.yml&gt;"</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-controller-secret-key secret_key="&lt;unencoded controller_secret_key value from secrets.yml&gt;"</code></pre>
 </div>
 </div>
 </li>
@@ -438,18 +459,36 @@ oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
 </ul>
 </div>
 <div class="paragraph">
-<p>Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)</p>
+<p><strong>Migration done</strong></p>
 </div>
 <div class="paragraph">
-<p>+</p>
+<p><strong>Lets Scale the pods up</strong></p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run the below command and wait for 15 minutes to bring the servies up and access the nodes.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=1; done</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>OR</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>Scale AAP back up using idle_aap</p>
 <div class="listingblock execute">
@@ -458,10 +497,10 @@ oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
 </div>
 </div>
 </li>
-</ul>
+</ol>
 </div>
 <div class="paragraph">
-<p>ansibleautomationplatform.aap.ansible.com/aap patched</p>
+<p><strong>Verify you are able to access it via GUI</strong></p>
 </div>
 <div class="ulist">
 <ul>
@@ -474,49 +513,38 @@ pod/aap-gateway-6c989b846c-47b9l 2/2 Running 0 45s</code></pre>
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Once you can access the GUI</strong></p>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>Run aap-gateway-manage to deprovision instances
-(obtain controller pod) export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns=":metadata.name"
-| grep aap-controller-task)</p>
+<p>Run aap-gateway-manage to deprovision instances which are not needed. if there is any:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo $AAP_CONTROLLER_POD
-aap-controller-task-759b6d9759-r59q9
-(exec into controller pod)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns="Name:metadata.name" | grep aap-controller-task)
+echo $AAP_CONTROLLER_POD</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc exec -it $AAP_CONTROLLER_POD -- /bin/bash
-
-awx-manage list_instances</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[controlplane capacity=642 policy=100%]
-aap-controller-task-759b6d9759-r59q9 capacity=642 node_type=control
-version=4.6.15 heartbeat="2025-06-12 21:39:48"
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-
-[default capacity=0 policy=100%]
-node1.example.org capacity=0 node_type=hybrid version=4.6.13 heartbeat="2025-
-05-30 17:22:11"
-node2.example.org capacity=0 node_type=execution version=ansible-runner-2.4.1
-heartbeat="2025-05-30 17:22:08"
-Remove old nodes with awx-manage (leave only aap-controller-task):
-awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc exec -it $AAP_CONTROLLER_POD -- /bin/bash</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Run curl command to repair hub filesystem data</p>
+<p>In the controller pod run:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -d '{\"verify_checksums\": true }' -X POST -k https://&lt;aap
-url&gt;/api/galaxy/pulp/api/v3/repair/ -u &lt;admin_user&gt;:&lt;restored_admin_password&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage list_instances</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage deprovision_instance --host=node1.example.org
+awx-manage deprovision_instance --host=node2.example.org</code></pre>
 </div>
 </div>
 </li>
