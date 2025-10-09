@@ -56,13 +56,13 @@
     <a class="nav-link" href="../chapter1/index.html">Fast-track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
+    <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platform 2.4 to 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platfrom 2.4</a>
+    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platform 2.4</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a>
+    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platform 2.6</a>
   </li>
 </ul>
   </li>
@@ -150,7 +150,25 @@
 <div class="sect1">
 <h2 id="_deleted_inst_might_use_later_in_future"><a class="anchor" href="#_deleted_inst_might_use_later_in_future"></a>deleted inst might use later in future</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Replace db field encryption secrets:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-controller-secret-key secret_key="&lt;unencoded
+controller_secret_key value from secrets.yml&gt;"
 
+oc set data secret/aap-db-fields-encryption-secret secret_key="&lt;unencoded
+gateway_secret_key value from secrets.yml&gt;"
+
+oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
+&lt;unencoded hub_db_fields_encryption_key value from secrets.yml&gt;"</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </article>

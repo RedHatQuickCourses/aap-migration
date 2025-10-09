@@ -57,13 +57,13 @@
     <a class="nav-link" href="../chapter1/index.html">Fast-track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
+    <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platform 2.4 to 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platfrom 2.4</a>
+    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platform 2.4</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a>
+    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platform 2.6</a>
   </li>
 </ul>
   </li>
@@ -160,11 +160,11 @@
 <p>Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.</p>
 </li>
 <li>
-<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems. Make sure to replace the <code>-P &lt;port-number&gt;</code> and hostname according to your <strong>RHDP login</strong>.</p>
+<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems. Make sure to replace hostname according to your <strong>RHDP login</strong>.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
-scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+scp migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
 </div>
 </div>
 </li>
