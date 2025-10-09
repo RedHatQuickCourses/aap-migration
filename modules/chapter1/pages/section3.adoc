@@ -1,4 +1,4 @@
-= Performing Upgrade to Ansible Automation Platfrom 2.6
+= Performing Upgrade to Ansible Automation Platform 2.6
 
 This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of **Ansible Automation Platform 2.6**, featuring a new component called `Unified-ui`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI. 
 

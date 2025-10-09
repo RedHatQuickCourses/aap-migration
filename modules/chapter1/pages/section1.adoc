@@ -1,4 +1,4 @@
-= Upgrade from Ansible Automation platfrom 2.4 to 2.6. 
+= Upgrade from Ansible Automation platform 2.4 to 2.6. 
 
 This comprehensive checklist guides you through the essential steps for a successful Ansible Automation Platform (AAP) upgrade. It covers three key phases: pre-upgrade preparation, execution, and post-upgrade verification, ensuring a smooth transition and reliable platform performance.
 

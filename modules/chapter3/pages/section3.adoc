@@ -1,0 +1,18 @@
+= deleted inst might use in future 
+
+- Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
++ 
+[source,bash,role=execute]
+----
+[ungrouped capacity=0]
+[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z heartbeat="..."
+[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-runner-X.Y.Z heartbeat="..."
+---- 
+
+- Remove those nodes with awx-manage:
++ 
+[source,bash,role=execute]
+----
+awx-manage deprovision_instance --host=node1.example.org
+awx-manage deprovision_instance --host=node2.example.org
+----

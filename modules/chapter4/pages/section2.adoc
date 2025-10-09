@@ -2,12 +2,12 @@
 
 - Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.
 
-- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. Make sure to replace the `-P <port-number>` and hostname according to your *RHDP login*. 
+- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. Make sure to replace hostname according to your *RHDP login*. 
 +
 [source,bash,role=execute]
 ----
-scp -P 30866 migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
-scp -P 30866 migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+scp migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
+scp migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
 ----
 
 - Let start working on the project aap for the migration. 
