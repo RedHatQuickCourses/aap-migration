@@ -19,7 +19,7 @@ oc project aap
 + 
 [source,bash,role=execute]
 ----
-for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=0; done
+for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=0; done
 ----
 
 *OR*
@@ -133,8 +133,7 @@ spec:
 oc create -f aap-temp-postgres.yaml
 ----
 
-- Copy export artifact to temporary postgres pod:
-(obtain the pod name and set as an ENV variable)
+- Obtain the pod name and set as an ENV variable:
 + 
 [source,bash,role=execute]
 ----
@@ -142,7 +141,7 @@ export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.met
 echo $AAP_TEMP_POSTGRES
 ----
 
-- Copy the Created artifact created from *Chapter 2* to this system: 
+- Wait for the pod `aap-temp-postgres-*` to come up `1/1 Ready` and then copy the created artifact created from *Chapter 2* to the postgress temporary container: 
 + 
 [source,bash,role=execute]
 ----
@@ -227,6 +226,11 @@ pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontro
 + 
 [source,bash,role=execute]
 ----
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc
+----
++ 
+[source,bash,role=execute]
+----
 cat secrets.yml  
 ----
 + 
@@ -241,6 +245,12 @@ exit
 ----
 oc set data secret/aap-controller-secret-key secret_key="<unencoded controller_secret_key value from secrets.yml>"
 ---- 
++ 
+[source,bash,role=execute]
+----
+oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
+gateway_secret_key value from secrets.yml>"
+----
 
 - Clean up Temporary Postgres and PVC:
 + 
@@ -262,7 +272,7 @@ oc delete -f aap-temp-pvc.yaml
 + 
 [source,bash,role=execute]
 ----
-for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=1; done
+for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=1; done
 ----
 
 *OR*

@@ -25,6 +25,6 @@ image::form.png[align=left,width=540,height=380]
 
 [[RHDP-Portal-Links]]
 === RHDP Portal Links
-- RedHat associates: https://demo.redhat.com/[https://demo.redhat.com/,window=_blank]
+- RedHat associates: https://integration.demo.redhat.com/catalog?search=fast&item=babylon-catalog-prod%2Fpert.aap2.4-to-aap2.6-migration.prod[Demo.redhat.com,window=_blank]
 - RedHat partners: https://partner.demo.redhat.com/[https://partner.demo.redhat.com/,window=_blank]
 

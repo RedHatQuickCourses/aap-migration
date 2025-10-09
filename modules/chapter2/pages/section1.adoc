@@ -43,6 +43,7 @@ mkdir -p migration_artifact/controller/custom_configs migration_artifact/hub mig
 +
 [source,bash,role=execute]
 ----
+cd migration_artifact
 vi manifest.yml
 ----
 +
@@ -103,6 +104,7 @@ sudo cat /etc/pulp/certs/database_fields.symmetric.key
 [source,bash,role=execute]
 ----
 sudo  grep '^DATABASES' /etc/pulp/settings.py
+exit
 ----
 
 .. Access the *gateway node* and gather the secret key and add to the gateway_secret_key value in `secrets.yml`.
@@ -173,13 +175,6 @@ pg_dump -h database.lab -U automationgateway -d automationgateway --clean --crea
 pg_dump -h database.lab -U automationhub -d automationhub --clean --create -Fc -f hub/automationhub.pgc
 ----
 
-.. Now, let's go to `gateway node` and perfom the activity.
-+
-[source,bash,role=execute]
-----
-ssh gateway.lab  
-----
-
 .. Package the Migration artifact and send it to the system. 
 +
 [source,bash,role=execute]
@@ -190,10 +185,6 @@ cd /home/lab-user/migration_artifact/
 [source,bash,role=execute]
 ----
 [ -f sha256sum.txt ] && rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec sha256sum {} \; >> sha256sum.txt
-----
-+
-[source,bash,role=execute]
-----
 cat sha256sum.txt
 cd ..
 ----
