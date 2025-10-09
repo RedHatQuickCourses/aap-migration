@@ -197,8 +197,7 @@ sha256sum --check migration_artifact.tar.sha256
 tar tvf migration_artifact.tar
 ----
 
-Download the `migration_artifact.tar` and `migration_artifact.tar.sha256` to your local machine or transfer them to the target node with the scp command for that exit the gateway node:
-// Revised suggestion: Download the migration_artifact.tar and migration_artifact.tar.sha256 files to your local machine. To transfer them to the target node with the scp command, you must first exit the gateway node.
+Download the migration_artifact.tar and migration_artifact.tar.sha256 files to your local machine. To transfer them to the target node with the scp command, you must first exit the gateway node.
 
 [source,bash,role=execute]
 ----

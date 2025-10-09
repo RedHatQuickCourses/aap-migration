@@ -1,0 +1,28 @@
+== deleted inst might use later in future
+
+- Replace db field encryption secrets:
++ 
+[source,bash,role=execute]
+----
+oc set data secret/aap-controller-secret-key secret_key="<unencoded
+controller_secret_key value from secrets.yml>"
+
+oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
+gateway_secret_key value from secrets.yml>"
+
+oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
+<unencoded hub_db_fields_encryption_key value from secrets.yml>"
+---- 
+
++ 
+[source,bash,role=execute]
+----
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc
+----
+
++ 
+[source,bash,role=execute]
+----
+oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
+gateway_secret_key value from secrets.yml>"
+----

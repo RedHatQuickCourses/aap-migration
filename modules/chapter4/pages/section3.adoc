@@ -1,15 +1,331 @@
-== deleted inst might use later in future
+= Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6. 
+
+- Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.
+
+video::aap2.6_operator_migration.mp4[align="left",width=800,height=500]
+
+The above video shows how to excute the below mentioed steps and the command outputs:
+
+- After that go to the systems from where you will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. Make sure to replace hostname according to your *RHDP login*. 
++
+[source,bash,role=execute]
+----
+scp migration_artifact.tar lab-user@bastion.69nkb.sandbox3223.opentlc.com:/home/lab-user
+scp migration_artifact.tar.sha256 lab-user@bastion.69nkb.sandbox3223.opentlc.com:/home/lab-user
+----
+
+- Let start working on the project aap for the migration. 
++ 
+[source,bash,role=execute]
+----
+oc project aap
+----
++ 
+[source,bash,role=execute]
+----
+for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=0; done
+----
+
+*OR*
+
+- Begin by scaling down the AAP deployment using idle_aap should be used outside this lab to scale down the aap pods:
++ 
+[source,bash,role=execute]
+----
+oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":true}}'
+----
++
+Wait for component pods to terminate. Only the 6 operator pods will remain running.
+
+- Scale down the AAP Gateway Operator and Controller Operator:
++ 
+[source,bash,role=execute]
+----
+oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
+----
+
+*Starting Migration*
+
+- Scale up the idled Postgres StatefulSet:
++ 
+[source,bash,role=execute]
+----
+oc scale --replicas=1 statefulset.apps/aap-postgres-15
+----
+
+- Create a temporary PVC with appropriate settings and sizing:
++ 
+[source,bash,role=execute]
+----
+vim aap-temp-pvc.yaml
+----
++ 
+[source,bash,role=execute]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aap-temp-pvc
+  namespace: aap
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 75Gi
+----
++
+[source,bash,role=execute]
+----
+oc create -f aap-temp-pvc.yaml
+----
+
+- Obtain existing postgres image to use for temporary deployment and `copy` the image name:
++ 
+[source,bash,role=execute]
+----
+echo $(oc get pod/aap-postgres-15-0 -o jsonpath="{.spec.containers[].image}")
+----
+
+- Create temporary postgres deployment with mounted temporary pvc: aap-temp-postgres.yaml
++ 
+[source,bash,role=execute]
+----
+vim aap-temp-postgres.yaml
+----
++ 
+[source,bash,role=execute]
+----
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: aap-temp-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aap-temp-postgres
+  template:
+    metadata:
+      labels:
+        app: aap-temp-postgres
+    spec:
+      containers:
+        - name: aap-temp-postgres
+          image: <postgres image from previous step>
+          command:
+            - /bin/sh
+            - '-c'
+            - sleep infinity
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: aap-temp-pvc
+              mountPath: /tmp/aap-temp-pvc
+      volumes:
+        - name: aap-temp-pvc
+          persistentVolumeClaim:
+            claimName: aap-temp-pvc
+----
+
++ 
+[source,bash,role=execute]
+----
+oc create -f aap-temp-postgres.yaml
+----
+
+- Obtain the pod name and set as an ENV variable:
++ 
+[source,bash,role=execute]
+----
+export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
+echo $AAP_TEMP_POSTGRES
+----
+
+- Wait for the pod `aap-temp-postgres-*` to come up `1/1 Ready` and then copy the created artifact created from *Chapter 2* to the postgress temporary container: 
++ 
+[source,bash,role=execute]
+----
+oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+----
+
+- *Obtain passwords* Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for the databases and postgres admin password)
++ 
+[source,bash,role=execute]
+----
+echo
+for secret in aap-controller-postgres-configuration aap-gateway-postgres-configuration
+do
+  echo $secret
+  echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
+  echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -d`"
+  echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64 -d`"
+  echo
+done && echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"
+----
+
+- Now `exec` into temporary postgres deployment and cd to the mounted pvc containing copied artifact) 
++ 
+[source,bash,role=execute]
+----
+oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash
+----
++ 
+[source,bash,role=execute]
+----
+cd /tmp/aap-temp-pvc && ls -l
+sha256sum --check migration_artifact.tar.sha256 
+----
++ 
+[source,bash,role=execute]
+----
+tar xf migration_artifact.tar && cd migration_artifact && sha256sum --check sha256sum.txt
+----
+
+. Drop the automationcontroller Database and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
++ 
+[source,bash,role=execute]
+----
+dropdb -h aap-postgres-15 automationcontroller
+----
++ 
+[source,bash,role=execute]
+----
+psql -U postgres -h aap-postgres-15
+----
++ 
+[source,bash,role=execute]
+----
+postgres=# ALTER USER automationcontroller CREATEDB;
+postgres=\q
+----
+
+. Create a new database called automationcontroller using autoamtion Controller passowrd from *Obtain password* step in config `aap-controller-postgres-configuration`:
++ 
+[source,bash,role=execute]
+----
+createdb -h aap-postgres-15 -U automationcontroller automationcontroller
+----
+
+.. Revert temporary user permission and Provide the `POSTGRES ADMIN PASSWORD` to perform the operation.
++ 
+[source,bash,role=execute]
+----
+psql -U postgres -h aap-postgres-15
+
+postgres=# ALTER USER automationcontroller NOCREATEDB;
+postgres=# \q
+----
+
+.. Restoring the database form the migration_artifact directory from the container and please make sure to provide their repecitve database passowrd while resotring the database. 
++ 
+[source,bash,role=execute]
+----
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc
+----
++ 
+[source,bash,role=execute]
+----
+cat secrets.yml  
+----
++ 
+[source,bash,role=execute]
+----
+exit
+----
 
 - Replace db field encryption secrets:
 + 
 [source,bash,role=execute]
 ----
-oc set data secret/aap-controller-secret-key secret_key="<unencoded
-controller_secret_key value from secrets.yml>"
-
-oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded
-gateway_secret_key value from secrets.yml>"
-
-oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="
-<unencoded hub_db_fields_encryption_key value from secrets.yml>"
+oc set data secret/aap-controller-secret-key secret_key="<unencoded controller_secret_key value from secrets.yml>"
 ---- 
+
+- Clean up Temporary Postgres and PVC:
++ 
+[source,bash,role=execute]
+----
+oc delete -f aap-temp-postgres.yaml
+----
++ 
+[source,bash,role=execute]
+----
+oc delete -f aap-temp-pvc.yaml
+---- 
+
+*Migration done*
+
+*Lets Scale the pods up*
+
+. Run the below command and wait for 15 minutes to bring the servies up and access the nodes. 
++ 
+[source,bash,role=execute]
+----
+for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=1; done
+----
+
+*OR*
+
+. Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)
++ 
+[source,bash,role=execute]
+----
+oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager
+---- 
+
+. Scale AAP back up using idle_aap
++ 
+[source,bash,role=execute]
+----
+oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":false}}'
+----
+
+*Verify you are able to access it via GUI*
+
+-  Wait for aap-gateway pod to be running and clean up old service endpoints:
++ 
+[source,bash]
+----
+(wait for pod to be running)
+pod/aap-gateway-6c989b846c-47b9l 2/2 Running 0 45s
+----
+
+*Once you can access the GUI*
+
+-  Run aap-gateway-manage to deprovision instances which are not needed. if there is any:
++ 
+[source,bash,role=execute]
+----
+export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns="Name:metadata.name" | grep aap-controller-task)
+echo $AAP_CONTROLLER_POD
+----
++ 
+[source,bash,role=execute]
+----
+oc exec -it $AAP_CONTROLLER_POD -- /bin/bash
+----
+
+- In the controller pod run:
++
+[source,bash,role=execute]
+----
+awx-manage list_instances
+----
++
+[source,bash,role=execute]
+----
+[controlplane capacity=642 policy=100%]
+	aap-controller-task-854bd464cc-5wf9g capacity=642 node_type=control version=4.7.1 heartbeat="2025-10-09 14:13:10"
+	controller.lab capacity=0 node_type=hybrid version=4.7.1 heartbeat="2025-10-09 09:58:36"
+----
++
+[source,bash,role=execute]
+----
+awx-manage deprovision_instance --host=controller.lab
+---- 
+
+The controller content has been successfully migrated from RPM to the Operator framework.
