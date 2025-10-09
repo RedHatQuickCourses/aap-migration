@@ -55,16 +55,16 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter1/index.html">Fast-Track Ansible Automation Platform Migration</a>
+    <a class="nav-link" href="../chapter1/index.html">Fast-track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section2.html">Ansible automation platfrom 2.4</a>
+    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platfrom 2.4</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible automation platfrom 2.6</a>
+    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a>
   </li>
 </ul>
   </li>
@@ -103,7 +103,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
+    <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP Operator 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter4/section1.html">Operator Deployment LAB</a>
@@ -170,15 +170,15 @@ Your browser does not support the video tag.
 </div>
 </div>
 <div class="paragraph">
-<p>The above video is at 1.75X seed to demostrate the below steps.</p>
+<p>The above video is at 1.75X speed to demostrate the below steps.</p>
 </div>
 <div class="paragraph">
-<p>The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the <code>container.lab</code> system only but you might be having different systems so highlighting which command needs to run on which node:</p>
+<p>The first essential step is to halt the services so we can perform the restore. In  these above mentioned steps, all the components were installed on a single system <code>container.lab</code>, so we will perform all the steps on that machine. However, since your environment may have multiple systems, we will highlight which command needs to be run on which node.</p>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Access the Automation Controller node and run:</p>
+<p>Access the Automation Controller node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop automation-controller-task automation-controller-web automation-controller-rsyslog
@@ -187,7 +187,7 @@ systemctl --user stop receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Hub node and run:</p>
+<p>Access the Automation Hub node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
@@ -195,7 +195,7 @@ systemctl --user stop receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node and run:</p>
+<p>Access the Automation Gateway node and run the following commamd:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop automation-gateway automation-gateway-proxy</code></pre>
@@ -203,7 +203,7 @@ systemctl --user stop receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
+<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop redis-unix redis-tcp</code></pre>
@@ -247,7 +247,7 @@ systemctl --user stop receptor</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>When inside the container, access the database and ensure the users have the CREATEDB role.</p>
+<p>When inside the container, access the database and ensure that the users have the CREATEDB role.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -h localhost -U postgres</code></pre>
@@ -281,12 +281,12 @@ sha256sum --check sha256sum.txt</code></pre>
 </div>
 <div class="paragraph">
 <p>Note:
-The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have show for controller only.</p>
+The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have shown for controller only.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>After the restore, remove the permissions from the user</p>
+<p>After the restore, remove the permissions from the user.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -h localhost -U postgres</code></pre>
@@ -305,11 +305,11 @@ postgres=# \q</code></pre>
 </div>
 </li>
 <li>
-<p>All the below services needs to be started again on all the nodes:</p>
+<p>All the below services need to be started again on all the nodes:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Access the Automation Controller node and run:</p>
+<p>Access the Automation Controller node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user start automation-controller-task automation-controller-web automation-controller-rsyslog
@@ -318,7 +318,7 @@ systemctl --user start receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Hub node and run:</p>
+<p>Access the Automation Hub node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2</code></pre>
@@ -326,7 +326,7 @@ systemctl --user start receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node and run:</p>
+<p>Access the Automation Gateway node and run the following commamd:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user start automation-gateway automation-gateway-proxy</code></pre>
@@ -381,7 +381,7 @@ ServiceCluster.objects.all().delete()
 <p>Re-run the containerized installer on the target environment using the same inventory from the installation.</p>
 </li>
 <li>
-<p>Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
+<p>Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-controller-task bash
@@ -407,7 +407,7 @@ cat external_ip</code></pre>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section1.html">Making Target Environment Ready</a></span>
-  <span class="next"><a href="../chapter4/index.html">AAP RPM 2.6 to AAP operator 2.6</a></span>
+  <span class="next"><a href="../chapter4/index.html">AAP RPM 2.6 to AAP Operator 2.6</a></span>
 </nav>
 </article>
   </div>

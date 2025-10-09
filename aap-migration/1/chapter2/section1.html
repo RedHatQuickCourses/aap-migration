@@ -55,16 +55,16 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter1/index.html">Fast-Track Ansible Automation Platform Migration</a>
+    <a class="nav-link" href="../chapter1/index.html">Fast-track Ansible Automation Platform Migration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter1/section1.html">Upgrade from Ansible Automation platfrom 2.4 to 2.6.</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section2.html">Ansible automation platfrom 2.4</a>
+    <a class="nav-link" href="../chapter1/section2.html">Ansible Automation Platfrom 2.4</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible automation platfrom 2.6</a>
+    <a class="nav-link" href="../chapter1/section3.html">Performing Upgrade to Ansible Automation Platfrom 2.6</a>
   </li>
 </ul>
   </li>
@@ -103,7 +103,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP operator 2.6</a>
+    <a class="nav-link" href="../chapter4/index.html">AAP RPM 2.6 to AAP Operator 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../chapter4/section1.html">Operator Deployment LAB</a>
@@ -156,7 +156,7 @@
 <article class="doc">
 <h1 class="page">Migration Artifact Collection LAB</h1>
 <div class="paragraph">
-<p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or Operator based Deployment. It should be organized as follows:</p>
+<p>The migration artifact is a complete bundle of all the components you need to successfully move your AAP deployment from an RPM-based installation to either container or operator-based deployment. It should be organized as follows:</p>
 </div>
 <div class="videoblock text-left">
 <div class="content">
@@ -184,7 +184,7 @@ Your browser does not support the video tag.
 <p>Artifact Structure</p>
 </div>
 <div class="paragraph">
-<p>The below architecture we will be creating so that it can be further moved to the Environment either for the migration of Container or Operator based deployment.</p>
+<p>In the below architecture we will be creating so that it can be further moved to the environment either for the migration of container or operator-based deployment.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -230,7 +230,7 @@ components:
 </div>
 </li>
 <li>
-<p>Edit <code>secrets.yml</code> file which will be containg the below information as this is different for every environment so create it accordingly.</p>
+<p>Edit <code>secrets.yml</code> file to include the following information. Since this data is unique to each environment, please configure the values accordingly.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">controller_pg_database: &lt;redacted&gt;
@@ -282,7 +282,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 </div>
 </li>
 <li>
-<p>On the Hub node you can run the below command to get the database realted information which will be used later to take backup.</p>
+<p>On the Hub node you can run the below command to get the database-related information which will be later used to take backup.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  grep '^DATABASES' /etc/pulp/settings.py</code></pre>
@@ -304,7 +304,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>On the <strong>gateway node</strong> you can run the below command to get the database realted information which will be used later to take backup:</p>
+<p>On the <strong>gateway node</strong> you can run the below command to get the database-related information which will be later used to take backup:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  aap-gateway-manage print_settings | grep '^DATABASES'</code></pre>
@@ -325,7 +325,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Access the <strong>controller node</strong> you can run the below command to get the database realted information which will be used later to take backup:</p>
+<p>Accessing the <strong>controller node</strong> you can run the below command to get the database-related information which will be used later to take backup:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo awx-manage print_settings | grep '^DATABASES'</code></pre>
@@ -333,7 +333,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong> run the below commands to create the databases <strong>backup</strong>. and Make sure you are a <code>sudo user</code> and the database password is same as of previous chapter i.e. <strong>redhat</strong> for all databases.</p>
+<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong> run the below commands to create the database <strong>backup</strong>. Also, make sure that you are a <code>sudo user</code> and the database password is same as that of the previous chapter i.e. <strong>redhat</strong> for all databases.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">using the below format to create command:
@@ -370,7 +370,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Now let&#8217;s go to <code>gateway node</code> and perfom the activity.</p>
+<p>Now, let&#8217;s go to <code>gateway node</code> and perfom the activity.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gateway.lab</code></pre>
@@ -407,7 +407,7 @@ tar tvf migration_artifact.tar</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>Download the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to your local machine or transfer to the target node with the scp command for that exit the gateway node:</p>
+<p>Download the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to your local machine or transfer them to the target node with the scp command for that exit the gateway node:</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
