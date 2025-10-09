@@ -212,7 +212,8 @@ Your browser does not support the video tag.
 <p>Edit the manifest.yml file using the vi command. This file is for reference only; it shows the backup version we are collecting.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi manifest.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd migration_artifact
+vi manifest.yml</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
@@ -285,7 +286,8 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <p>On the Hub node you can run the below command to get the database-related information which will be later used to take backup.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  grep '^DATABASES' /etc/pulp/settings.py</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  grep '^DATABASES' /etc/pulp/settings.py
+exit</code></pre>
 </div>
 </div>
 </li>
@@ -370,14 +372,6 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Now, let&#8217;s go to <code>gateway node</code> and perfom the activity.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh gateway.lab</code></pre>
-</div>
-</div>
-</li>
-<li>
 <p>Package the Migration artifact and send it to the system.</p>
 <div class="listingblock execute">
 <div class="content">
@@ -386,12 +380,8 @@ file.</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[ -f sha256sum.txt ] &amp;&amp; rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec sha256sum {} \; &gt;&gt; sha256sum.txt</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat sha256sum.txt
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[ -f sha256sum.txt ] &amp;&amp; rm -f sha256sum.txt; find . -type f -name "*.pgc" -exec sha256sum {} \; &gt;&gt; sha256sum.txt
+cat sha256sum.txt
 cd ..</code></pre>
 </div>
 </div>

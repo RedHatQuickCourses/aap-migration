@@ -177,7 +177,7 @@ scp migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</c
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=0; done</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=0; done</code></pre>
 </div>
 </div>
 </li>
@@ -309,8 +309,7 @@ spec:
 </div>
 </li>
 <li>
-<p>Copy export artifact to temporary postgres pod:
-(obtain the pod name and set as an ENV variable)</p>
+<p>Obtain the pod name and set as an ENV variable:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
@@ -319,7 +318,7 @@ echo $AAP_TEMP_POSTGRES</code></pre>
 </div>
 </li>
 <li>
-<p>Copy the Created artifact created from <strong>Chapter 2</strong> to this system:</p>
+<p>Wait for the pod <code>aap-temp-postgres-<strong></code> to come up <code>1/1 Ready</code> and then copy the created artifact created from *Chapter 2</strong> to the postgress temporary container:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
@@ -411,6 +410,11 @@ postgres=# \q</code></pre>
 </div>
 <div class="listingblock execute">
 <div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat secrets.yml</code></pre>
 </div>
 </div>
@@ -431,6 +435,12 @@ postgres=# \q</code></pre>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-controller-secret-key secret_key="&lt;unencoded controller_secret_key value from secrets.yml&gt;"</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-db-fields-encryption-secret secret_key="&lt;unencoded
+gateway_secret_key value from secrets.yml&gt;"</code></pre>
 </div>
 </div>
 </li>
@@ -461,7 +471,7 @@ postgres=# \q</code></pre>
 <p>Run the below command and wait for 15 minutes to bring the servies up and access the nodes.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for r in $(oc get deploy,statefulset -n aap -o name); do oc scale $r -n aap --replicas=1; done</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=1; done</code></pre>
 </div>
 </div>
 </li>
