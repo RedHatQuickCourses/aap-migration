@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6. :: Fast-Track Ansible Automation Platform Migration</title>
+    <title>Operator Deployment LAB :: Fast-Track Ansible Automation Platform Migration</title>
     <link rel="prev" href="section1.html">
+    <link rel="next" href="section3.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -105,10 +106,13 @@
     <a class="nav-link" href="index.html">AAP RPM 2.6 to AAP Operator 2.6</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section1.html">Operator Deployment LAB</a>
+    <a class="nav-link" href="section1.html">section1.adoc</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section2.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="section2.html">Operator Deployment LAB</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
   </li>
 </ul>
   </li>
@@ -144,7 +148,7 @@
   <ul>
     <li><a href="../index.html">Fast-Track Ansible Automation Platform Migration</a></li>
     <li><a href="index.html">AAP RPM 2.6 to AAP Operator 2.6</a></li>
-    <li><a href="section2.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a></li>
+    <li><a href="section2.html">Operator Deployment LAB</a></li>
   </ul>
 </nav>
 </div>
@@ -153,406 +157,80 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</h1>
-<div class="ulist">
-<ul>
-<li>
-<p>Prior to initiating the migration, validate that the source environment is stable and operational, and perform a full backup of the application.</p>
-</li>
-<li>
-<p>After that go to the systems from where you will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems. Make sure to replace hostname according to your <strong>RHDP login</strong>.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar lab-user@ssh.ocpv06.rhdp.net:/home/lab-user
-scp migration_artifact.tar.sha256 lab-user@ssh.ocpv06.rhdp.net:/home/lab-user</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Let start working on the project aap for the migration.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project aap</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=0; done</code></pre>
-</div>
-</div>
-</li>
-</ul>
+<h1 class="page">Operator Deployment LAB</h1>
+<div class="paragraph">
+<p>We will be using <strong>Product Enablement AAP Operator Deployment lab</strong> LAB for this deployment. Please be aware that setting up a operator lab will take about fifty minutes. Following that, you can proceed with the installation procedures:</p>
 </div>
 <div class="paragraph">
-<p><strong>OR</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Begin by scaling down the AAP deployment using idle_aap:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":true}}'</code></pre>
-</div>
+<p>The following video will provide the step-by-step guide for installing the Ansible Automation Platform 2.6 operator:</p>
 </div>
 <div class="paragraph">
-<p>Wait for component pods to terminate. Only the 6 operator pods will remain running.</p>
-</div>
-</li>
-<li>
-<p>Scale down the AAP Gateway Operator and Controller Operator:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=0 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Starting Migration</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Scale up the idled Postgres StatefulSet:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=1 statefulset.apps/aap-postgres-15</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Create a temporary PVC with appropriate settings and sizing:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vim aap-temp-pvc.yaml</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: aap-temp-pvc
-  namespace: aap
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 75Gi</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-pvc.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Obtain existing postgres image to use for temporary deployment and <code>copy</code> the image name:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo $(oc get pod/aap-postgres-15-0 -o jsonpath="{.spec.containers[].image}")</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Create temporary postgres deployment with mounted temporary pvc: aap-temp-postgres.yaml</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vim aap-temp-postgres.yaml</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">---
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: aap-temp-postgres
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: aap-temp-postgres
-  template:
-    metadata:
-      labels:
-        app: aap-temp-postgres
-    spec:
-      containers:
-        - name: aap-temp-postgres
-          image: &lt;postgres image from previous step&gt;
-          command:
-            - /bin/sh
-            - '-c'
-            - sleep infinity
-          imagePullPolicy: Always
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-          volumeMounts:
-            - name: aap-temp-pvc
-              mountPath: /tmp/aap-temp-pvc
-      volumes:
-        - name: aap-temp-pvc
-          persistentVolumeClaim:
-            claimName: aap-temp-pvc</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f aap-temp-postgres.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Obtain the pod name and set as an ENV variable:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
-echo $AAP_TEMP_POSTGRES</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Wait for the pod <code>aap-temp-postgres-<strong></code> to come up <code>1/1 Ready</code> and then copy the created artifact created from *Chapter 2</strong> to the postgress temporary container:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc cp migration_artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
-oc cp migration_artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p><strong>Obtain passwords</strong> Restore databases to AAP postgres using temporary postgres: (obtain postgres passwords for all 3 databases and postgres admin password)</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo
-for secret in aap-controller-postgres-configuration aap-gateway-postgres-configuration
-do
-  echo $secret
-  echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
-  echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -d`"
-  echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64 -d`"
-  echo
-done &amp;&amp; echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Now <code>exec</code> into temporary postgres deployment and cd to the mounted pvc containing copied artifact)</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc exec -it deployment.apps/aap-temp-postgres -- /bin/bash</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /tmp/aap-temp-pvc &amp;&amp; ls -l
-sha256sum --check migration_artifact.tar.sha256</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">tar xf migration_artifact.tar &amp;&amp; cd migration_artifact &amp;&amp; sha256sum --check sha256sum.txt</code></pre>
-</div>
+<p>All the followed steps in the video are shared below:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Drop the automationcontroller Database and Provide the <code>POSTGRES ADMIN PASSWORD</code> to perform the operation.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dropdb -h aap-postgres-15 automationcontroller</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER USER automationcontroller CREATEDB;
-postgres=\q</code></pre>
-</div>
-</div>
+<p>Log in to the Red Hat OpenShift Container Platform.</p>
 </li>
 <li>
-<p>Create a new database called automationcontroller using autoamtion Controller passowrd from <strong>Obtain password</strong> step in config <code>aap-controller-postgres-configuration</code>:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">createdb -h aap-postgres-15 -U automationcontroller automationcontroller</code></pre>
-</div>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Revert temporary user permission and Provide the <code>POSTGRES ADMIN PASSWORD</code> to perform the operation.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -U postgres -h aap-postgres-15
-
-postgres=# ALTER USER automationcontroller NOCREATEDB;
-postgres=# \q</code></pre>
-</div>
-</div>
+<p>Navigate to Operators OperatorHub.</p>
 </li>
 <li>
-<p>Restoring the database form the migration_artifact directory from the container and please make sure to provide their repecitve database passowrd while resotring the database.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U automationcontroller -d automationcontroller controller/automationcontroller.pgc</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/automationgateway.pgc</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat secrets.yml</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
-</div>
-</div>
+<p>Search for <strong>Ansible Automation Platform</strong> and click <strong>Install</strong>.</p>
+</li>
+<li>
+<p>Select a <strong>stable-2.6</strong>.</p>
+</li>
+<li>
+<p>Select namespace as default which will be <strong>aap</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Install</strong>.</p>
+</li>
+<li>
+<p>Go to <strong>Installed Operators</strong> and there you will see <strong>Ansible Automation Platform</strong> operator installed click on it.</p>
+</li>
+<li>
+<p>Select project as <strong>aap</strong> if it&#8217;s not aap.</p>
 </li>
 </ol>
 </div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Replace db field encryption secrets:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-controller-secret-key secret_key="&lt;unencoded controller_secret_key value from secrets.yml&gt;"</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc set data secret/aap-db-fields-encryption-secret secret_key="&lt;unencoded
-gateway_secret_key value from secrets.yml&gt;"</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Clean up Temporary Postgres and PVC:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-postgres.yaml</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f aap-temp-pvc.yaml</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
 <div class="paragraph">
-<p><strong>Migration done</strong></p>
-</div>
-<div class="paragraph">
-<p><strong>Lets Scale the pods up</strong></p>
+<p>oc scale --replicas=0 deployment automation-hub-operator-controller-manager</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Run the below command and wait for 15 minutes to bring the servies up and access the nodes.</p>
-<div class="listingblock execute">
+<p>Then scroll to the option <strong>Ansible Automation Platform</strong> and click on <strong>Create instance</strong> which will deploy all the components of <strong>aap</strong>.</p>
+</li>
+<li>
+<p>Provide the <strong>Name</strong> = <strong>aap</strong> on which will be used to create the resources for that <strong>AAP</strong> like network routes,secrets.</p>
+<div class="literalblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for d in $(oc get deploy -n aap -o name); do oc scale $d -n aap --replicas=1; done</code></pre>
+<pre>Note: There are many other options that we can customize according to the requirement but in this we will be taking care of very basic deployment.</pre>
 </div>
 </div>
+</li>
+<li>
+<p>Click on <strong>Create</strong> it will deploy the resournces which will take around 20 minutes.</p>
+</li>
+<li>
+<p>On openshift dashboard <strong>Click on</strong> Networking and then routes and click on the <strong>ansible</strong> route or the <strong>Name</strong> given in Step 10 above.</p>
+</li>
+<li>
+<p>On openshift dashboard go to <strong>Workloads</strong> and then <strong>Secrets</strong> and search for <strong>admin</strong> . Click on it and copy the <strong>password</strong>.</p>
+</li>
+<li>
+<p>Provide the <strong>Red Hat login ID</strong> to get the subscription for attaching it to the AAP and <strong>60-day subscription to Red Hat Ansible® Automation Platform</strong> or <strong>Red Hat Developer Subscription for Individuals</strong> subscription can be used for this lab.</p>
+</li>
+<li>
+<p>Submit it and run the <strong>Project sync</strong> of the <strong>Demo project</strong> to confirm that the job is getting executed.</p>
 </li>
 </ol>
-</div>
-<div class="paragraph">
-<p><strong>OR</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Scale the Gateway and Controller Operators back up and wait for the gateway operator reconciliation loop to complete (postgres statefulset will be set back to idle)</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale --replicas=1 deployment aap-gateway-operator-controller-manager automation-controller-operator-controller-manager</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Scale AAP back up using idle_aap</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc patch ansibleautomationplatform aap --type=merge -p '{"spec":{"idle_aap":false}}'</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Verify you are able to access it via GUI</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Wait for aap-gateway pod to be running and clean up old service endpoints:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">(wait for pod to be running)
-pod/aap-gateway-6c989b846c-47b9l 2/2 Running 0 45s</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Once you can access the GUI</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Run aap-gateway-manage to deprovision instances which are not needed. if there is any:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AAP_CONTROLLER_POD=$(oc get pods --no-headers -o  custom-columns="Name:metadata.name" | grep aap-controller-task)
-echo $AAP_CONTROLLER_POD</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc exec -it $AAP_CONTROLLER_POD -- /bin/bash</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>In the controller pod run:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage list_instances</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</code></pre>
-</div>
-</div>
-</li>
-</ul>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="section1.html">Operator Deployment LAB</a></span>
+  <span class="prev"><a href="section1.html">section1.adoc</a></span>
+  <span class="next"><a href="section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a></span>
 </nav>
 </article>
   </div>
