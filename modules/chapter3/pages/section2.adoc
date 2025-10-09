@@ -4,11 +4,11 @@
 
 video::container_migration.mp4[align="left",width=800,height=500]
 
-The above video is at 1.75X seed to demostrate the below steps.
+The above video is at 1.75X speed to demostrate the below steps.
 
-The first essential step is to halt the services so we can perform the restore. As we have perfomed the Installation of all the comonenets on a single systems itslef so we are going to perfom all the below steps on the `container.lab` system only but you might be having different systems so highlighting which command needs to run on which node: 
+The first essential step is to halt the services so we can perform the restore. In  these above mentioned steps, all the components were installed on a single system `container.lab`, so we will perform all the steps on that machine. However, since your environment may have multiple systems, we will highlight which command needs to be run on which node.
 
-.. Access the Automation Controller node and run:
+.. Access the Automation Controller node and run the following command:
 +
 [source,bash,role=execute]
 ----
@@ -16,21 +16,21 @@ systemctl --user stop automation-controller-task automation-controller-web autom
 systemctl --user stop receptor
 ----
 
-.. Access the Automation Hub node and run:
+.. Access the Automation Hub node and run the following command:
 +
 [source,bash,role=execute]
 ----
 systemctl --user stop automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
 ----
 
-.. Access the Automation Gateway node and run:
+.. Access the Automation Gateway node and run the following commamd:
 +
 [source,bash,role=execute]
 ----
 systemctl --user stop automation-gateway automation-gateway-proxy
 ----
 
-.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:
+.. Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run the following command:
 +
 [source,bash,role=execute]
 ----
@@ -59,7 +59,7 @@ Once executed, this command will provide you with a shell inside the container, 
 
 *Create a DB role* 
 
-- When inside the container, access the database and ensure the users have the CREATEDB role.
+- When inside the container, access the database and ensure that the users have the CREATEDB role.
 +
 [source,bash,role=execute]
 ----
@@ -88,9 +88,9 @@ pg_restore --clean --create --no-owner -h localhost -U awx -d template1 controll
 ----
 
 Note: 
-The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have show for controller only.  
+The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have shown for controller only.  
 
-- After the restore, remove the permissions from the user
+- After the restore, remove the permissions from the user.
 +
 [source,bash,role=execute]
 ----
@@ -108,9 +108,9 @@ postgres=# \q
 exit
 ----
 
-- All the below services needs to be started again on all the nodes: 
+- All the below services need to be started again on all the nodes: 
 
-.. Access the Automation Controller node and run:
+.. Access the Automation Controller node and run the following command:
 + 
 [source,bash,role=execute]
 ----
@@ -118,14 +118,14 @@ systemctl --user start automation-controller-task automation-controller-web auto
 systemctl --user start receptor
 ----
 
-.. Access the Automation Hub node and run:
+.. Access the Automation Hub node and run the following command:
 + 
 [source,bash,role=execute]
 ----
 systemctl --user start automation-hub-api automation-hub-content automation-hub-web automation-hub-worker-1 automation-hub-worker-2
 ----
 
-.. Access the Automation Gateway node and run:
+.. Access the Automation Gateway node and run the following commamd:
 + 
 [source,bash,role=execute]
 ----
@@ -169,7 +169,7 @@ exit
 
 - Re-run the containerized installer on the target environment using the same inventory from the installation.
 
-- Validate Instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
+- Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
 + 
 [source,bash,role=execute]
 ----

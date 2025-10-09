@@ -2,7 +2,7 @@
 
 The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.
 
-In the larger context of Ansible Automation Platform 2.5 Migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
+In the larger context of Ansible Automation Platform 2.5 migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
 
 . Preparing and assessing the source environment.
 . Exporting the source environment, which includes creating the migration artifact.
@@ -44,7 +44,7 @@ The `manifest.yml` file acts as the primary metadata document for the migration 
 
 The `secrets.yml` file within the migration artifact is vital as it contains essential Django `SECRET_KEY values and other sensitive data` required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.
 
-Its structure contains redacted values for:
+It's structure contains redacted values for:
 
 - controller_pg_database
 - controller_secret_key

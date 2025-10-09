@@ -1,4 +1,4 @@
-= Fast-Track Ansible Automation Platform Migration
+= Fast-track Ansible Automation Platform Migration
 
 This training focuses only on migrating the main components of Ansible Automation Platform. You'll need to manually re-create or re-import the following items in your new environment:
 
@@ -14,7 +14,7 @@ So this course is divided into multiple sections:
 
 - First we will talk about a simple upgrade from `AAP 2.4` to `AAP 2.6 RPM` 
 - Then we talk about migrating `AAP 2.6 RPM` to `AAP 2.6 Containerized`. 
-- Then we talk about migrating `AAP 2.6 RPM` to `AAP 2.6 Operator`. 
+- Later, we talk about migrating `AAP 2.6 RPM` to `AAP 2.6 Operator`. 
 
 
 
