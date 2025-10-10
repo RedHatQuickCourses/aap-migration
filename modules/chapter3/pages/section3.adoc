@@ -2,6 +2,66 @@
 
 
 
+. Lets correct the secret for Controller component and before that gather the current resource secret values for each component: :
++ 
+[source,bash,role=execute]
+----
+podman exec -it automation-gateway bash -c 'aap-gateway-manage shell_plus --quiet -c "[print(cl.name, key.secret) for cl in ServiceCluster.objects.all() for key in cl.service_keys.all()]"'
+----
++ 
+[source,bash,role=execute]
+----
+for secret_name in controller_resource_server
+do
+echo $secret_name
+podman secret inspect $secret_name --showsecret | grep SecretData
+done
+----
+
+. Remove the old secret and add the once from the artifact directory:
++
+[source,bash,role=execute]
+----
+podman secret rm controller_resource_server
+----
++
+[source,bash,role=execute]
+----
+cat /home/lab-user/migration_artifact/secrets.yml
+----
++
+[source,bash,role=execute]
+----
+echo "secret_value" | podman secret create controller_resource_server -
+----
+
+- Re-run the containerized installer on the target environment using the same inventory from the installation.
+
+- Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
++ 
+[source,bash,role=execute]
+----
+podman exec -it automation-controller-task bash
+----
++ 
+[source,bash,role=execute]
+----
+awx-manage list_instances
+----
++ 
+[source,bash,role=execute]
+----
+exit
+----
+
+- Migration successful! Your new deployment is ready to go.
++
+[source,bash,role=execute]
+----
+cd
+cat external_ip
+----
+
 
 
 
