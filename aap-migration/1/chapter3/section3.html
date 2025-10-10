@@ -155,8 +155,74 @@
 </aside>
 <article class="doc">
 <h1 class="page">deleted inst might use in future</h1>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Lets correct the secret for Controller component and before that gather the current resource secret values for each component: :</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-gateway bash -c 'aap-gateway-manage shell_plus --quiet -c "[print(cl.name, key.secret) for cl in ServiceCluster.objects.all() for key in cl.service_keys.all()]"'</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for secret_name in controller_resource_server
+do
+echo $secret_name
+podman secret inspect $secret_name --showsecret | grep SecretData
+done</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Remove the old secret and add the once from the artifact directory:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman secret rm controller_resource_server</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat /home/lab-user/migration_artifact/secrets.yml</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "secret_value" | podman secret create controller_resource_server -</code></pre>
+</div>
+</div>
 <div class="ulist">
 <ul>
+<li>
+<p>Re-run the containerized installer on the target environment using the same inventory from the installation.</p>
+</li>
+<li>
+<p>Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-controller-task bash</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage list_instances</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Migration successful! Your new deployment is ready to go.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd
+cat external_ip</code></pre>
+</div>
+</div>
+</li>
 <li>
 <p>Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:</p>
 <div class="listingblock execute">
@@ -177,6 +243,9 @@ awx-manage deprovision_instance --host=node2.example.org</code></pre>
 </div>
 </li>
 </ul>
+</div>
+</li>
+</ol>
 </div>
 </article>
   </div>
