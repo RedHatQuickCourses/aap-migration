@@ -328,4 +328,4 @@ awx-manage list_instances
 awx-manage deprovision_instance --host=controller.lab
 ---- 
 
-The controller content has been successfully migrated from RPM to the Operator framework.
+The migration of the RPM controller to a Operator framework is complete. Comprehensive information regarding the migration process for additional components is available in the https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/html/ansible_automation_platform_migration/target_environment#target-ocp[Ansible Automation Platform technical documentation,windows=_blank].

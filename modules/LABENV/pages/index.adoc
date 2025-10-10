@@ -6,6 +6,7 @@
 . **Search** for the catalog entry: **Fast-track Ansible Automation Platform Migration**.
 +
 image::lab.png[align=left,width=540,height=380]
+
 . **Click** on the catalog entry in the search results.
 . On the catalog page, **click** the **Order** button.
 . **Fill out** the required details in the order form.

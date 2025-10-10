@@ -47,6 +47,7 @@ The following command starts a temporary container named postgresql_restore_temp
 +
 [source,bash,role=execute]
 ----
+cd
 tar xf migration_artifact.tar
 ----
 +
@@ -108,7 +109,7 @@ postgres=# \q
 exit
 ----
 
-- All the below services need to be started again on all the nodes: 
+- All the below services need to be started again on all the nodes currently we will run the below on the same node as we have followed a `All-in-one` pattern for deployment: 
 
 .. Access the Automation Controller node and run the following command:
 + 
@@ -139,14 +140,18 @@ systemctl --user start automation-gateway automation-gateway-proxy
 systemctl --user start redis-unix redis-tcp
 ----
 
-*Target Environment Post-Import Reconciliation*
 
+*Target Environment Post-Import Reconciliation*
 
 - Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
 + 
 [source,bash,role=execute]
 ----
 podman exec -it automation-gateway bash
+----
++ 
+[source,bash,role=execute]
+----
 aap-gateway-manage migrate
 ----
 + 
@@ -157,8 +162,7 @@ aap-gateway-manage shell_plus
 + 
 [source,bash,role=execute]
 ----
->>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();
-ServiceCluster.objects.all().delete()
+>>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();ServiceCluster.objects.all().delete()
 >>> CTRL+D <-- to exit
 ---- 
 + 
@@ -167,13 +171,40 @@ ServiceCluster.objects.all().delete()
 exit
 ----
 
+- There might be a bug in this file so please remove the last line if it matched: 
++
+[source,bash,role=execute]
+----
+vim /home/lab-user/ansible-automation-platform-containerized-setup-bundle-2.6-1-x86_64/collections/ansible_collections/ansible/containerized_installer/roles/automationcontroller/tasks/postgresql.yml
+----
++
+[source,bash,role=execute]
+----
+remove or comment out this line
+#  when: _controller_db_info.query_result[0].datcollversion is version('2.34', '<')
+----
+
 - Re-run the containerized installer on the target environment using the same inventory from the installation.
++
+[source,bash,role=execute]
+----
+cd <ansible_automation_platform-install dir>
+----
++
+[source,bash,role=execute]
+----
+ansible-playbook -i inventory-growth ansible.containerized_installer.install -e @../migration_artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'" 
+----
 
 - Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:
 + 
 [source,bash,role=execute]
 ----
 podman exec -it automation-controller-task bash
+----
++ 
+[source,bash,role=execute]
+----
 awx-manage list_instances
 ----
 + 
@@ -189,3 +220,5 @@ exit
 cd
 cat external_ip
 ----
+
+The migration of the RPM controller to a container-based deployment is complete. Comprehensive information regarding the migration process for additional components is available in the https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/html/ansible_automation_platform_migration/target_environment#target-containerized[Ansible Automation Platform technical documentation,windows=_blank].

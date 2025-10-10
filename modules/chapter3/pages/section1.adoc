@@ -21,6 +21,7 @@ ssh container.lab
 +
 [source,bash,role=execute]
 ----
+tar xf migration_artifact.tar
 sudo dnf install -y wget git-core rsync vim ansible-core
 ----
  
@@ -64,7 +65,7 @@ Note: Please click this link to learn how to use https://www.geeksforgeeks.org/b
 +
 [source,bash,role=execute]
 ----
-ansible-playbook -i inventory-growth ansible.containerized_installer.install
+ansible-playbook -i inventory-growth ansible.containerized_installer.install -e @../migration_artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'" 
 ----
 
 . Use the user *admin* and the *password* set during the time of installation. In the above video I have set it to *redhat*. 

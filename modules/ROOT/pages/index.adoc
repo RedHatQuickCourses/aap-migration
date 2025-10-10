@@ -16,8 +16,7 @@ You’ll learn how to:
 ✔ Troubleshoot common issues and validate post-migration functionality.
 
 
-Duration: FIXME hours
-// Can you please add the duration?
+Duration: 4 hours
 
 == Objectives
 

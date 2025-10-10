@@ -1,5 +1,10 @@
 = deleted inst might use in future 
 
+
+
+
+
+
 - Find nodes which are no longer part of this cluster. A good indicator are nodes with 0 capacity as they have failed their health checks:
 + 
 [source,bash,role=execute]

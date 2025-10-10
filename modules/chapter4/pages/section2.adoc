@@ -19,9 +19,6 @@ All the followed steps in the video are shared below:
 
 . Select project as *aap* if it's not aap. 
 
-
-oc scale --replicas=0 deployment automation-hub-operator-controller-manager
-
 . Then scroll to the option *Ansible Automation Platform* and click on *Create instance* which will deploy all the components of *aap*.
 
 . Provide the *Name* = *aap* on which will be used to create the resources for that *AAP* like network routes,secrets. 
@@ -34,6 +31,6 @@ oc scale --replicas=0 deployment automation-hub-operator-controller-manager
 
 . On openshift dashboard go to *Workloads* and then *Secrets* and search for *admin* . Click on it and copy the *password*. 
 
-. Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab.  
+. Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab or you can provide the *Manifest file* for activating Ansible Automation paltform.
 
 . Submit it and run the *Project sync* of the *Demo project* to confirm that the job is getting executed.
