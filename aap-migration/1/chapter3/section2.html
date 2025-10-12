@@ -353,6 +353,16 @@ systemctl --user start receptor</code></pre>
 <div class="paragraph">
 <p><strong>Target Environment Post-Import Reconciliation</strong></p>
 </div>
+<div class="paragraph">
+<p>Learn how to perform the <strong>Post-Import Reconciliation</strong> in this video so you can successfully execute the job on the <strong>Unified UI</strong>.</p>
+</div>
+<div class="videoblock text-left">
+<div class="content">
+<video src="_images/container_migration_post.mp4" width="800" height="500" controls>
+Your browser does not support the video tag.
+</video>
+</div>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -385,10 +395,15 @@ systemctl --user start receptor</code></pre>
 </div>
 </li>
 <li>
-<p>There might be a bug in this file so please remove the last line if it matched:</p>
+<p>There might be a bug in your Installer file so please remove the last line if it matches:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vim /home/lab-user/ansible-automation-platform-containerized-setup-bundle-2.6-1-x86_64/collections/ansible_collections/ansible/containerized_installer/roles/automationcontroller/tasks/postgresql.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd &lt;ansible_automation_platform-install dir&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vim collections/ansible_collections/ansible/containerized_installer/roles/automationcontroller/tasks/postgresql.yml</code></pre>
 </div>
 </div>
 <div class="listingblock execute">
@@ -400,11 +415,6 @@ systemctl --user start receptor</code></pre>
 </li>
 <li>
 <p>Re-run the containerized installer on the target environment using the same inventory from the installation.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd &lt;ansible_automation_platform-install dir&gt;</code></pre>
-</div>
-</div>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ansible-playbook -i inventory-growth ansible.containerized_installer.install -e @../migration_artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"</code></pre>

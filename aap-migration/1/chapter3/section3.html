@@ -155,6 +155,39 @@
 </aside>
 <article class="doc">
 <h1 class="page">deleted inst might use in future</h1>
+<div class="paragraph">
+<p><strong>Target Environment Post-Import Reconciliation</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-gateway bash</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap-gateway-manage migrate</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aap-gateway-manage shell_plus</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">&gt;&gt;&gt; HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();ServiceCluster.objects.all().delete()
+&gt;&gt;&gt; CTRL+D &lt;-- to exit</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exit</code></pre>
+</div>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -188,8 +221,17 @@ done</code></pre>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "secret_value" | podman secret create controller_resource_server -</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "secret_value" | podman secret create &lt;SECRET_NAME&gt; -</code></pre>
 </div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -228,8 +270,7 @@ cat external_ip</code></pre>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[ungrouped capacity=0]
-[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z heartbeat="..."
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-runner-X.Y.Z heartbeat="..."</code></pre>
+[DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z heartbeat="..."</code></pre>
 </div>
 </div>
 </li>
@@ -237,15 +278,11 @@ cat external_ip</code></pre>
 <p>Remove those nodes with awx-manage:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">awx-manage deprovision_instance --host=node1.example.org</code></pre>
 </div>
 </div>
 </li>
 </ul>
-</div>
-</li>
-</ol>
 </div>
 </article>
   </div>
