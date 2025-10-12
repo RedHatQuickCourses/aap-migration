@@ -6,7 +6,7 @@ This guide provides a detailed, step-by-step process to migrate your RPM-based A
 
 ✅ Source Environment:
 
-- RPM-based AAP deployment (version 2.4).
+- RPM-based AAP deployment (version 2.6).
 - PostgreSQL 15 (mandatory).
 - Sufficient disk space for backups and migration artifacts.
 

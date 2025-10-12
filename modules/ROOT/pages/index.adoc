@@ -11,7 +11,7 @@ You’ll learn how to:
 
 ✔ Create and validate a migration artifact (database dumps, secrets, configurations).
 
-✔ Import and reconcile data in the target environment.
+✔ Import and reconcile data in the target environments (containerized or operator based).
 
 ✔ Troubleshoot common issues and validate post-migration functionality.
 

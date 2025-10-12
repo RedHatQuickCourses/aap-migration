@@ -143,6 +143,10 @@ systemctl --user start redis-unix redis-tcp
 
 *Target Environment Post-Import Reconciliation*
 
+Learn how to perform the *Post-Import Reconciliation* in this video so you can successfully execute the job on the *Unified UI*.
+
+video::container_migration_post.mp4[align="left",width=800,height=500]
+
 - Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
 + 
 [source,bash,role=execute]
@@ -171,11 +175,16 @@ aap-gateway-manage shell_plus
 exit
 ----
 
-- There might be a bug in this file so please remove the last line if it matched: 
+- There might be a bug in your Installer file so please remove the last line if it matches: 
 +
 [source,bash,role=execute]
 ----
-vim /home/lab-user/ansible-automation-platform-containerized-setup-bundle-2.6-1-x86_64/collections/ansible_collections/ansible/containerized_installer/roles/automationcontroller/tasks/postgresql.yml
+cd <ansible_automation_platform-install dir>
+----
++
+[source,bash,role=execute]
+----
+vim collections/ansible_collections/ansible/containerized_installer/roles/automationcontroller/tasks/postgresql.yml
 ----
 +
 [source,bash,role=execute]
@@ -185,11 +194,6 @@ remove or comment out this line
 ----
 
 - Re-run the containerized installer on the target environment using the same inventory from the installation.
-+
-[source,bash,role=execute]
-----
-cd <ansible_automation_platform-install dir>
-----
 +
 [source,bash,role=execute]
 ----

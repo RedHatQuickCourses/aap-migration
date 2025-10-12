@@ -1,6 +1,35 @@
 = deleted inst might use in future 
 
 
+*Target Environment Post-Import Reconciliation*
+
+- Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:
++ 
+[source,bash,role=execute]
+----
+podman exec -it automation-gateway bash
+----
++ 
+[source,bash,role=execute]
+----
+aap-gateway-manage migrate
+----
++ 
+[source,bash,role=execute]
+----
+aap-gateway-manage shell_plus
+----
++ 
+[source,bash,role=execute]
+----
+>>> HTTPPort.objects.all().delete(); ServiceNode.objects.all().delete();ServiceCluster.objects.all().delete()
+>>> CTRL+D <-- to exit
+---- 
++ 
+[source,bash,role=execute]
+----
+exit
+----
 
 . Lets correct the secret for Controller component and before that gather the current resource secret values for each component: :
 + 
@@ -32,8 +61,13 @@ cat /home/lab-user/migration_artifact/secrets.yml
 +
 [source,bash,role=execute]
 ----
-echo "secret_value" | podman secret create controller_resource_server -
+echo "secret_value" | podman secret create <SECRET_NAME> -
 ----
+
+
+. 
+
+
 
 - Re-run the containerized installer on the target environment using the same inventory from the installation.
 
@@ -71,7 +105,6 @@ cat external_ip
 ----
 [ungrouped capacity=0]
 [DISABLED] node1.example.org capacity=0 node_type=hybrid version=X.Y.Z heartbeat="..."
-[DISABLED] node2.example.org capacity=0 node_type=execution version=ansible-runner-X.Y.Z heartbeat="..."
 ---- 
 
 - Remove those nodes with awx-manage:
@@ -79,5 +112,4 @@ cat external_ip
 [source,bash,role=execute]
 ----
 awx-manage deprovision_instance --host=node1.example.org
-awx-manage deprovision_instance --host=node2.example.org
 ----

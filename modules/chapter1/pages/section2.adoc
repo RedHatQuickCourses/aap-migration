@@ -2,6 +2,8 @@
 
 The Red Hat Ansible Automation Platform 2.4 environment is now fully deployed and ready for immediate use. Below, you'll find the essential access details for the core components: the **Automation Controller** for centralized job orchestration and the **Private Automation Hub** for managing your curated content and Execution Environments with installer managed external database.
 
+image::controller.png[]
+
 . Simply ssh the hostname from the *bastion* host and get the *external_IP* of the system to access the Dashboard.
 +
 [source,bash,role=execute]
