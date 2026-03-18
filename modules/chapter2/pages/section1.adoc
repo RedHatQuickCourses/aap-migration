@@ -99,7 +99,7 @@ sudo grep '^SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2 }'
 sudo cat /etc/pulp/certs/database_fields.symmetric.key
 ----
 
-.. On the Hub node you can run the below command to get the database-related information which will be later used to take backup.
+.. On the Hub node you can run the below command to get the database-related information and add the value of `NAME` variable in `secrets.yml` file at `hub_pg_database` .
 +
 [source,bash,role=execute]
 ----
@@ -120,7 +120,7 @@ ssh gateway.lab
 sudo  cat /etc/ansible-automation-platform/gateway/SECRET_KEY
 ----
 
-.. On the *gateway node* you can run the below command to get the database-related information which will be later used to take backup:
+.. On the *gateway node* you can run the below command to get the database-related information and add the value of `NAME` variable in `secrets.yml` file at `gateway_pg_database` .
 +
 [source,bash,role=execute]
 ----
@@ -139,7 +139,7 @@ ssh controller.lab
 sudo  cat /etc/tower/SECRET_KEY
 ----
 
-.. Accessing the *controller node* you can run the below command to get the database-related information which will be used later to take backup:
+.. Accessing the *controller node* you can run the below command to get the database-related information  and add the value of `NAME` variable in `secrets.yml` file at `controller_pg_database` .
 +
 [source,bash,role=execute]
 ----
