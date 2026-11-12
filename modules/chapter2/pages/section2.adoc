@@ -87,7 +87,7 @@ tar -xvf custom_config.tar.gz
 rm -rf custom_config.tar.gz
 ----
 
-... Now to copy this to your local machine please use the *Login Command* and *password* from the RHDP page as the port and *bastion* hostname will be diffrent for your systems: 
+... To copy the artifact to your local machine, use the *Login Command* and *password* from the RHDP portal. Note that the port and bastion hostname will differ per user:
 +
 [source,bash,role=execute]
 ----

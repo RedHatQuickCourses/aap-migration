@@ -17,7 +17,7 @@ image::form.png[]
 . **Click** the **Order** button to place your lab order.
 
 === Important Notes:
-- This lab may take approximately **50 minutes** to become ready for **Product Enablement AAP Operator Deployment lab** .
+- This lab may take approximately **50 minutes** to provision.
 - You will receive an **email with access details** once your lab environment is ready.
 - You can also **retrieve lab access** directly from the RHDP portal.
 
@@ -27,5 +27,5 @@ image::form.png[]
 
 [[RHDP-Portal-Links]]
 === RHDP Portal Links
-- RedHat associates: Access to the labs https://catalog.demo.redhat.com/catalog?search=Product+Enablement+AAP+Operator+Deployment+lab[Product Enablement AAP Operator Deployment lab,window=_balnk]
-- RedHat partners: https://catalog.partner.demo.redhat.com/catalog?search=Product+Enablement+AAP+Operator+Deployment+lab[Product Enablement AAP Operator Deployment lab,window=_balnk]
+- RedHat associates: Access to the labs https://catalog.demo.redhat.com/catalog?search=Product+Enablement+AAP+Operator+Deployment+lab[Product Enablement AAP Operator Deployment lab,window=_blank]
+- RedHat partners: https://catalog.partner.demo.redhat.com/catalog?search=Product+Enablement+AAP+Operator+Deployment+lab[Product Enablement AAP Operator Deployment lab,window=_blank]

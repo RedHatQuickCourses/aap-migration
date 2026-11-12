@@ -1,8 +1,8 @@
 = Migration Artifact
 
-The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.
+The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.6 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide focuses on migrating between deployment types, specifically from RPM-based to container-based or operator-based installations.
 
-In the larger context of Ansible Automation Platform 2.5 migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
+In the context of Ansible Automation Platform 2.6 migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:
 
 . Preparing and assessing the source environment.
 . Exporting the source environment, which includes creating the migration artifact.
@@ -14,7 +14,7 @@ In the larger context of Ansible Automation Platform 2.5 migration, the creation
 
 *Migration Artifact: Purpose and Structure*
 
-The migration artifact is a `comprehensive package` that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.
+The migration artifact is a comprehensive package that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.
 
 The recommended structure for the migration artifact is as follows:
 
@@ -36,15 +36,15 @@ The recommended structure for the migration artifact is as follows:
 
 The `manifest.yml` file acts as the primary metadata document for the migration artifact. It provides critical versioning and component information about your source environment. Its structure includes:
 
-- aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).
-- Platform: The type of the source platform (e.g., rpm).
-- Components: A list detailing each component's name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).
+- `aap_version`: The specific Ansible Automation Platform version being migrated (e.g., X.Y).
+- `platform`: The type of the source platform (e.g., rpm).
+- `components`: A list detailing each component's name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).
 
 *Secrets File (secrets.yml)*
 
-The `secrets.yml` file within the migration artifact is vital as it contains essential Django `SECRET_KEY values and other sensitive data` required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.
+The `secrets.yml` file within the migration artifact is vital as it contains essential Django `SECRET_KEY` values and other sensitive data required for authentication between services. It includes database names and secret keys for various components. Ensure this file is encrypted and stored in a secure location before transfer.
 
-It's structure contains redacted values for:
+Its structure contains redacted values for:
 
 - controller_pg_database
 - controller_secret_key

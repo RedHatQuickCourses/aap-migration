@@ -8,17 +8,17 @@ This training focuses only on migrating the main components of Ansible Automatio
 - Custom Certificate Authority for the receptor mesh
 - Any custom execution environments (the default one is included)
 
-When we talk about migrating from an RPM to a container or operator-based installation, we're really talking about a major shift. The biggest difference is that we're moving the entire infrastructure from living directly on the system to being managed by container technology.
+Migrating from an RPM-based to a container or operator-based installation is a significant shift. The biggest difference is that workloads move from running directly on the host OS to being managed by container technology.
 
-So this course is divided into multiple sections: 
+This course is divided into multiple sections:
 
-- First we will talk about a simple upgrade from `AAP 2.4` to `AAP 2.6 RPM` 
-- Then we talk about migrating `AAP 2.6 RPM` to `AAP 2.6 Containerized`. 
-- Later, we talk about migrating `AAP 2.6 RPM` to `AAP 2.6 Operator`. 
+- First, it covers a simple upgrade from `AAP 2.4` to `AAP 2.6 RPM`.
+- Then, it covers migrating `AAP 2.6 RPM` to `AAP 2.6 Containerized`.
+- Finally, it covers migrating `AAP 2.6 RPM` to `AAP 2.6 Operator`.
 
 
 
-## System List
+== System List
 
 The below systems will be used in the exercise for the initial 2 chapters.
 

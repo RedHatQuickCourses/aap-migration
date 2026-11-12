@@ -11,7 +11,7 @@ This comprehensive checklist guides you through the essential steps for a succes
 ... Verify that new nodes are reachable from the installer system. 
 ... Ensure that the OS is consistent across all nodes.
 ... Capture and document OS hardening details.
-... Determine if a dedicated installer user is there on the new nodes and that they have the sudo.
+... Confirm that a dedicated installer user exists on each new node and has sudo privileges.
 ... Set up passwordless access to the new nodes for the installer.
 
 .. Backups and Documentation:

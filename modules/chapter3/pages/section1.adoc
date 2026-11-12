@@ -1,10 +1,10 @@
 = Making Target Environment Ready
 
-- Go to the *bastion* host using the RHDP login page creds.
+- Log in to the *bastion* host using the credentials from the RHDP portal.
 
 video::aap2.6_container_install.mp4[align="left",width=800,height=500]
 
-- You will do `scp` the `migration_artifact.tar` and `migration_artifact.tar.sha256` to the new systems. 
+- Copy the migration artifact files to `container.lab` using `scp`:
 +
 [source,bash,role=execute]
 ----
@@ -25,11 +25,11 @@ tar xf migration_artifact.tar
 sudo dnf install -y wget git-core rsync vim ansible-core
 ----
  
-*Let's have the Containerized setup ready*
+*Prepare the Containerized Setup*
 
-- Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and Get the installer link for *Ansible Automation Platform 2.6 Containerized Setup Bundle*.
+- Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and copy the download URL for *Ansible Automation Platform 2.6 Containerized Setup Bundle*.
 +
-Note: Please follow above step and the next steps one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.
+NOTE: Complete this step and the next step in sequence to avoid URL expiration errors. Reload the page to get a fresh link if the download fails.
 
 . Download the installer file to the VM: 
 + 
@@ -61,17 +61,25 @@ aap.example.org -> container.lab
 +
 Note: Please click this link to learn how to use https://www.geeksforgeeks.org/basic-vim-commands/[Vim basic operations,window=_blank] and also to remove any node under `[automationeda]`. 
 
-. Once the inventory file is ready follow the below steps to do the installation:
+. Once the inventory file is ready, run the following command to start the installation:
 +
 [source,bash,role=execute]
 ----
 ansible-playbook -i inventory-growth ansible.containerized_installer.install -e @../migration_artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'" 
 ----
++
+[NOTE]
+====
+ The preflight check might fail for ansible_version. You can ignore this error and continue with the installation by commenting the task or adding the version installed on the your systems. 
+ 
+ The path of the file is: ansible-automation-platform-containerized-setup-bundle-2.6-14.2-x86_64/collections/ansible_collections/ansible/containerized_installer/roles/preflight/tasks/core.yml
+====
 
-. Use the user *admin* and the *password* set during the time of installation. In the above video I have set it to *redhat*. 
 
- Note: Try to use a stronger password while doing the enterprise deployment 
+. Use the *admin* user and the password set during installation (set to *redhat* in the video above).
++
+NOTE: Use a stronger password in an enterprise deployment.
 
-. Provide the *Red Hat login ID* to get the subscription for attaching it to the AAP and *60-day subscription to Red Hat Ansible® Automation Platform* or *Red Hat Developer Subscription for Individuals* subscription can be used for this lab.
+. Attach a Red Hat subscription to activate AAP. You can use a 60-day trial subscription, a *Red Hat Developer Subscription for Individuals*, or a manifest file.
 
-. After *Login* run the *Project sync* for the *Demo project* to confirm the job is getting executed.
+. After logging in, run a *Project sync* on the *Demo Project* to confirm that jobs execute successfully.

@@ -34,7 +34,7 @@ On completing this course, you should be able to:
 .. Export data from the source environment into a structured migration artifact.
 .. Import and restore data in the target environment (Container/OpenShift/Managed AAP).
 .. Reconcile configurations and validate functionality post-migration.
-Test & Validate the migrated content
+.. Test and validate migrated content.
 
 == Prerequisites
 

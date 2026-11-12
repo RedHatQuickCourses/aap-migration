@@ -1,16 +1,16 @@
 = Performing Upgrade to Ansible Automation Platform 2.6
 
-This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of **Ansible Automation Platform 2.6**, featuring a new component called `Unified-ui`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI. 
+This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to the new architecture of **Ansible Automation Platform 2.6**, featuring a new component called `Unified UI`. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with the added advantage of an optimized UI.
 
 video::aap2.6_after_migration.mp4[align="left",width=800,height=500]
 
-All the above steps followed in the video are shared below: 
+All steps shown in the video are listed below:
 
 image::gateway.png[]
 
 . Once the lab is deployed and you are accessing the system via *ssh* terminal make sure to run everything as a normal user only and use the sudo command to perform any root-level operations.
 
-. We are going to follow a *RPM growth topology* approach for this upgrade. Where we have each system for new components and use the existing one to upgrade for the same components.
+. We are going to follow an *RPM growth topology* approach for this upgrade, where each new system hosts a new component while the existing systems are upgraded in place.
 
 . Go to the https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software[Installer,window=_blank] link and get the installer link for *Ansible Automation Platform 2.6 Setup Bundle*.
 +
@@ -65,7 +65,7 @@ automationhub_pg_host=database.lab
 automationhub_pg_password=redhat
 ----
 
-. Now, let's add the addition details of the hosts where it needs to either install or upgrade the components: 
+. Now, let's add the additional host details specifying where each component should be installed or upgraded:
 +
 [source,bash,role=execute]
 ----
@@ -90,7 +90,7 @@ database.lab
 ansible_become=true
 ----
 
-. Once the inventory file is ready follow the below steps to do the installation/upgrade:
+. Once the inventory file is ready, run the following command to start the installation or upgrade:
 +
 [source,bash,role=execute]
 ----
@@ -109,10 +109,10 @@ ssh gateway.lab
 cat external_ip
 ----
 
-. Copy the *external_ip* and paste it in the browser and you should be able to access the AAP 2.6 *Login page*. 
+. Copy the external IP, paste it into a browser address bar, and the AAP 2.6 *Login page* will load.
 
-. Use the user *admin* and the *password* set during the time of installation. In the above video I have set it to *redhat*. 
+. Use the *admin* user and the password set during installation (set to *redhat* in the video above).
++
+NOTE: Use a stronger password in an enterprise deployment.
 
- Note: Try to use a stronger password while doing the enterprise deployment 
-
-. After *Login* run the *Project sync* for the *Demo project* to confirm that the job is getting executed and verify the data of the AAP 2.4. 
+. After logging in, run a *Project sync* on the *Demo Project* to confirm that jobs execute correctly and verify that your AAP 2.4 data is intact.
