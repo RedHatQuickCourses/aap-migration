@@ -112,7 +112,7 @@
     <a class="nav-link" href="../chapter4/section2.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section3.html">Migration from AAP RPM 2.6 to Operator 2.6</a>
   </li>
 </ul>
   </li>
@@ -159,7 +159,7 @@
 <article class="doc">
 <h1 class="page">Performing Upgrade to Ansible Automation Platform 2.6</h1>
 <div class="paragraph">
-<p>This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to new architecture of <strong>Ansible Automation Platform 2.6</strong>, featuring a new component called <code>Unified-ui</code>. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with added advantege of optimized UI.</p>
+<p>This section details the critical steps for upgrading your existing AAP 2.4 deployment and curated content to the new architecture of <strong>Ansible Automation Platform 2.6</strong>, featuring a new component called <code>Unified UI</code>. The upgrade process ensures you benefit from the latest features, security enhancements, and performance optimizations with the added advantage of an optimized UI.</p>
 </div>
 <div class="videoblock text-left">
 <div class="content">
@@ -169,7 +169,7 @@ Your browser does not support the video tag.
 </div>
 </div>
 <div class="paragraph">
-<p>All the above steps followed in the video are shared below:</p>
+<p>All steps shown in the video are listed below:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -182,7 +182,7 @@ Your browser does not support the video tag.
 <p>Once the lab is deployed and you are accessing the system via <strong>ssh</strong> terminal make sure to run everything as a normal user only and use the sudo command to perform any root-level operations.</p>
 </li>
 <li>
-<p>We are going to follow a <strong>RPM growth topology</strong> approach for this upgrade. Where we have each system for new components and use the existing one to upgrade for the same components.</p>
+<p>We are going to follow an <strong>RPM growth topology</strong> approach for this upgrade, where each new system hosts a new component while the existing systems are upgraded in place.</p>
 </li>
 <li>
 <p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and get the installer link for <strong>Ansible Automation Platform 2.6 Setup Bundle</strong>.</p>
@@ -245,7 +245,7 @@ automationhub_pg_password=redhat</code></pre>
 </div>
 </li>
 <li>
-<p>Now, let&#8217;s add the addition details of the hosts where it needs to either install or upgrade the components:</p>
+<p>Now, let&#8217;s add the additional host details specifying where each component should be installed or upgraded:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[automationgateway]
@@ -271,7 +271,7 @@ ansible_become=true</code></pre>
 </div>
 </li>
 <li>
-<p>Once the inventory file is ready follow the below steps to do the installation/upgrade:</p>
+<p>Once the inventory file is ready, run the following command to start the installation or upgrade:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./setup.sh -i inventory-growth</code></pre>
@@ -292,18 +292,25 @@ ansible_become=true</code></pre>
 </div>
 </li>
 <li>
-<p>Copy the <strong>external_ip</strong> and paste it in the browser and you should be able to access the AAP 2.6 <strong>Login page</strong>.</p>
+<p>Copy the external IP, paste it into a browser address bar, and the AAP 2.6 <strong>Login page</strong> will load.</p>
 </li>
 <li>
-<p>Use the user <strong>admin</strong> and the <strong>password</strong> set during the time of installation. In the above video I have set it to <strong>redhat</strong>.</p>
-<div class="literalblock">
-<div class="content">
-<pre>Note: Try to use a stronger password while doing the enterprise deployment</pre>
-</div>
+<p>Use the <strong>admin</strong> user and the password set during installation (set to <strong>redhat</strong> in the video above).</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Use a stronger password in an enterprise deployment.
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
-<p>After <strong>Login</strong> run the <strong>Project sync</strong> for the <strong>Demo project</strong> to confirm that the job is getting executed and verify the data of the AAP 2.4.</p>
+<p>After logging in, run a <strong>Project sync</strong> on the <strong>Demo Project</strong> to confirm that jobs execute correctly and verify that your AAP 2.4 data is intact.</p>
 </li>
 </ol>
 </div>

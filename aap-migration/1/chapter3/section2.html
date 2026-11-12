@@ -112,7 +112,7 @@
     <a class="nav-link" href="../chapter4/section2.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section3.html">Migration from AAP RPM 2.6 to Operator 2.6</a>
   </li>
 </ul>
   </li>
@@ -173,10 +173,10 @@ Your browser does not support the video tag.
 </div>
 </div>
 <div class="paragraph">
-<p>The above video is at 1.75X speed to demostrate the below steps.</p>
+<p>The video above is played at 1.75x speed to demonstrate the steps below.</p>
 </div>
 <div class="paragraph">
-<p>The first essential step is to halt the services so we can perform the restore. In  these above mentioned steps, all the components were installed on a single system <code>container.lab</code>, so we will perform all the steps on that machine. However, since your environment may have multiple systems, we will highlight which command needs to be run on which node.</p>
+<p>The first step is to stop the services so the restore can be performed. In this lab, all components are installed on a single system (<code>container.lab</code>), so all commands run on that machine. In a multi-node environment, run each command on the appropriate node.</p>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
@@ -198,7 +198,7 @@ systemctl --user stop receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node and run the following commamd:</p>
+<p>Access the Automation Gateway node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop automation-gateway automation-gateway-proxy</code></pre>
@@ -206,7 +206,7 @@ systemctl --user stop receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run the following command:</p>
+<p>If using standalone Redis, access the Automation Gateway node. If using clustered Redis, access all nodes in the redis group. Then run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user stop redis-unix redis-tcp</code></pre>
@@ -243,7 +243,7 @@ tar xf migration_artifact.tar</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>Once executed, this command will provide you with a shell inside the container, where your restore artifact is accessible at /var/lib/pgsql/backups.</p>
+<p>Once executed, this command opens a shell inside the container. Your restore artifact is accessible at <code>/var/lib/pgsql/backups</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Create a DB role</strong></p>
@@ -251,7 +251,7 @@ tar xf migration_artifact.tar</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>When inside the container, access the database and ensure that the users have the CREATEDB role.</p>
+<p>Inside the container, connect to the database and grant the CREATEDB role to each component database user.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">psql -h localhost -U postgres</code></pre>
@@ -259,7 +259,7 @@ tar xf migration_artifact.tar</code></pre>
 </div>
 </li>
 <li>
-<p>For each component name, add the CREATEDB role to the Owner.</p>
+<p>For each component, grant the CREATEDB role to its database owner.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">postgres=# ALTER ROLE awx WITH CREATEDB;
@@ -268,7 +268,7 @@ postgres=# \q</code></pre>
 </div>
 </li>
 <li>
-<p>With the CREATEDB in place, access the path where the artifact is mounted, and you may run the <code>pg_restore</code> commands.</p>
+<p>With the CREATEDB permission granted, navigate to the path where the artifact is mounted and run the <code>pg_restore</code> commands.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /var/lib/pgsql/backups/
@@ -283,9 +283,17 @@ sha256sum --check sha256sum.txt</code></pre>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>Note:
-The above restore process can be followed for the other components like Unified UI or Automation hub or EDA. Currently we have shown for controller only.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The same restore process applies to other components (Unified UI, Automation Hub). This example covers the Controller only.
+</td>
+</tr>
+</table>
 </div>
 <div class="ulist">
 <ul>
@@ -309,7 +317,7 @@ postgres=# \q</code></pre>
 </div>
 </li>
 <li>
-<p>All the below services need to be started again on all the nodes currently we will run the below on the same node as we have followed a <code>All-in-one</code> pattern for deployment:</p>
+<p>Restart all services. Since this lab uses an all-in-one deployment, run all commands on <code>container.lab</code>. In a multi-node environment, run each command on its respective node:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -330,7 +338,7 @@ systemctl --user start receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node and run the following commamd:</p>
+<p>Access the Automation Gateway node and run the following command:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user start automation-gateway automation-gateway-proxy</code></pre>
@@ -338,7 +346,7 @@ systemctl --user start receptor</code></pre>
 </div>
 </li>
 <li>
-<p>Access the Automation Gateway node when using standalone redis, or all nodes from the redis group in your inventory when using clustered redis and run:</p>
+<p>If using standalone Redis, access the Automation Gateway node. If using clustered Redis, access all nodes in the redis group. Then run:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl --user start redis-unix redis-tcp</code></pre>
@@ -366,7 +374,7 @@ Your browser does not support the video tag.
 <div class="ulist">
 <ul>
 <li>
-<p>Deprovision gateway configuration SSH to the host serving an automation-gateway container as the same rootless user from 4.2.6 and run the following to remove the automation gateway proxy configuration:</p>
+<p>To clean up the gateway proxy configuration, SSH to the host running the <code>automation-gateway</code> container as the rootless user and run the following commands:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-gateway bash</code></pre>
@@ -395,7 +403,7 @@ Your browser does not support the video tag.
 </div>
 </li>
 <li>
-<p>There might be a bug in your Installer file so please remove the last line if it matches:</p>
+<p>Known issue: If the following line is present in the installer playbook, comment it out or remove it to avoid errors:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd &lt;ansible_automation_platform-install dir&gt;</code></pre>
@@ -422,7 +430,7 @@ Your browser does not support the video tag.
 </div>
 </li>
 <li>
-<p>Validate instances for Automation Execution SSH to the host serving an automation-controller-task container as the same rootless user from above and run the following to validate and/or remove instances which are orphaned from the source artifact:</p>
+<p>Validate instances for Automation Execution: SSH to the host running the <code>automation-controller-task</code> container as the rootless user and run the following to validate and remove any instances orphaned from the source artifact:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman exec -it automation-controller-task bash</code></pre>
@@ -440,7 +448,7 @@ Your browser does not support the video tag.
 </div>
 </li>
 <li>
-<p>Migration successful! Your new deployment is ready to go.</p>
+<p>Migration complete. Your containerized deployment is now operational.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd

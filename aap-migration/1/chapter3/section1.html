@@ -112,7 +112,7 @@
     <a class="nav-link" href="../chapter4/section2.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section3.html">Migration from AAP RPM 2.6 to Operator 2.6</a>
   </li>
 </ul>
   </li>
@@ -161,7 +161,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Go to the <strong>bastion</strong> host using the RHDP login page creds.</p>
+<p>Log in to the <strong>bastion</strong> host using the credentials from the RHDP portal.</p>
 </li>
 </ul>
 </div>
@@ -175,7 +175,7 @@ Your browser does not support the video tag.
 <div class="ulist">
 <ul>
 <li>
-<p>You will do <code>scp</code> the <code>migration_artifact.tar</code> and <code>migration_artifact.tar.sha256</code> to the new systems.</p>
+<p>Copy the migration artifact files to <code>container.lab</code> using <code>scp</code>:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp migration_artifact.tar container.lab:/home/lab-user/
@@ -200,14 +200,23 @@ sudo dnf install -y wget git-core rsync vim ansible-core</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Let&#8217;s have the Containerized setup ready</strong></p>
+<p><strong>Prepare the Containerized Setup</strong></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and Get the installer link for <strong>Ansible Automation Platform 2.6 Containerized Setup Bundle</strong>.</p>
-<div class="paragraph">
-<p>Note: Please follow above step and the next steps one after another in order to avoid the link expiration error, as the copied URL has an expiration time. Reload the website for the new link if you are having trouble downloading the package.</p>
+<p>Go to the <a href="https://access.redhat.com/downloads/content/480/ver=2.6/rhel---9/2.6/x86_64/product-software" target="_blank" rel="noopener">Installer</a> link and copy the download URL for <strong>Ansible Automation Platform 2.6 Containerized Setup Bundle</strong>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Complete this step and the next step in sequence to avoid URL expiration errors. Reload the page to get a fresh link if the download fails.
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -246,26 +255,54 @@ aap.example.org -&gt; container.lab
 </div>
 </li>
 <li>
-<p>Once the inventory file is ready follow the below steps to do the installation:</p>
+<p>Once the inventory file is ready, run the following command to start the installation:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ansible-playbook -i inventory-growth ansible.containerized_installer.install -e @../migration_artifact/secrets.yml -e "__hub_database_fields='{{ hub_db_fields_encryption_key }}'"</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>Use the user <strong>admin</strong> and the <strong>password</strong> set during the time of installation. In the above video I have set it to <strong>redhat</strong>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="literalblock">
 <div class="content">
-<pre>Note: Try to use a stronger password while doing the enterprise deployment</pre>
+<pre>The preflight check might fail for ansible_version. You can ignore this error and continue with the installation by commenting the task or adding the version installed on the your systems.</pre>
 </div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>The path of the file is: ansible-automation-platform-containerized-setup-bundle-2.6-14.2-x86_64/collections/ansible_collections/ansible/containerized_installer/roles/preflight/tasks/core.yml</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
-<p>Provide the <strong>Red Hat login ID</strong> to get the subscription for attaching it to the AAP and <strong>60-day subscription to Red Hat Ansible® Automation Platform</strong> or <strong>Red Hat Developer Subscription for Individuals</strong> subscription can be used for this lab.</p>
+<p>Use the <strong>admin</strong> user and the password set during installation (set to <strong>redhat</strong> in the video above).</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Use a stronger password in an enterprise deployment.
+</td>
+</tr>
+</table>
+</div>
 </li>
 <li>
-<p>After <strong>Login</strong> run the <strong>Project sync</strong> for the <strong>Demo project</strong> to confirm the job is getting executed.</p>
+<p>Attach a Red Hat subscription to activate AAP. You can use a 60-day trial subscription, a <strong>Red Hat Developer Subscription for Individuals</strong>, or a manifest file.</p>
+</li>
+<li>
+<p>After logging in, run a <strong>Project sync</strong> on the <strong>Demo Project</strong> to confirm that jobs execute successfully.</p>
 </li>
 </ol>
 </div>

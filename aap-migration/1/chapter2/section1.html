@@ -112,7 +112,7 @@
     <a class="nav-link" href="../chapter4/section2.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section3.html">Migration from AAP RPM 2.6 to Operator 2.6</a>
   </li>
 </ul>
   </li>
@@ -187,7 +187,7 @@ Your browser does not support the video tag.
 <p>Artifact Structure</p>
 </div>
 <div class="paragraph">
-<p>In the below architecture we will be creating so that it can be further moved to the environment either for the migration of container or operator-based deployment.</p>
+<p>Below is the artifact structure you will create. It can then be used to migrate to either a containerized or operator-based deployment.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -212,7 +212,7 @@ Your browser does not support the video tag.
 <div class="ulist">
 <ul>
 <li>
-<p>Edit the manifest.yml file using the vi command. This file is for reference only; it shows the backup version we are collecting.</p>
+<p>Edit the <code>manifest.yml</code> file using the <code>vi</code> command. This file is for reference only — it documents the AAP version and component versions being migrated.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd migration_artifact
@@ -234,7 +234,7 @@ components:
 </div>
 </li>
 <li>
-<p>Edit <code>secrets.yml</code> file to include the following information. Since this data is unique to each environment, please configure the values accordingly.</p>
+<p>Edit the <code>secrets.yml</code> file with values from your environment. Because these values are unique to each system, you must collect them individually using the commands below.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">controller_pg_database: &lt;redacted&gt;
@@ -255,12 +255,12 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 <div class="ulist">
 <ul>
 <li>
-<p>The below is the correct way to collect information and fill the information in the <code>secrets.yml</code> file:</p>
+<p>The following steps show how to collect and populate the values in the <code>secrets.yml</code> file:</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For each of the component groups, you need to get the connection settings from one node. To do this, you must first access the host and become the root user by running <code>sudo -i</code> before running each of the commands listed below.</p>
+<p>For each component, collect connection settings from one node. First, access the host and switch to root with <code>sudo -i</code> before running any of the commands below.</p>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
@@ -286,7 +286,7 @@ hub_db_fields_encryption_key: &lt;from /etc/pulp/certs/database_fields.symmetric
 </div>
 </li>
 <li>
-<p>On the Hub node you can run the below command to get the database-related information and add the value of <code>NAME</code> variable in <code>secrets.yml</code> file at <code>hub_pg_database</code> .</p>
+<p>On the Hub node, run the following command to get the database-related information and add the value of the <code>NAME</code> variable to <code>hub_pg_database</code> in <code>secrets.yml</code>.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  grep '^DATABASES' /etc/pulp/settings.py
@@ -309,7 +309,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>On the <strong>gateway node</strong> you can run the below command to get the database-related information and add the value of <code>NAME</code> variable in <code>secrets.yml</code> file at <code>gateway_pg_database</code> .</p>
+<p>On the <strong>gateway node</strong>, run the following command to get the database-related information and add the value of the <code>NAME</code> variable to <code>gateway_pg_database</code> in <code>secrets.yml</code>.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo  aap-gateway-manage print_settings | grep '^DATABASES'</code></pre>
@@ -330,7 +330,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Accessing the <strong>controller node</strong> you can run the below command to get the database-related information  and add the value of <code>NAME</code> variable in <code>secrets.yml</code> file at <code>controller_pg_database</code> .</p>
+<p>On the <strong>controller node</strong>, run the following command to get the database-related information and add the value of the <code>NAME</code> variable to <code>controller_pg_database</code> in <code>secrets.yml</code>.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo awx-manage print_settings | grep '^DATABASES'</code></pre>
@@ -338,7 +338,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong> run the below commands to create the database <strong>backup</strong>. Also, make sure that you are a <code>sudo user</code> and the database password is same as that of the previous chapter i.e. <strong>redhat</strong> for all databases.</p>
+<p>From the <strong>migration_artifact</strong> directory on the <strong>gateway node</strong>, run the following commands to create database backups. Ensure you are a <code>sudo</code> user. The database password for all three components is <strong>redhat</strong>, as set in the previous chapter.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">using the below format to create command:
@@ -375,7 +375,7 @@ file.</p>
 </div>
 </li>
 <li>
-<p>Package the Migration artifact and send it to the system.</p>
+<p>Package the migration artifact and transfer it to the bastion host.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /home/lab-user/migration_artifact/</code></pre>
@@ -400,7 +400,7 @@ tar tvf migration_artifact.tar</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>Download the migration_artifact.tar and migration_artifact.tar.sha256 files to your local machine. To transfer them to the target node with the scp command, you must first exit the gateway node.</p>
+<p>First, exit the gateway node, then copy the artifact files to the bastion host before transferring them to your local machine.</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
@@ -419,7 +419,7 @@ scp gateway.lab:/home/lab-user/migration_artifact.tar.sha256  .</code></pre>
 </div>
 </li>
 <li>
-<p>Now to copy this to your local machine please use the <strong>Login Command</strong> and <strong>password</strong> from the RHDP page as the <strong>port</strong> and <strong>bastion</strong> hostname will be diffrent for your systems:</p>
+<p>To copy the artifact to your local machine, use the <strong>Login Command</strong> and <strong>password</strong> from the RHDP portal. Note that the port and bastion hostname will differ per user:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -P 30911 lab-user@ssh.ocpv04.rhdp.net:/home/lab-user/migration_artifact.tar .</code></pre>

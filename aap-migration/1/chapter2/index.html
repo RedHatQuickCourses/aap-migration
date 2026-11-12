@@ -112,7 +112,7 @@
     <a class="nav-link" href="../chapter4/section2.html">Operator Deployment LAB</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../chapter4/section3.html">Migration of Ansible Automation Platform from RPM 2.6 to operator 2.6.</a>
+    <a class="nav-link" href="../chapter4/section3.html">Migration from AAP RPM 2.6 to Operator 2.6</a>
   </li>
 </ul>
   </li>
@@ -158,10 +158,10 @@
 <article class="doc">
 <h1 class="page">Migration Artifact</h1>
 <div class="paragraph">
-<p>The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.5 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide specifically focuses on enabling migration between different deployment types, such as RPM-based to container-based installations.</p>
+<p>The Migration Artifact Structure and Verification is a crucial aspect of the Red Hat Ansible Automation Platform 2.6 migration process, serving as the central component for transferring your deployment from one installation type to another. This guide focuses on migrating between deployment types, specifically from RPM-based to container-based or operator-based installations.</p>
 </div>
 <div class="paragraph">
-<p>In the larger context of Ansible Automation Platform 2.5 migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:</p>
+<p>In the context of Ansible Automation Platform 2.6 migration, the creation and verification of the migration artifact are integrated into the overall workflow. The general migration process involves:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -192,7 +192,7 @@
 <p><strong>Migration Artifact: Purpose and Structure</strong></p>
 </div>
 <div class="paragraph">
-<p>The migration artifact is a <code>comprehensive package</code> that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.</p>
+<p>The migration artifact is a comprehensive package that contains all the necessary data and configurations from your source Ansible Automation Platform deployment. This exported data is then used to configure your new target environment.</p>
 </div>
 <div class="paragraph">
 <p>The recommended structure for the migration artifact is as follows:</p>
@@ -269,13 +269,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p>aap_version: The specific Ansible Automation Platform version being migrated (e.g., X.Y).</p>
+<p><code>aap_version</code>: The specific Ansible Automation Platform version being migrated (e.g., X.Y).</p>
 </li>
 <li>
-<p>Platform: The type of the source platform (e.g., rpm).</p>
+<p><code>platform</code>: The type of the source platform (e.g., rpm).</p>
 </li>
 <li>
-<p>Components: A list detailing each component&#8217;s name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).</p>
+<p><code>components</code>: A list detailing each component&#8217;s name and version (e.g., controller, hub, gateway, with their respective versions x.y.z).</p>
 </li>
 </ul>
 </div>
@@ -283,10 +283,10 @@
 <p><strong>Secrets File (secrets.yml)</strong></p>
 </div>
 <div class="paragraph">
-<p>The <code>secrets.yml</code> file within the migration artifact is vital as it contains essential Django <code>SECRET_KEY values and other sensitive data</code> required for authentication between services. It includes database names and secret keys for various components. The source explicitly states the importance of ensuring this file is `encrypted and kept in a secure location.</p>
+<p>The <code>secrets.yml</code> file within the migration artifact is vital as it contains essential Django <code>SECRET_KEY</code> values and other sensitive data required for authentication between services. It includes database names and secret keys for various components. Ensure this file is encrypted and stored in a secure location before transfer.</p>
 </div>
 <div class="paragraph">
-<p>It&#8217;s structure contains redacted values for:</p>
+<p>Its structure contains redacted values for:</p>
 </div>
 <div class="ulist">
 <ul>
